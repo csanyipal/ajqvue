@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Created-By: Dana M. Proctor
+Specification-Title: Ajqvue
+Specification-Version: 1.0
+Specification-Vender: Dandy Made Productions
+Specification-URL: http://dandymadeproductions.com
+Main-Class: com.dandymadeproductions.ajqvue.Ajqvue
+Class-Path: lib/itextpdf-5.5.9.jar lib/hsqldb.jar lib/h2-1.4.192.jar lib/jfxrt.jar lib/sqlite-jdbc-3.13.0.jar

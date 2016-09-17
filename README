@@ -1,0 +1,62 @@
+   Ajqvue provides an easy to use Java based user interface frontend
+for viewing, adding, editing, or deleting entries in several mainstream
+databases. A query tools allows the building of complex SQL statements
+and a SQL Query Bucket for saving such. The application allows easy
+sorting, searching, and import/export of table data. A plug-in framework
+has allowed the inclusion of tools to visually build queries, profile
+and plot data for analysis.
+
+   Dana M. Proctor
+   Project Manager
+   http://dandymadeproductions.com
+
+Features:
+
+   * Plugin Framework.
+   * Internationalization Support.
+   * Simple Easy to Use Interface.
+   * User Connection Preferences Saving/Managing.
+   * User Preferences Summary Table Column Selection & Sizing.
+   * User Preferences Summary Table Row Sizing.
+   * Access to All User Tables in Database During Session.
+   * Simple and Advanced Table Sorting and Searching.
+   * Summary Table State Saving/Loading.
+   * Viewing, Adding, Editing, and Deleting All Table Fields.
+   * Update Multiple Rows of Selected Table Field.
+   * Support for Table Field Function Operations.
+   * Support for All Basic Data Types, Including Blob/Bytea/Binary.
+   * Data Type Checking During Adding or Updates.
+   * Support for All Table Types, Including Transaction Locking.
+   * Support for Flushing Privileges for User root on mysql database.
+   * Printing of Summary Table Data, Screen View.
+   * Export of CSV Summary or Complete Table Data.
+   * Export of SQL Summary or Complete Table Structure/Data.
+   * Export of PDF Summary Table.
+   * Export of SQL Current Open Database/Scheme.
+   * Import of SQL Statement File.
+   * Import of CSV data File Into Selected Database Table via Insert/Update.
+   * Query Bucket for Storing/Organizing SQL Statements.
+   * Query Frame for Building Complex SQL Statements.
+   * Search Frame for Running Generic LIKE Queries on All Tables in Database.
+   * In Memory Data Analysis Capability
+
+Requirements:
+
+   * Microsoft® Windows 7, Vista ?, XP, 2000, 98, NT, ME, MAC?, Linux, & X-Window Environment.
+   * Java Runtime Environment, JRE 1.7 or Newer.
+   
+Installation Notes:
+
+   Ajqvue is a stand alone application. To get started download and unzip
+the release file to your local hard drive using a program such as WinZip, 7-Zip,
+Tar or similar compression/decompression program. Extract the Ajqvue files
+to the desired location on the hard disk. On a Windows system this may be any
+location, but on a Unix or Linux system it will be in the home directory of
+the user. If multiple users are to access the application then consult with
+the system administrator of your workstation. The likely location will be in
+the /usr/local or a public directory, which all users have access to for
+application execution.
+
+Copyright Notice:
+
+This program is licensed under the GNU GPL.

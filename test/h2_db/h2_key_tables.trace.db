@@ -1,0 +1,1193 @@
+09-05 17:08:34 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE TABLE ""key_table1"" (  ""key_id1"" IDENTITY,  ""key_id2"" INT NOT NULL WITH[*] DEFAULT 0,  ""text"" CLOB(1M),  PRIMARY KEY  (""key_id1"", ""key_id2""))"; expected "AS, DEFAULT, GENERATED, NOT, NULL, AUTO_INCREMENT, BIGSERIAL, SERIAL, IDENTITY, NULL_TO_DEFAULT, SEQUENCE, SELECTIVITY, COMMENT, CONSTRAINT, PRIMARY, UNIQUE, NOT, NULL, CHECK, REFERENCES, ,, )"; SQL statement:
+CREATE TABLE "key_table1" (  "key_id1" IDENTITY,  "key_id2" INT NOT NULL WITH DEFAULT 0,  "text" CLOB(1M),  PRIMARY KEY  ("key_id1", "key_id2")) [42001-173]
+09-05 17:14:08 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Attempt to define a second primary key; SQL statement:
+CREATE TABLE "key_table1" (  "key_id1" IDENTITY NOT NULL,  "key_id2" INT NOT NULL DEFAULT 0,  "text" CLOB(1M),  PRIMARY KEY ("key_id1", "key_id2")) [90017-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.message.DbException.get(DbException.java:137)
+	at org.h2.command.ddl.CreateTable.setPrimaryKeyColumns(CreateTable.java:238)
+	at org.h2.command.ddl.CreateTable.addConstraintCommand(CreateTable.java:82)
+	at org.h2.command.Parser.parseCreateTable(Parser.java:5315)
+	at org.h2.command.Parser.parseCreate(Parser.java:3873)
+	at org.h2.command.Parser.parsePrepared(Parser.java:324)
+	at org.h2.command.Parser.parse(Parser.java:279)
+	at org.h2.command.Parser.parse(Parser.java:251)
+	at org.h2.command.Parser.prepareCommand(Parser.java:218)
+	at org.h2.engine.Session.prepareLocal(Session.java:428)
+	at org.h2.engine.Session.prepareCommand(Session.java:377)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:156)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpImportThread.importSQLFile(SQLDataDumpImportThread.java:362)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpImportThread.run(SQLDataDumpImportThread.java:205)
+	at java.lang.Thread.run(Unknown Source)
+09-05 17:22:46 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Column "avatar_id_fit" not found; SQL statement:
+INSERT INTO "PUBLIC"."key_table4" ("avatar_id", "user_id", "bing_id", "avatar_id_fit") VALUES (0, 0, 0, 0) [42122-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.table.Table.getColumn(Table.java:613)
+	at org.h2.command.Parser.parseColumn(Parser.java:805)
+	at org.h2.command.Parser.parseColumnList(Parser.java:790)
+	at org.h2.command.Parser.parseInsert(Parser.java:983)
+	at org.h2.command.Parser.parsePrepared(Parser.java:375)
+	at org.h2.command.Parser.parse(Parser.java:279)
+	at org.h2.command.Parser.parse(Parser.java:251)
+	at org.h2.command.Parser.prepareCommand(Parser.java:218)
+	at org.h2.engine.Session.prepareLocal(Session.java:428)
+	at org.h2.engine.Session.prepareCommand(Session.java:377)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:124)
+	at org.h2.jdbc.JdbcStatement.executeUpdate(JdbcStatement.java:113)
+	at com.dandymadeproductions.myjsqlview.io.CSVDataImportThread.importCSVFile(CSVDataImportThread.java:618)
+	at com.dandymadeproductions.myjsqlview.io.CSVDataImportThread.run(CSVDataImportThread.java:238)
+	at java.lang.Thread.run(Unknown Source)
+09-05 22:54:44 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Cannot parse "DATE" constant "2011"; SQL statement:
+SELECT "date_id", "name" FROM "PUBLIC"."key_table8" WHERE "date_id" > '2011' LIMIT 50 OFFSET 0 [22007-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:160)
+	at org.h2.value.ValueDate.parse(ValueDate.java:70)
+	at org.h2.value.Value.convertTo(Value.java:832)
+	at org.h2.table.Table.compareTypeSave(Table.java:1054)
+	at org.h2.index.BaseIndex.compareValues(BaseIndex.java:304)
+	at org.h2.index.BaseIndex.compareRows(BaseIndex.java:236)
+	at org.h2.index.PageBtree.find(PageBtree.java:117)
+	at org.h2.index.PageBtreeLeaf.find(PageBtreeLeaf.java:302)
+	at org.h2.index.PageBtreeIndex.find(PageBtreeIndex.java:180)
+	at org.h2.index.PageBtreeIndex.find(PageBtreeIndex.java:171)
+	at org.h2.index.BaseIndex.find(BaseIndex.java:126)
+	at org.h2.index.IndexCursor.find(IndexCursor.java:155)
+	at org.h2.table.TableFilter.next(TableFilter.java:328)
+	at org.h2.command.dml.Select.queryFlat(Select.java:518)
+	at org.h2.command.dml.Select.queryWithoutCache(Select.java:625)
+	at org.h2.command.dml.Query.query(Query.java:314)
+	at org.h2.command.dml.Query.query(Query.java:284)
+	at org.h2.command.dml.Query.query(Query.java:36)
+	at org.h2.command.CommandContainer.query(CommandContainer.java:91)
+	at org.h2.command.Command.executeQuery(Command.java:195)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:78)
+	at com.dandymadeproductions.myjsqlview.gui.panels.TableTabPanel_Generic.loadTable(TableTabPanel_Generic.java:711)
+	at com.dandymadeproductions.myjsqlview.gui.panels.TableTabPanel.executeActions(TableTabPanel.java:1164)
+	at com.dandymadeproductions.myjsqlview.gui.panels.TableTabPanel.access$0(TableTabPanel.java:1130)
+	at com.dandymadeproductions.myjsqlview.gui.panels.TableTabPanel$1.run(TableTabPanel.java:1004)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.lang.IllegalArgumentException: 2011
+	at org.h2.util.DateTimeUtils.parseDateValue(DateTimeUtils.java:270)
+	at org.h2.value.ValueDate.parse(ValueDate.java:68)
+	... 24 more
+09-05 22:55:39 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Cannot parse "DATE" constant "2011"; SQL statement:
+SELECT "date_id", "name" FROM "PUBLIC"."key_table8" WHERE "date_id" > '2011' LIMIT 50 OFFSET 0 [22007-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:160)
+	at org.h2.value.ValueDate.parse(ValueDate.java:70)
+	at org.h2.value.Value.convertTo(Value.java:832)
+	at org.h2.table.Table.compareTypeSave(Table.java:1054)
+	at org.h2.index.BaseIndex.compareValues(BaseIndex.java:304)
+	at org.h2.index.BaseIndex.compareRows(BaseIndex.java:236)
+	at org.h2.index.PageBtree.find(PageBtree.java:117)
+	at org.h2.index.PageBtreeLeaf.find(PageBtreeLeaf.java:302)
+	at org.h2.index.PageBtreeIndex.find(PageBtreeIndex.java:180)
+	at org.h2.index.PageBtreeIndex.find(PageBtreeIndex.java:171)
+	at org.h2.index.BaseIndex.find(BaseIndex.java:126)
+	at org.h2.index.IndexCursor.find(IndexCursor.java:155)
+	at org.h2.table.TableFilter.next(TableFilter.java:328)
+	at org.h2.command.dml.Select.queryFlat(Select.java:518)
+	at org.h2.command.dml.Select.queryWithoutCache(Select.java:625)
+	at org.h2.command.dml.Query.query(Query.java:314)
+	at org.h2.command.dml.Query.query(Query.java:284)
+	at org.h2.command.dml.Query.query(Query.java:36)
+	at org.h2.command.CommandContainer.query(CommandContainer.java:91)
+	at org.h2.command.Command.executeQuery(Command.java:195)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:78)
+	at com.dandymadeproductions.myjsqlview.gui.panels.TableTabPanel_Generic.loadTable(TableTabPanel_Generic.java:711)
+	at com.dandymadeproductions.myjsqlview.gui.panels.TableTabPanel.setTableHeadings(TableTabPanel.java:2774)
+	at com.dandymadeproductions.myjsqlview.gui.panels.TableTabPanel.executeHistoryAction(TableTabPanel.java:1119)
+	at com.dandymadeproductions.myjsqlview.gui.panels.TableTabPanel.actionPerformed(TableTabPanel.java:931)
+	at javax.swing.AbstractButton.fireActionPerformed(Unknown Source)
+	at javax.swing.AbstractButton$Handler.actionPerformed(Unknown Source)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(Unknown Source)
+	at javax.swing.DefaultButtonModel.setPressed(Unknown Source)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(Unknown Source)
+	at java.awt.Component.processMouseEvent(Unknown Source)
+	at javax.swing.JComponent.processMouseEvent(Unknown Source)
+	at java.awt.Component.processEvent(Unknown Source)
+	at java.awt.Container.processEvent(Unknown Source)
+	at java.awt.Component.dispatchEventImpl(Unknown Source)
+	at java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.awt.Component.dispatchEvent(Unknown Source)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Unknown Source)
+	at java.awt.LightweightDispatcher.processMouseEvent(Unknown Source)
+	at java.awt.LightweightDispatcher.dispatchEvent(Unknown Source)
+	at java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.awt.Window.dispatchEventImpl(Unknown Source)
+	at java.awt.Component.dispatchEvent(Unknown Source)
+	at java.awt.EventQueue.dispatchEvent(Unknown Source)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.run(Unknown Source)
+Caused by: java.lang.IllegalArgumentException: 2011
+	at org.h2.util.DateTimeUtils.parseDateValue(DateTimeUtils.java:270)
+	at org.h2.value.ValueDate.parse(ValueDate.java:68)
+	... 48 more
+09-05 22:57:30 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT ""name"", ""color"", SUM(""price"") AS ""price"" FROM ""PUBLIC"".""key_table5"" GROUP BY ""color"" ASC[*] LIMIT 50 OFFSET 0 "; SQL statement:
+SELECT "name", "color", Sum("price") AS "price" FROM "PUBLIC"."key_table5" GROUP BY "color" ASC LIMIT 50 OFFSET 0 [42000-173]
+09-05 22:57:36 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT ""name"", ""color"", SUM(""price"") AS ""price"" FROM ""PUBLIC"".""key_table5"" GROUP BY ""price"" ASC[*] LIMIT 50 OFFSET 0 "; SQL statement:
+SELECT "name", "color", Sum("price") AS "price" FROM "PUBLIC"."key_table5" GROUP BY "price" ASC LIMIT 50 OFFSET 0 [42000-173]
+09-05 22:57:52 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT ""name"", ""color"", SUM(""price"") AS ""price"" FROM ""PUBLIC"".""key_table5"" GROUP BY ""price"" ASC[*] LIMIT 50 OFFSET 0 "; SQL statement:
+SELECT "name", "color", Sum("price") AS "price" FROM "PUBLIC"."key_table5" GROUP BY "price" ASC LIMIT 50 OFFSET 0 [42000-173]
+09-05 22:58:07 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT SUM(""price"") AS ""price"" FROM ""PUBLIC"".""key_table5"" GROUP BY ""price"" ASC[*] LIMIT 50 OFFSET 0 "; SQL statement:
+SELECT Sum("price") AS "price" FROM "PUBLIC"."key_table5" GROUP BY "price" ASC LIMIT 50 OFFSET 0 [42000-173]
+09-05 22:58:17 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT SUM(""price"") AS ""price"" FROM ""PUBLIC"".""key_table5"" GROUP BY ""price"" ASC[*] LIMIT 50 OFFSET 0 "; SQL statement:
+SELECT Sum("price") AS "price" FROM "PUBLIC"."key_table5" GROUP BY "price" ASC LIMIT 50 OFFSET 0 [42000-173]
+09-05 23:00:19 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Column "H" not found; SQL statement:
+SELECT H@VERSION() [42122-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:144)
+	at org.h2.command.dml.Select.prepare(Select.java:808)
+	at org.h2.command.Parser.prepareCommand(Parser.java:219)
+	at org.h2.engine.Session.prepareLocal(Session.java:428)
+	at org.h2.engine.Session.prepareCommand(Session.java:377)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:156)
+	at com.dandymadeproductions.myjsqlview.gui.panels.SQLTabPanel.executeSQL(SQLTabPanel.java:322)
+	at com.dandymadeproductions.myjsqlview.gui.panels.SQLTabPanel.<init>(SQLTabPanel.java:192)
+	at com.dandymadeproductions.myjsqlview.gui.QueryFrame$2.run(QueryFrame.java:902)
+	at java.lang.Thread.run(Unknown Source)
+09-06 10:54:03 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Feature not supported: "Index on BLOB or CLOB column: ""text_id"" CLOB NOT NULL"; SQL statement:
+CREATE TABLE "key_table7" ("text_id" CLOB NOT NULL,"name" VARCHAR(30) DEFAULT NULL,"blob_field2" BLOB(1M),PRIMARY KEY ("text_id")) [50100-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:206)
+	at org.h2.index.BaseIndex.checkIndexColumnTypes(BaseIndex.java:79)
+	at org.h2.index.PageBtreeIndex.<init>(PageBtreeIndex.java:46)
+	at org.h2.table.RegularTable.addIndex(RegularTable.java:232)
+	at org.h2.command.ddl.AlterTableAddConstraint.tryUpdate(AlterTableAddConstraint.java:131)
+	at org.h2.command.ddl.AlterTableAddConstraint.update(AlterTableAddConstraint.java:70)
+	at org.h2.command.ddl.CreateTable.update(CreateTable.java:169)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:79)
+	at org.h2.command.Command.executeUpdate(Command.java:235)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:181)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:156)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpImportThread.importSQLFile(SQLDataDumpImportThread.java:362)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpImportThread.run(SQLDataDumpImportThread.java:205)
+	at java.lang.Thread.run(Unknown Source)
+09-06 11:13:42 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE4" not found; SQL statement:
+SELECT bing_id FROM key_table4 WHERE user_id>4 [42102-173]
+09-06 11:13:52 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLException: Column "BING_ID" not found; SQL statement:
+SELECT bing_id FROM "key_table4" WHERE user_id>4 [42122-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:144)
+	at org.h2.command.dml.Select.prepare(Select.java:808)
+	at org.h2.command.Parser.prepareCommand(Parser.java:219)
+	at org.h2.engine.Session.prepareLocal(Session.java:428)
+	at org.h2.engine.Session.prepareCommand(Session.java:377)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:156)
+	at com.dandymadeproductions.myjsqlview.gui.panels.SQLTabPanel.executeSQL(SQLTabPanel.java:322)
+	at com.dandymadeproductions.myjsqlview.gui.panels.SQLTabPanel.<init>(SQLTabPanel.java:192)
+	at com.dandymadeproductions.myjsqlview.gui.QueryFrame$2.run(QueryFrame.java:905)
+	at java.lang.Thread.run(Unknown Source)
+09-06 11:14:04 jdbc[6]: exception
+org.h2.jdbc.JdbcSQLException: Column "USER_ID" not found; SQL statement:
+SELECT "bing_id" FROM "key_table4" WHERE user_id>4 [42122-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:144)
+	at org.h2.expression.Comparison.optimize(Comparison.java:171)
+	at org.h2.command.dml.Select.prepare(Select.java:811)
+	at org.h2.command.Parser.prepareCommand(Parser.java:219)
+	at org.h2.engine.Session.prepareLocal(Session.java:428)
+	at org.h2.engine.Session.prepareCommand(Session.java:377)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:156)
+	at com.dandymadeproductions.myjsqlview.gui.panels.SQLTabPanel.executeSQL(SQLTabPanel.java:322)
+	at com.dandymadeproductions.myjsqlview.gui.panels.SQLTabPanel.<init>(SQLTabPanel.java:192)
+	at com.dandymadeproductions.myjsqlview.gui.QueryFrame$2.run(QueryFrame.java:905)
+	at java.lang.Thread.run(Unknown Source)
+09-07 11:30:05 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Table "SYSTEM_TABLES" not found; SQL statement:
+SELECT "TABLE_TYPE" FROM "INFORMATION_SCHEMA"."SYSTEM_TABLES" WHERE "TABLE_SCHEM"='PUBLIC' AND TABLE_NAME='keY_tAble2' [42102-173]
+09-07 11:39:12 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Column "TABLE_SCHEM" not found; SQL statement:
+SELECT "TABLE_TYPE" FROM "INFORMATION_SCHEMA"."TABLES" WHERE "TABLE_SCHEM"='PUBLIC' AND TABLE_NAME='keY_tAble2' [42122-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:144)
+	at org.h2.expression.Comparison.optimize(Comparison.java:171)
+	at org.h2.expression.ConditionAndOr.optimize(ConditionAndOr.java:131)
+	at org.h2.command.dml.Select.prepare(Select.java:811)
+	at org.h2.command.Parser.prepareCommand(Parser.java:219)
+	at org.h2.engine.Session.prepareLocal(Session.java:428)
+	at org.h2.engine.Session.prepareCommand(Session.java:377)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:72)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.createH2TableDefinition(TableDefinitionGenerator.java:2045)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.getTableDefinition(TableDefinitionGenerator.java:2519)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.dumpData(SQLDataDumpThread.java:528)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.run(SQLDataDumpThread.java:462)
+	at java.lang.Thread.run(Unknown Source)
+09-07 11:40:49 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Column "DATETIME_PRECISION" not found; SQL statement:
+SELECT "COLUMN_NAME","DATA_TYPE","DATETIME_PRECISION","DTD_IDENTIFIER" FROM "INFORMATION_SCHEMA"."COLUMNS" WHERE "TABLE_SCHEMA"='PUBLIC' AND TABLE_NAME='keY_tAble2' [42122-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:144)
+	at org.h2.command.dml.Select.prepare(Select.java:808)
+	at org.h2.command.Parser.prepareCommand(Parser.java:219)
+	at org.h2.engine.Session.prepareLocal(Session.java:428)
+	at org.h2.engine.Session.prepareCommand(Session.java:377)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:72)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.createH2TableDefinition(TableDefinitionGenerator.java:2118)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.getTableDefinition(TableDefinitionGenerator.java:2519)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.dumpData(SQLDataDumpThread.java:528)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.run(SQLDataDumpThread.java:462)
+	at java.lang.Thread.run(Unknown Source)
+09-07 12:04:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Table "key_table5_View" not found; SQL statement:
+SELECT * FROM "PUBLIC"."key_table5_View" WHERE "name"='bird' AND "color"='grey' AND "price"=13.22  [42102-173]
+09-07 12:05:01 jdbc[6]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE FORCE VIEW PUBLIC.""key_table5_View""(""name"", ""color"", ""price"") ASSELECT[*]    ""key_table5"".""name"",    ""key_table5"".""color"",    ""key_table5"".""price""FROM PUBLIC.""key_table5""                                        "; expected "AS"; SQL statement:
+CREATE FORCE VIEW PUBLIC."key_table5_View"("name", "color", "price") ASSELECT    "key_table5"."name",    "key_table5"."color",    "key_table5"."price"FROM PUBLIC."key_table5"    /* PUBLIC."key_table5".tableScan */ [42001-173]
+09-07 12:19:24 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE FORCE VIEW PUBLIC.""key_table5_View""(""name"", ""color"", ""price"") ASSELECT[*]    ""key_table5"".""name"",    ""key_table5"".""color"",    ""key_table5"".""price""FROM PUBLIC.""key_table5"""; expected "AS"; SQL statement:
+CREATE FORCE VIEW PUBLIC."key_table5_View"("name", "color", "price") ASSELECT    "key_table5"."name",    "key_table5"."color",    "key_table5"."price"FROM PUBLIC."key_table5" [42001-173]
+09-07 12:21:27 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE FORCE VIEW PUBLIC.""key_table5_View""(""name"", ""color"", ""price"") ASSELECT[*]    ""key_table5"".""name"",    ""key_table5"".""color"",    ""key_table5"".""price""FROM PUBLIC.""key_table5"""; expected "AS"; SQL statement:
+CREATE FORCE VIEW PUBLIC."key_table5_View"("name", "color", "price") ASSELECT    "key_table5"."name",    "key_table5"."color",    "key_table5"."price"FROM PUBLIC."key_table5" [42001-173]
+09-07 12:28:13 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE FORCE VIEW ""PUBLIC"".""key_table5_View""(""name"", ""color"", ""price"") ASSELECT[*]    ""key_table5"".""name"",    ""key_table5"".""color"",    ""key_table5"".""price""FROM ""PUBLIC"".""key_table5"""; expected "AS"; SQL statement:
+CREATE FORCE VIEW "PUBLIC"."key_table5_View"("name", "color", "price") ASSELECT    "key_table5"."name",    "key_table5"."color",    "key_table5"."price"FROM "PUBLIC"."key_table5" [42001-173]
+09-07 12:53:12 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: The object is already closed [90007-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.message.DbException.get(DbException.java:137)
+	at org.h2.jdbc.JdbcResultSet.checkClosed(JdbcResultSet.java:3099)
+	at org.h2.jdbc.JdbcResultSetMetaData.checkClosed(JdbcResultSetMetaData.java:438)
+	at org.h2.jdbc.JdbcResultSetMetaData.checkColumnIndex(JdbcResultSetMetaData.java:446)
+	at org.h2.jdbc.JdbcResultSetMetaData.getCatalogName(JdbcResultSetMetaData.java:181)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.createH2TableDefinition(TableDefinitionGenerator.java:2095)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.getTableDefinition(TableDefinitionGenerator.java:2410)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.dumpData(SQLDataDumpThread.java:528)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.run(SQLDataDumpThread.java:462)
+	at java.lang.Thread.run(Unknown Source)
+09-07 12:55:25 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: The object is already closed [90007-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.message.DbException.get(DbException.java:137)
+	at org.h2.jdbc.JdbcResultSet.checkClosed(JdbcResultSet.java:3099)
+	at org.h2.jdbc.JdbcResultSetMetaData.checkClosed(JdbcResultSetMetaData.java:438)
+	at org.h2.jdbc.JdbcResultSetMetaData.checkColumnIndex(JdbcResultSetMetaData.java:446)
+	at org.h2.jdbc.JdbcResultSetMetaData.getCatalogName(JdbcResultSetMetaData.java:181)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.createH2TableDefinition(TableDefinitionGenerator.java:2094)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.getTableDefinition(TableDefinitionGenerator.java:2409)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.dumpData(SQLDataDumpThread.java:528)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.run(SQLDataDumpThread.java:462)
+	at java.lang.Thread.run(Unknown Source)
+09-07 12:59:05 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: The object is already closed [90007-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.message.DbException.get(DbException.java:137)
+	at org.h2.jdbc.JdbcResultSet.checkClosed(JdbcResultSet.java:3099)
+	at org.h2.jdbc.JdbcResultSetMetaData.checkClosed(JdbcResultSetMetaData.java:438)
+	at org.h2.jdbc.JdbcResultSetMetaData.checkColumnIndex(JdbcResultSetMetaData.java:446)
+	at org.h2.jdbc.JdbcResultSetMetaData.getCatalogName(JdbcResultSetMetaData.java:181)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.createH2TableDefinition(TableDefinitionGenerator.java:2096)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.getTableDefinition(TableDefinitionGenerator.java:2413)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.dumpData(SQLDataDumpThread.java:528)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.run(SQLDataDumpThread.java:462)
+	at java.lang.Thread.run(Unknown Source)
+09-07 16:11:03 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Cannot drop "key_table5" because "key_table5_View" depends on it; SQL statement:
+DROP TABLE IF EXISTS "PUBLIC"."key_table5" [90107-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.command.ddl.DropTable.prepareDrop(DropTable.java:84)
+	at org.h2.command.ddl.DropTable.update(DropTable.java:113)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:79)
+	at org.h2.command.Command.executeUpdate(Command.java:235)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:181)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:156)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpImportThread.importSQLFile(SQLDataDumpImportThread.java:362)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpImportThread.run(SQLDataDumpImportThread.java:205)
+	at java.lang.Thread.run(Unknown Source)
+09-07 16:11:49 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Feature not supported: "VIEW"; SQL statement:
+INSERT INTO "PUBLIC"."key_table5_View" ("name", "color", "price") VALUES('bike', 'blue', 33.25) [50100-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.message.DbException.getUnsupportedException(DbException.java:206)
+	at org.h2.table.TableView.addRow(TableView.java:315)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:127)
+	at org.h2.command.dml.Insert.update(Insert.java:86)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:79)
+	at org.h2.command.Command.executeUpdate(Command.java:235)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:181)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:156)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpImportThread.importSQLFile(SQLDataDumpImportThread.java:362)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpImportThread.run(SQLDataDumpImportThread.java:205)
+	at java.lang.Thread.run(Unknown Source)
+09-07 16:16:02 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Cannot drop "key_table5" because "key_table5_View" depends on it; SQL statement:
+DROP TABLE IF EXISTS "PUBLIC"."key_table5" [90107-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.command.ddl.DropTable.prepareDrop(DropTable.java:84)
+	at org.h2.command.ddl.DropTable.update(DropTable.java:113)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:79)
+	at org.h2.command.Command.executeUpdate(Command.java:235)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:181)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:156)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpImportThread.importSQLFile(SQLDataDumpImportThread.java:362)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpImportThread.run(SQLDataDumpImportThread.java:205)
+	at java.lang.Thread.run(Unknown Source)
+09-29 13:21:35 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: The object is already closed [90007-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.message.DbException.get(DbException.java:137)
+	at org.h2.jdbc.JdbcResultSet.checkClosed(JdbcResultSet.java:3099)
+	at org.h2.jdbc.JdbcResultSetMetaData.checkClosed(JdbcResultSetMetaData.java:438)
+	at org.h2.jdbc.JdbcResultSetMetaData.checkColumnIndex(JdbcResultSetMetaData.java:446)
+	at org.h2.jdbc.JdbcResultSetMetaData.getCatalogName(JdbcResultSetMetaData.java:181)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.createH2TableDefinition(TableDefinitionGenerator.java:2093)
+	at com.dandymadeproductions.myjsqlview.utilities.TableDefinitionGenerator.getTableDefinition(TableDefinitionGenerator.java:2382)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.dumpData(SQLDataDumpThread.java:527)
+	at com.dandymadeproductions.myjsqlview.io.SQLDataDumpThread.run(SQLDataDumpThread.java:462)
+	at java.lang.Thread.run(Unknown Source)
+10-05 15:23:14 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "META[*] DATA RESULTS: 
+
+CREATE TABLE ""myTable"" (
+    ""data_type_id"" IDENTITY NOT NULL,
+    ""smallint_type"" SMALLINT,
+    ""int_type"" INTEGER,
+    ""bigint_type"" BIGINT,
+    ""decimal_type"" DECIMAL(16,2),
+    ""numeric_type"" DECIMAL(10,2),
+    ""real_type"" REAL,
+    ""doubleprecision_type"" DOUBLE,
+    ""serial_type"" IDENTITY NOT NULL,
+    ""bigserial_type"" IDENTITY NOT NULL,
+    ""varchar_type"" VARCHAR(30),
+    ""char_type"" CHAR(30),
+    ""text_type"" CLOB(2147483647),
+    ""bytea_type"" BLOB(2147483647),
+    ""date_type"" DATE,
+    ""time_type"" TIME,
+    ""timetz_type"" TIME,
+    ""timestamp_type"" TIMESTAMP,
+    ""timestamptz_type"" TIMESTAMP,
+    ""interval_type"" VARCHAR(49),
+    ""boolean_type"" BOOLEAN,
+    ""point_type"" LONGVARCHAR,
+    ""linesegment_type"" LONGVARCHAR,
+    ""box_type"" LONGVARCHAR,
+    ""path_type"" LONGVARCHAR,
+    ""polygon_type"" LONGVARCHAR,
+    ""circle_type"" LONGVARCHAR,
+    ""cidr_type"" LONGVARCHAR,
+    ""inet_type"" LONGVARCHAR,
+    ""macaddr_type"" LONGVARCHAR,
+    ""bit2_type"" BOOLEAN,
+    ""bitvarying5_type"" VARCHAR(5)
+);
+ "; expected "MERGE, {"; SQL statement:
+Meta Data Results: 
+
+CREATE TABLE "myTable" (
+    "data_type_id" IDENTITY NOT NULL,
+    "smallint_type" SMALLINT,
+    "int_type" INTEGER,
+    "bigint_type" BIGINT,
+    "decimal_type" DECIMAL(16,2),
+    "numeric_type" DECIMAL(10,2),
+    "real_type" REAL,
+    "doubleprecision_type" DOUBLE,
+    "serial_type" IDENTITY NOT NULL,
+    "bigserial_type" IDENTITY NOT NULL,
+    "varchar_type" VARCHAR(30),
+    "char_type" CHAR(30),
+    "text_type" CLOB(2147483647),
+    "bytea_type" BLOB(2147483647),
+    "date_type" DATE,
+    "time_type" TIME,
+    "timetz_type" TIME,
+    "timestamp_type" TIMESTAMP,
+    "timestamptz_type" TIMESTAMP,
+    "interval_type" VARCHAR(49),
+    "boolean_type" BOOLEAN,
+    "point_type" LONGVARCHAR,
+    "linesegment_type" LONGVARCHAR,
+    "box_type" LONGVARCHAR,
+    "path_type" LONGVARCHAR,
+    "polygon_type" LONGVARCHAR,
+    "circle_type" LONGVARCHAR,
+    "cidr_type" LONGVARCHAR,
+    "inet_type" LONGVARCHAR,
+    "macaddr_type" LONGVARCHAR,
+    "bit2_type" BOOLEAN,
+    "bitvarying5_type" VARCHAR(5)
+);
+ [42001-173]
+10-05 15:24:26 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "META[*] DATA RESULTS: 
+
+CREATE TABLE ""myTable"" (
+    ""data_type_id"" IDENTITY NOT NULL,
+    ""smallint_type"" SMALLINT,
+    ""int_type"" INTEGER,
+    ""bigint_type"" BIGINT,
+    ""decimal_type"" DECIMAL(16,2),
+    ""numeric_type"" DECIMAL(10,2),
+    ""real_type"" REAL,
+    ""doubleprecision_type"" DOUBLE,
+    ""serial_type"" IDENTITY NOT NULL,
+    ""bigserial_type"" IDENTITY NOT NULL,
+    ""varchar_type"" VARCHAR(30),
+    ""char_type"" CHAR(30),
+    ""text_type"" CLOB(2147483647),
+    ""bytea_type"" BLOB(2147483647),
+    ""date_type"" DATE,
+    ""time_type"" TIME,
+    ""timetz_type"" TIME,
+    ""timestamp_type"" TIMESTAMP,
+    ""timestamptz_type"" TIMESTAMP,
+    ""interval_type"" VARCHAR(49),
+    ""boolean_type"" BOOLEAN,
+    ""point_type"" LONGVARCHAR,
+    ""linesegment_type"" LONGVARCHAR,
+    ""box_type"" LONGVARCHAR,
+    ""path_type"" LONGVARCHAR,
+    ""polygon_type"" LONGVARCHAR,
+    ""circle_type"" LONGVARCHAR,
+    ""cidr_type"" LONGVARCHAR,
+    ""inet_type"" LONGVARCHAR,
+    ""macaddr_type"" LONGVARCHAR,
+    ""bit2_type"" BOOLEAN,
+    ""bitvarying5_type"" VARCHAR(5)
+) "; expected "MERGE, {"; SQL statement:
+Meta Data Results: 
+
+CREATE TABLE "myTable" (
+    "data_type_id" IDENTITY NOT NULL,
+    "smallint_type" SMALLINT,
+    "int_type" INTEGER,
+    "bigint_type" BIGINT,
+    "decimal_type" DECIMAL(16,2),
+    "numeric_type" DECIMAL(10,2),
+    "real_type" REAL,
+    "doubleprecision_type" DOUBLE,
+    "serial_type" IDENTITY NOT NULL,
+    "bigserial_type" IDENTITY NOT NULL,
+    "varchar_type" VARCHAR(30),
+    "char_type" CHAR(30),
+    "text_type" CLOB(2147483647),
+    "bytea_type" BLOB(2147483647),
+    "date_type" DATE,
+    "time_type" TIME,
+    "timetz_type" TIME,
+    "timestamp_type" TIMESTAMP,
+    "timestamptz_type" TIMESTAMP,
+    "interval_type" VARCHAR(49),
+    "boolean_type" BOOLEAN,
+    "point_type" LONGVARCHAR,
+    "linesegment_type" LONGVARCHAR,
+    "box_type" LONGVARCHAR,
+    "path_type" LONGVARCHAR,
+    "polygon_type" LONGVARCHAR,
+    "circle_type" LONGVARCHAR,
+    "cidr_type" LONGVARCHAR,
+    "inet_type" LONGVARCHAR,
+    "macaddr_type" LONGVARCHAR,
+    "bit2_type" BOOLEAN,
+    "bitvarying5_type" VARCHAR(5)
+) [42001-173]
+10-05 15:24:49 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLException: Attempt to define a second primary key; SQL statement:
+CREATE TABLE "myTable" (
+    "data_type_id" IDENTITY NOT NULL,
+    "smallint_type" SMALLINT,
+    "int_type" INTEGER,
+    "bigint_type" BIGINT,
+    "decimal_type" DECIMAL(16,2),
+    "numeric_type" DECIMAL(10,2),
+    "real_type" REAL,
+    "doubleprecision_type" DOUBLE,
+    "serial_type" IDENTITY NOT NULL,
+    "bigserial_type" IDENTITY NOT NULL,
+    "varchar_type" VARCHAR(30),
+    "char_type" CHAR(30),
+    "text_type" CLOB(2147483647),
+    "bytea_type" BLOB(2147483647),
+    "date_type" DATE,
+    "time_type" TIME,
+    "timetz_type" TIME,
+    "timestamp_type" TIMESTAMP,
+    "timestamptz_type" TIMESTAMP,
+    "interval_type" VARCHAR(49),
+    "boolean_type" BOOLEAN,
+    "point_type" LONGVARCHAR,
+    "linesegment_type" LONGVARCHAR,
+    "box_type" LONGVARCHAR,
+    "path_type" LONGVARCHAR,
+    "polygon_type" LONGVARCHAR,
+    "circle_type" LONGVARCHAR,
+    "cidr_type" LONGVARCHAR,
+    "inet_type" LONGVARCHAR,
+    "macaddr_type" LONGVARCHAR,
+    "bit2_type" BOOLEAN,
+    "bitvarying5_type" VARCHAR(5)
+) [90017-173]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:331)
+	at org.h2.message.DbException.get(DbException.java:171)
+	at org.h2.message.DbException.get(DbException.java:148)
+	at org.h2.message.DbException.get(DbException.java:137)
+	at org.h2.command.ddl.CreateTable.setPrimaryKeyColumns(CreateTable.java:242)
+	at org.h2.command.ddl.CreateTable.addConstraintCommand(CreateTable.java:82)
+	at org.h2.command.Parser.parseCreateTable(Parser.java:5327)
+	at org.h2.command.Parser.parseCreate(Parser.java:3873)
+	at org.h2.command.Parser.parsePrepared(Parser.java:324)
+	at org.h2.command.Parser.parse(Parser.java:279)
+	at org.h2.command.Parser.parse(Parser.java:251)
+	at org.h2.command.Parser.prepareCommand(Parser.java:218)
+	at org.h2.engine.Session.prepareLocal(Session.java:428)
+	at org.h2.engine.Session.prepareCommand(Session.java:377)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:168)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:156)
+	at com.dandymadeproductions.myjsqlview.gui.panels.SQLTabPanel.executeSQL(SQLTabPanel.java:322)
+	at com.dandymadeproductions.myjsqlview.gui.panels.SQLTabPanel.<init>(SQLTabPanel.java:192)
+	at com.dandymadeproductions.myjsqlview.gui.QueryFrame$2.run(QueryFrame.java:903)
+	at java.lang.Thread.run(Unknown Source)
+10-17 23:22:39 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "CATALOGS" not found; SQL statement:
+SELECT * FROM "CATALOGS" LIMIT 1 [42102-173]
+10-17 23:22:39 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Table "CATALOGS" not found; SQL statement:
+SELECT * FROM "CATALOGS" LIMIT 1 [42102-173]
+10-17 23:22:39 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Table "CATALOGS" not found; SQL statement:
+SELECT * FROM "CATALOGS" LIMIT 1 [42102-173]
+10-17 23:23:08 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Table "COLLATIONS" not found; SQL statement:
+SELECT * FROM "COLLATIONS" LIMIT 1 [42102-173]
+10-17 23:23:13 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Table "COLUMNS" not found; SQL statement:
+SELECT * FROM "COLUMNS" LIMIT 1 [42102-173]
+10-17 23:23:18 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Table "COLUMN_PRIVILEGES" not found; SQL statement:
+SELECT * FROM "COLUMN_PRIVILEGES" LIMIT 1 [42102-173]
+10-17 23:24:11 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Table "CATALOGS" not found; SQL statement:
+SELECT * FROM "CATALOGS" LIMIT 1 [42102-173]
+10-17 23:24:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "CATALOGS" not found; SQL statement:
+SELECT * FROM "CATALOGS" LIMIT 1 [42102-173]
+10-17 23:24:44 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "CATALOGS" not found; SQL statement:
+SELECT * FROM "CATALOGS" LIMIT 1 [42102-173]
+10-17 23:24:45 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Table "CATALOGS" not found; SQL statement:
+SELECT * FROM "CATALOGS" LIMIT 1 [42102-173]
+10-17 23:24:46 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Table "CATALOGS" not found; SQL statement:
+SELECT * FROM "CATALOGS" LIMIT 1 [42102-173]
+03-13 18:41:38 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-175]
+03-13 18:51:58 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-175]
+03-14 16:28:54 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-175]
+03-29 12:34:36 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-175]
+03-29 12:34:58 jdbc[7]: exception
+org.h2.jdbc.JdbcSQLException: Column "NAME" not found; SQL statement:
+INSERT INTO KEY_TABLES.PUBLIC."key_table5" (name, color, price) VALUES (?, ?, ?) [42122-175]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:332)
+	at org.h2.message.DbException.get(DbException.java:172)
+	at org.h2.message.DbException.get(DbException.java:149)
+	at org.h2.table.Table.getColumn(Table.java:626)
+	at org.h2.command.Parser.parseColumn(Parser.java:826)
+	at org.h2.command.Parser.parseColumnList(Parser.java:811)
+	at org.h2.command.Parser.parseInsert(Parser.java:1004)
+	at org.h2.command.Parser.parsePrepared(Parser.java:394)
+	at org.h2.command.Parser.parse(Parser.java:298)
+	at org.h2.command.Parser.parse(Parser.java:270)
+	at org.h2.command.Parser.prepareCommand(Parser.java:235)
+	at org.h2.engine.Session.prepareLocal(Session.java:436)
+	at org.h2.engine.Session.prepareCommand(Session.java:379)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:70)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:267)
+	at com.sun.rowset.internal.CachedRowSetWriter.writeData(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.executeCachedJDBCRowSet(DB_To_FileMemoryDBPanel.java:822)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.access$1(DB_To_FileMemoryDBPanel.java:661)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB$1.run(DB_To_FileMemoryDBPanel.java:210)
+	at java.lang.Thread.run(Unknown Source)
+03-29 13:15:18 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-175]
+03-29 13:15:28 jdbc[5]: null
+org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-175]
+	at org.h2.message.DbException.get(DbException.java:172)
+	at org.h2.message.DbException.get(DbException.java:149)
+	at org.h2.message.DbException.get(DbException.java:138)
+	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:171)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:116)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:90)
+	at org.h2.Driver.connect(Driver.java:73)
+	at java.sql.DriverManager.getConnection(Unknown Source)
+	at java.sql.DriverManager.getConnection(Unknown Source)
+	at com.dandymadeproductions.myjsqlview.datasource.ConnectionManager.getConnection(ConnectionManager.java:240)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.executeCachedJDBCRowSet(DB_To_FileMemoryDBPanel.java:677)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.access$1(DB_To_FileMemoryDBPanel.java:661)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB$1.run(DB_To_FileMemoryDBPanel.java:210)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: org.h2.jdbc.JdbcSQLException: The connection was not closed by the application and is garbage collected [90018-175]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:332)
+	... 14 more
+03-29 13:15:29 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLException: Column "NAME" not found; SQL statement:
+INSERT INTO KEY_TABLES.PUBLIC."key_table5" (name, color, price) VALUES (?, ?, ?) [42122-175]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:332)
+	at org.h2.message.DbException.get(DbException.java:172)
+	at org.h2.message.DbException.get(DbException.java:149)
+	at org.h2.table.Table.getColumn(Table.java:626)
+	at org.h2.command.Parser.parseColumn(Parser.java:826)
+	at org.h2.command.Parser.parseColumnList(Parser.java:811)
+	at org.h2.command.Parser.parseInsert(Parser.java:1004)
+	at org.h2.command.Parser.parsePrepared(Parser.java:394)
+	at org.h2.command.Parser.parse(Parser.java:298)
+	at org.h2.command.Parser.parse(Parser.java:270)
+	at org.h2.command.Parser.prepareCommand(Parser.java:235)
+	at org.h2.engine.Session.prepareLocal(Session.java:436)
+	at org.h2.engine.Session.prepareCommand(Session.java:379)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:70)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:267)
+	at com.sun.rowset.internal.CachedRowSetWriter.writeData(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.executeCachedJDBCRowSet(DB_To_FileMemoryDBPanel.java:826)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.access$1(DB_To_FileMemoryDBPanel.java:661)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB$1.run(DB_To_FileMemoryDBPanel.java:210)
+	at java.lang.Thread.run(Unknown Source)
+03-29 13:15:53 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Column "NAME" not found; SQL statement:
+INSERT INTO KEY_TABLES.PUBLIC."key_table5" (name, color, price) VALUES (?, ?, ?) [42122-175]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:332)
+	at org.h2.message.DbException.get(DbException.java:172)
+	at org.h2.message.DbException.get(DbException.java:149)
+	at org.h2.table.Table.getColumn(Table.java:626)
+	at org.h2.command.Parser.parseColumn(Parser.java:826)
+	at org.h2.command.Parser.parseColumnList(Parser.java:811)
+	at org.h2.command.Parser.parseInsert(Parser.java:1004)
+	at org.h2.command.Parser.parsePrepared(Parser.java:394)
+	at org.h2.command.Parser.parse(Parser.java:298)
+	at org.h2.command.Parser.parse(Parser.java:270)
+	at org.h2.command.Parser.prepareCommand(Parser.java:235)
+	at org.h2.engine.Session.prepareLocal(Session.java:436)
+	at org.h2.engine.Session.prepareCommand(Session.java:379)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:70)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:267)
+	at com.sun.rowset.internal.CachedRowSetWriter.writeData(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.executeCachedJDBCRowSet(DB_To_FileMemoryDBPanel.java:826)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.access$1(DB_To_FileMemoryDBPanel.java:661)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB$1.run(DB_To_FileMemoryDBPanel.java:210)
+	at java.lang.Thread.run(Unknown Source)
+03-31 11:56:52 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-175]
+03-31 11:57:02 jdbc[5]: null
+org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-175]
+	at org.h2.message.DbException.get(DbException.java:172)
+	at org.h2.message.DbException.get(DbException.java:149)
+	at org.h2.message.DbException.get(DbException.java:138)
+	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:171)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:116)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:90)
+	at org.h2.Driver.connect(Driver.java:73)
+	at java.sql.DriverManager.getConnection(Unknown Source)
+	at java.sql.DriverManager.getConnection(Unknown Source)
+	at com.dandymadeproductions.myjsqlview.datasource.ConnectionManager.getConnection(ConnectionManager.java:240)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.executeCachedJDBCRowSet(DB_To_FileMemoryDBPanel.java:680)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.access$1(DB_To_FileMemoryDBPanel.java:664)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB$1.run(DB_To_FileMemoryDBPanel.java:210)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: org.h2.jdbc.JdbcSQLException: The connection was not closed by the application and is garbage collected [90018-175]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:332)
+	... 14 more
+03-31 11:57:02 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLException: Column "NAME" not found; SQL statement:
+INSERT INTO KEY_TABLES.PUBLIC."key_table5" (name, color, price) VALUES (?, ?, ?) [42122-175]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:332)
+	at org.h2.message.DbException.get(DbException.java:172)
+	at org.h2.message.DbException.get(DbException.java:149)
+	at org.h2.table.Table.getColumn(Table.java:626)
+	at org.h2.command.Parser.parseColumn(Parser.java:826)
+	at org.h2.command.Parser.parseColumnList(Parser.java:811)
+	at org.h2.command.Parser.parseInsert(Parser.java:1004)
+	at org.h2.command.Parser.parsePrepared(Parser.java:394)
+	at org.h2.command.Parser.parse(Parser.java:298)
+	at org.h2.command.Parser.parse(Parser.java:270)
+	at org.h2.command.Parser.prepareCommand(Parser.java:235)
+	at org.h2.engine.Session.prepareLocal(Session.java:436)
+	at org.h2.engine.Session.prepareCommand(Session.java:379)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:70)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:267)
+	at com.sun.rowset.internal.CachedRowSetWriter.writeData(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.executeCachedJDBCRowSet(DB_To_FileMemoryDBPanel.java:831)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.access$1(DB_To_FileMemoryDBPanel.java:664)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB$1.run(DB_To_FileMemoryDBPanel.java:210)
+	at java.lang.Thread.run(Unknown Source)
+03-31 12:04:52 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Column "NAME" not found; SQL statement:
+INSERT INTO KEY_TABLES.PUBLIC."key_table5" (name, color, price) VALUES (?, ?, ?) [42122-175]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:332)
+	at org.h2.message.DbException.get(DbException.java:172)
+	at org.h2.message.DbException.get(DbException.java:149)
+	at org.h2.table.Table.getColumn(Table.java:626)
+	at org.h2.command.Parser.parseColumn(Parser.java:826)
+	at org.h2.command.Parser.parseColumnList(Parser.java:811)
+	at org.h2.command.Parser.parseInsert(Parser.java:1004)
+	at org.h2.command.Parser.parsePrepared(Parser.java:394)
+	at org.h2.command.Parser.parse(Parser.java:298)
+	at org.h2.command.Parser.parse(Parser.java:270)
+	at org.h2.command.Parser.prepareCommand(Parser.java:235)
+	at org.h2.engine.Session.prepareLocal(Session.java:436)
+	at org.h2.engine.Session.prepareCommand(Session.java:379)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:70)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:267)
+	at com.sun.rowset.internal.CachedRowSetWriter.writeData(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.executeCachedJDBCRowSet(DB_To_FileMemoryDBPanel.java:831)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.access$1(DB_To_FileMemoryDBPanel.java:664)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB$1.run(DB_To_FileMemoryDBPanel.java:210)
+	at java.lang.Thread.run(Unknown Source)
+03-31 19:04:35 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Column "NAME" not found; SQL statement:
+INSERT INTO KEY_TABLES.PUBLIC."key_table5" (name, color, price) VALUES (?, ?, ?) [42122-175]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:332)
+	at org.h2.message.DbException.get(DbException.java:172)
+	at org.h2.message.DbException.get(DbException.java:149)
+	at org.h2.table.Table.getColumn(Table.java:626)
+	at org.h2.command.Parser.parseColumn(Parser.java:826)
+	at org.h2.command.Parser.parseColumnList(Parser.java:811)
+	at org.h2.command.Parser.parseInsert(Parser.java:1004)
+	at org.h2.command.Parser.parsePrepared(Parser.java:394)
+	at org.h2.command.Parser.parse(Parser.java:298)
+	at org.h2.command.Parser.parse(Parser.java:270)
+	at org.h2.command.Parser.prepareCommand(Parser.java:235)
+	at org.h2.engine.Session.prepareLocal(Session.java:436)
+	at org.h2.engine.Session.prepareCommand(Session.java:379)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:70)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:267)
+	at com.sun.rowset.internal.CachedRowSetWriter.writeData(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.executeCachedJDBCRowSet(DB_To_FileMemoryDBPanel.java:859)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.access$1(DB_To_FileMemoryDBPanel.java:664)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB$1.run(DB_To_FileMemoryDBPanel.java:210)
+	at java.lang.Thread.run(Unknown Source)
+04-02 12:09:20 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-175]
+04-02 12:13:41 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Column "NAME" not found; SQL statement:
+INSERT INTO KEY_TABLES.PUBLIC."key_table5" (name, color, price) VALUES (?, ?, ?) [42122-175]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:332)
+	at org.h2.message.DbException.get(DbException.java:172)
+	at org.h2.message.DbException.get(DbException.java:149)
+	at org.h2.table.Table.getColumn(Table.java:626)
+	at org.h2.command.Parser.parseColumn(Parser.java:826)
+	at org.h2.command.Parser.parseColumnList(Parser.java:811)
+	at org.h2.command.Parser.parseInsert(Parser.java:1004)
+	at org.h2.command.Parser.parsePrepared(Parser.java:394)
+	at org.h2.command.Parser.parse(Parser.java:298)
+	at org.h2.command.Parser.parse(Parser.java:270)
+	at org.h2.command.Parser.prepareCommand(Parser.java:235)
+	at org.h2.engine.Session.prepareLocal(Session.java:436)
+	at org.h2.engine.Session.prepareCommand(Session.java:379)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1138)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:70)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:267)
+	at com.sun.rowset.internal.CachedRowSetWriter.writeData(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.sun.rowset.CachedRowSetImpl.acceptChanges(Unknown Source)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.executeCachedJDBCRowSet(DB_To_FileMemoryDBPanel.java:857)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB.access$1(DB_To_FileMemoryDBPanel.java:670)
+	at com.dandymadeproductions.dbtofilememorydb.DB_To_FileMemoryDB$1.run(DB_To_FileMemoryDBPanel.java:216)
+	at java.lang.Thread.run(Unknown Source)
+04-04 12:59:58 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT * FROM ""myTable"")"; SQL statement:
+SELECT * FROM "myTable") [42000-175]
+04-05 13:34:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-175]
+04-05 13:34:45 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-175]
+04-05 14:07:37 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-175]
+04-05 14:07:40 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-175]
+2015-12-05 11:24:47 database: wrong user or password; user: "DANAP"
+org.h2.message.DbException: Wrong user name or password [28000-190]
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.get(DbException.java:144)
+	at org.h2.engine.Engine.openSession(Engine.java:106)
+	at org.h2.engine.Engine.openSession(Engine.java:175)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:153)
+	at org.h2.engine.Engine.createSession(Engine.java:136)
+	at org.h2.engine.Engine.createSession(Engine.java:28)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:349)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:107)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:91)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:571)
+	at java.sql.DriverManager.getConnection(DriverManager.java:187)
+	at com.dandymadeproductions.myjsqlview.gui.LoginFrame.accessCheck(LoginFrame.java:1191)
+	at com.dandymadeproductions.myjsqlview.gui.LoginFrame.actionPerformed(LoginFrame.java:686)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+	at java.awt.Component.processMouseEvent(Component.java:6516)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3321)
+	at java.awt.Component.processEvent(Component.java:6281)
+	at java.awt.Container.processEvent(Container.java:2229)
+	at java.awt.Component.dispatchEventImpl(Component.java:4872)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+	at java.awt.Container.dispatchEventImpl(Container.java:2273)
+	at java.awt.Window.dispatchEventImpl(Window.java:2719)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:747)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.awt.EventQueue$4.run(EventQueue.java:718)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:717)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+Caused by: org.h2.jdbc.JdbcSQLException: Wrong user name or password [28000-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	... 52 more
+2015-12-05 11:25:08 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-190]
+2015-12-05 11:25:11 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-190]
+2015-12-05 11:25:28 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM KEY_TABLE5 [42102-190]
+2015-12-05 11:25:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM KEY_TABLE5 [42102-190]
+2015-12-28 22:23:58 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-190]
+2015-12-28 22:24:02 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-190]
+2015-12-28 22:24:24 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM PUBLIC.key_table5 [42102-190]
+2015-12-28 22:24:27 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM PUBLIC.key_table5 [42102-190]
+2015-12-29 13:12:35 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-190]
+2015-12-29 13:12:39 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "KEY_TABLE5" not found; SQL statement:
+SELECT * FROM key_table5 [42102-190]
+2016-01-03 12:44:15 database: wrong user or password; user: "SA"
+org.h2.message.DbException: Wrong user name or password [28000-190]
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.get(DbException.java:144)
+	at org.h2.engine.Engine.openSession(Engine.java:106)
+	at org.h2.engine.Engine.openSession(Engine.java:175)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:153)
+	at org.h2.engine.Engine.createSession(Engine.java:136)
+	at org.h2.engine.Engine.createSession(Engine.java:28)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:349)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:107)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:91)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:571)
+	at java.sql.DriverManager.getConnection(DriverManager.java:187)
+	at com.dandymadeproductions.myjsqlview.gui.LoginFrame.accessCheck(LoginFrame.java:1191)
+	at com.dandymadeproductions.myjsqlview.gui.LoginFrame.actionPerformed(LoginFrame.java:686)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+	at java.awt.Component.processMouseEvent(Component.java:6516)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3321)
+	at java.awt.Component.processEvent(Component.java:6281)
+	at java.awt.Container.processEvent(Container.java:2229)
+	at java.awt.Component.dispatchEventImpl(Component.java:4872)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+	at java.awt.Container.dispatchEventImpl(Container.java:2273)
+	at java.awt.Window.dispatchEventImpl(Window.java:2719)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:747)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.awt.EventQueue$4.run(EventQueue.java:718)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:717)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+Caused by: org.h2.jdbc.JdbcSQLException: Wrong user name or password [28000-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	... 52 more
+2016-01-03 12:44:26 database: wrong user or password; user: "SA"
+org.h2.message.DbException: Wrong user name or password [28000-190]
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.get(DbException.java:144)
+	at org.h2.engine.Engine.openSession(Engine.java:106)
+	at org.h2.engine.Engine.openSession(Engine.java:175)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:153)
+	at org.h2.engine.Engine.createSession(Engine.java:136)
+	at org.h2.engine.Engine.createSession(Engine.java:28)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:349)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:107)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:91)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:571)
+	at java.sql.DriverManager.getConnection(DriverManager.java:187)
+	at com.dandymadeproductions.myjsqlview.gui.LoginFrame.accessCheck(LoginFrame.java:1191)
+	at com.dandymadeproductions.myjsqlview.gui.LoginFrame.actionPerformed(LoginFrame.java:686)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+	at java.awt.Component.processMouseEvent(Component.java:6516)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3321)
+	at java.awt.Component.processEvent(Component.java:6281)
+	at java.awt.Container.processEvent(Container.java:2229)
+	at java.awt.Component.dispatchEventImpl(Component.java:4872)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+	at java.awt.Container.dispatchEventImpl(Container.java:2273)
+	at java.awt.Window.dispatchEventImpl(Window.java:2719)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:747)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.awt.EventQueue$4.run(EventQueue.java:718)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:717)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+Caused by: org.h2.jdbc.JdbcSQLException: Wrong user name or password [28000-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	... 52 more
+2016-01-03 12:44:33 database: wrong user or password; user: "SA"
+org.h2.message.DbException: Wrong user name or password [28000-190]
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.get(DbException.java:144)
+	at org.h2.engine.Engine.openSession(Engine.java:106)
+	at org.h2.engine.Engine.openSession(Engine.java:175)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:153)
+	at org.h2.engine.Engine.createSession(Engine.java:136)
+	at org.h2.engine.Engine.createSession(Engine.java:28)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:349)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:107)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:91)
+	at org.h2.Driver.connect(Driver.java:72)
+	at java.sql.DriverManager.getConnection(DriverManager.java:571)
+	at java.sql.DriverManager.getConnection(DriverManager.java:187)
+	at com.dandymadeproductions.myjsqlview.gui.LoginFrame.accessCheck(LoginFrame.java:1191)
+	at com.dandymadeproductions.myjsqlview.gui.LoginFrame.actionPerformed(LoginFrame.java:686)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:376)
+	at javax.swing.plaf.basic.BasicRootPaneUI$Actions.actionPerformed(BasicRootPaneUI.java:208)
+	at javax.swing.SwingUtilities.notifyAction(SwingUtilities.java:1662)
+	at javax.swing.JComponent.processKeyBinding(JComponent.java:2879)
+	at javax.swing.KeyboardManager.fireBinding(KeyboardManager.java:307)
+	at javax.swing.KeyboardManager.fireKeyboardAction(KeyboardManager.java:250)
+	at javax.swing.JComponent.processKeyBindingsForAllComponents(JComponent.java:2971)
+	at javax.swing.JComponent.processKeyBindings(JComponent.java:2963)
+	at javax.swing.JComponent.processKeyEvent(JComponent.java:2842)
+	at java.awt.Component.processEvent(Component.java:6293)
+	at java.awt.Container.processEvent(Container.java:2229)
+	at java.awt.Component.dispatchEventImpl(Component.java:4872)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.KeyboardFocusManager.redispatchEvent(KeyboardFocusManager.java:1887)
+	at java.awt.DefaultKeyboardFocusManager.dispatchKeyEvent(DefaultKeyboardFocusManager.java:762)
+	at java.awt.DefaultKeyboardFocusManager.preDispatchKeyEvent(DefaultKeyboardFocusManager.java:1027)
+	at java.awt.DefaultKeyboardFocusManager.typeAheadAssertions(DefaultKeyboardFocusManager.java:899)
+	at java.awt.DefaultKeyboardFocusManager.dispatchEvent(DefaultKeyboardFocusManager.java:727)
+	at java.awt.Component.dispatchEventImpl(Component.java:4742)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Window.dispatchEventImpl(Window.java:2719)
+	at java.awt.Component.dispatchEvent(Component.java:4698)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:747)
+	at java.awt.EventQueue.access$300(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:706)
+	at java.awt.EventQueue$3.run(EventQueue.java:704)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.awt.EventQueue$4.run(EventQueue.java:718)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:717)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+Caused by: org.h2.jdbc.JdbcSQLException: Wrong user name or password [28000-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	... 61 more
+2016-02-02 23:06:16 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Column "USER_ID" not found; SQL statement:
+CREATE FORCE VIEW PUBLIC._0 AS
+SELECT
+    USER_ID,
+    BING_ID
+FROM PUBLIC."key_table4" [42122-190]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:147)
+	at org.h2.command.dml.Select.prepare(Select.java:835)
+	at org.h2.command.Parser.prepare(Parser.java:226)
+	at org.h2.engine.Session.prepare(Session.java:426)
+	at org.h2.engine.Session.prepare(Session.java:413)
+	at org.h2.table.TableView.compileViewQuery(TableView.java:106)
+	at org.h2.table.TableView.initColumnsAndTables(TableView.java:151)
+	at org.h2.table.TableView.init(TableView.java:102)
+	at org.h2.table.TableView.<init>(TableView.java:67)
+	at org.h2.table.TableView.createTempView(TableView.java:512)
+	at org.h2.command.Parser.readTableFilter(Parser.java:1169)
+	at org.h2.command.Parser.parseSelectSimpleFromPart(Parser.java:1873)
+	at org.h2.command.Parser.parseSelectSimple(Parser.java:1982)
+	at org.h2.command.Parser.parseSelectSub(Parser.java:1867)
+	at org.h2.command.Parser.parseSelectUnion(Parser.java:1688)
+	at org.h2.command.Parser.parseSelect(Parser.java:1676)
+	at org.h2.command.Parser.parsePrepared(Parser.java:432)
+	at org.h2.command.Parser.parse(Parser.java:304)
+	at org.h2.command.Parser.parse(Parser.java:276)
+	at org.h2.command.Parser.prepareCommand(Parser.java:241)
+	at org.h2.engine.Session.prepareLocal(Session.java:460)
+	at org.h2.engine.Session.prepareCommand(Session.java:402)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1188)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:170)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:158)
+	at com.dandymadeproductions.myjsqlview.gui.panels.SQLTabPanel.executeSQL(SQLTabPanel.java:339)
+	at com.dandymadeproductions.myjsqlview.gui.panels.SQLTabPanel.<init>(SQLTabPanel.java:209)
+	at com.dandymadeproductions.myjsqlview.gui.QueryFrame$2.run(QueryFrame.java:931)
+	at java.lang.Thread.run(Thread.java:745)

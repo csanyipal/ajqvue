@@ -1,0 +1,60 @@
+Ajqvue DB to DB Memory Transfer
+11/13/2015
+
+Testing
+Derby, H2, HSQLDB, Microsoft SQL, MariaDB, MySQL, Oracle, PostgreSQL, and SQLite
+
+Memory Databases
+H2, HSQL, Derby, and SQLite 
+
+DB_To_FileMemoryDB.java
+
+DDL: Check
+
+1. Derby
+   a. H2 (PASS)
+   b. HSQL (PASS)
+   c. Derby (PASS)
+   d. SQLite (PASS)
+
+2. H2
+   a. H2 (PASS)
+   b. HSQL (PASS)
+   c. Derby (PASS)
+   d. SQLite (PASS)
+
+3. HSQLDB
+   a. H2 (PASS)
+   b. HSQL (PASS)
+   c. Derby (PASS)
+   d. SQLite (PASS)
+
+4. MSSQL
+   a. H2 (PASS)
+   b. HSQL (PASS)
+   c. Derby (PASS)
+   d. SQLite (PASS)
+
+5. MySQL/MariaDB (Issues: ENUM, LONGBLOB, LONGTEXT. PRECISION/SIZE)
+   a. H2 (PASS)
+   b. HSQL (PASS)
+   c. Derby (PASS)
+   d. SQLite (PASS)
+
+6. Oracle (Issues: NUMBER)
+   a. H2 (PASS)
+   b. HSQL (PASS)
+   c. Derby (PASS)
+   d. SQLite (PASS)
+
+7. PostgreSQL (Issues: SERIAL, BIGSERIAL, BIT2)
+   a. H2 (PASS)
+   b. HSQL (PASS)
+   c. Derby (PASS)
+   d. SQLite (PASS)
+
+8. SQLite
+   a. H2 (PASS)
+   b. HSQL (PASS)
+   c. Derby (PASS)
+   d. SQLite (PASS)

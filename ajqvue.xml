@@ -1,0 +1,34 @@
+<Ajqvue>
+<Sites>
+<Site Name="LocalHost_MySQL" Driver="com.mysql.jdbc.Driver" Protocol="jdbc" SubProtocol="mysql" Host="127.0.0.1" Port="3306" Database="mysql" User="" Password="" SSH="0" />
+<Site Name="LocalHost_MariaDB" Driver="org.mariadb.jdbc.Driver" Protocol="jdbc" SubProtocol="mariadb" Host="127.0.0.1" Port="3306" Database="mariadb" User="" Password="" SSH="0" />
+<Site Name="LocalHost_PostgreSQL" Driver="org.postgresql.Driver" Protocol="jdbc" SubProtocol="postgresql" Host="127.0.0.1" Port="5432" Database="postgresql" User="" Password="" SSH="0" />
+<Site Name="LocalHost_HSQL" Driver="org.hsqldb.jdbcDriver" Protocol="jdbc" SubProtocol="hsqldb:hsql" Host="127.0.0.1" Port="9001" Database="hsql;" User="" Password="" SSH="0" />
+<Site Name="LocalHost_HSQL" Driver="org.hsqldb.jdbcDriver" Protocol="jdbc" SubProtocol="hsqldb:hsql" Host="127.0.0.1" Port="9001" Database="mem:dbname" User="" Password="" SSH="0" />
+<Site Name="LocalHost_HSQL" Driver="org.hsqldb.jdbcDriver" Protocol="jdbc" SubProtocol="hsqldb:hsql" Host="127.0.0.1" Port="9001" Database="file:dbname" User="" Password="" SSH="0" />
+<Site Name="LocalHost_HSQL" Driver="org.hsqldb.jdbcDriver" Protocol="jdbc" SubProtocol="hsqldb:hsql" Host="127.0.0.1" Port="9001" Database="file:test/hsql_db/sampledata" User="sa" Password="" SSH="0" />
+<Site Name="LocalHost_Oracle" Driver="oracle.jdbc.driver.OracleDriver" Protocol="jdbc" SubProtocol="oracle:thin" Host="127.0.0.1" Port="1521" Database="oracle" User="" Password="" SSH="0" />
+<Site Name="LocalHost_SQLite" Driver="org.sqlite.JDBC" Protocol="jdbc" SubProtocol="sqlite" Host="127.0.0.1" Port="0000" Database="test/sqlite_db/sqlite_datatypes.db" User="sa" Password="" SSH="0" />
+<Site Name="LocalHost_SQLite" Driver="org.sqlite.JDBC" Protocol="jdbc" SubProtocol="sqlite" Host="127.0.0.1" Port="0000" Database=":memory:" User=" " Password="" SSH="0" />
+<Site Name="LocalHost_MS_Access" Driver="sun.jdbc.odbc.JdbcOdbcDriver" Protocol="jdbc" SubProtocol="odbc" Host="127.0.0.1" Port="0000" Database="ms_access" User="" Password="" SSH="0" />
+<Site Name="LocalHost_Derby" Driver="org.apache.derby.jdbc.ClientDriver" Protocol="jdbc" SubProtocol="derby" Host="127.0.0.1" Port="1527" Database="derby" User="" Password="" SSH="0" />
+<Site Name="LocalHost_Derby" Driver="org.apache.derby.jdbc.EmbeddedDriver" Protocol="jdbc" SubProtocol="derby" Host="127.0.0.1" Port="1527" Database="memory:dbname" User="" Password="" SSH="0" />
+<Site Name="LocalHost_Derby" Driver="org.apache.derby.jdbc.EmbeddedDriver" Protocol="jdbc" SubProtocol="derby" Host="127.0.0.1" Port="1527" Database="jar:(test/derby_db/toursdb.jar)toursdb" User="" Password="" SSH="0" />
+<Site Name="LocalHost_H2" Driver="org.h2.Driver" Protocol="jdbc" SubProtocol="h2" Host="127.0.0.1" Port="9092" Database="test/h2_db/h2_datatypes" User="sa" Password="" SSH="0" />
+<Site Name="LocalHost_H2" Driver="org.h2.Driver" Protocol="jdbc" SubProtocol="h2" Host="127.0.0.1" Port="9092" Database="mem:dbname" User="" Password="" SSH="0" />
+<Site Name="LocalHost_H2" Driver="org.h2.Driver" Protocol="jdbc" SubProtocol="h2" Host="127.0.0.1" Port="9092" Database="tcp:dbname" User="" Password="" SSH="0" />
+<Site Name="LocalHost_MSSQL" Driver="com.microsoft.sqlserver.jdbc.SQLServerDriver" Protocol="jdbc" SubProtocol="sqlserver" Host="127.0.0.1" Port="1433" Database="mssql" User="" Password="" SSH="0" />
+</Sites>
+<Settings>
+<Item name="Last Server Name" type="string">Last Site</Item>
+<Item name="Last Driver" type="string">com.mysql.jdbc.Driver</Item>
+<Item name="Last Protocol" type="string">jdbc</Item>
+<Item name="Last SubProtocol" type="string">mysql</Item>
+<Item name="Last Host" type="string">localhost</Item>
+<Item name="Last Port" type="numeric">3306</Item>
+<Item name="Last Database" type="string"> </Item>
+<Item name="Last User" type="string"> </Item>
+<Item name="Last Password" type="string"> </Item>
+<Item name="Last SSH" type="string">0</Item>
+</Settings>
+</Ajqvue>
