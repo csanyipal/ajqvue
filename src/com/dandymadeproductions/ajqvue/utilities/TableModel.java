@@ -12,7 +12,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Version 1.1 09/18/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/17/2016 Production StockItemsTableModel
-//                        
+//             09/18/2016 Corrected Error in Assignment for serialVersionUID.           
 //                        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -54,14 +54,14 @@ import javax.swing.table.AbstractTableModel;
  * generated.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 09/18/2016
  */
 
 public class TableModel extends AbstractTableModel
 {
    // Class Instances.
-   private static final long serialVersionUID = ;
-
+   private static final long serialVersionUID = -4573934966595200345L;
+   
    private ArrayList<String> headings;
    private Object[][] data;
    private boolean[] editableColumns;
