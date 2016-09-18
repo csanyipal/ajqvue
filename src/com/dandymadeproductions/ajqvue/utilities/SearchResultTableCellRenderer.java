@@ -1,10 +1,10 @@
 //=================================================================
-//                   BlobTextKey Class
+//            SearchResultTableCellRenderer Class
 //=================================================================
-//	This class provides the structure for a key in the SQL
-// database that might consist of BLOB or TEXT data.
+//   This class is used to provide a custom table cell renderer
+// component used in the SearchFrame JTable.
 //
-//                   << BlobTextKey.java >>
+//             << SearchResultTableCellRenderer.java >>
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
@@ -29,87 +29,58 @@
 // in the present version number. Author information should
 // also be included with the original copyright author.
 //=================================================================
-// Version 1.0 Production BlobTextKey Class.
-//
+// Version 1.0 Production SearchResultTableCellRenderer Class.
+//                            
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
 //=================================================================
 
 package com.dandymadeproductions.ajqvue.utilities;
 
+import java.awt.Component;
+
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+
 /**
- *    The BlobTextKey class provides the structure for a key in the
- * SQL database that might consist of BLOB or TEXT data.
+ *    The SearchResultTableCellRenderer class is used to provide a custom
+ * table cell renderer component used in the SearchFrame JTable.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2017
+ * @version 1.0 09/17/2016
  */
 
-public class BlobTextKey
+public class SearchResultTableCellRenderer extends DefaultTableCellRenderer
 {
-   // Class Instances.
-   private String name;
-   private String keyContent;
-   private int keyContentLength;
+   // Class Instances
+   private static final long serialVersionUID = 7420763823561682594L;
 
    //==============================================================
-   // BlobTextKey Constructor
+   // ResultTableCellRender Constructor
    //==============================================================
 
-   public BlobTextKey()
+   public SearchResultTableCellRenderer()
    {
-      name = "";
-      keyContent = "";
-      keyContentLength = 0;
+      super();
    }
 
    //==============================================================
-   // Class methods to allow classes to get the BlobTextKey object
-   // components.
+   // Class Method to get the columns default rendering scheme.
    //==============================================================
 
-   public String getName()
+   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                  boolean hasFocus, int row, int column)
    {
-      return name;
-   }
+      Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      String text = ((JLabel) c).getText();
 
-   public String getContent()
-   {
-      return keyContent;
-   }
+      if (column == 1)
+         ((JLabel) c).setText("<html><body><a href=\"\" style=\"text-decoration: none; "
+                              + "font-weight: bold;\">" + text + "</a><body></html>");
+      else
+         ((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
 
-   public int getLength()
-   {
-      return keyContentLength;
-   }
-
-   //==============================================================
-   // Class methods to allow classes to set the BlobTextKey object
-   // components.
-   //==============================================================
-
-   public void setName(String content)
-   {
-      name = content;
-   }
-
-   public void setContent(String content)
-   {
-      keyContent = content;
-   }
-
-   public void setLength(int value)
-   {
-      keyContentLength = value;
-   }
-
-   //==============================================================
-   // Class method to properly implement the toString() method
-   // for the object. Local method overides.
-   //==============================================================
-
-   public String toString()
-   {
-      return name;
+      return c;
    }
 }
