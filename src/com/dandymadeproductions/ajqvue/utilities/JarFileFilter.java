@@ -1,15 +1,15 @@
 //=================================================================
-//                    MyJSQLView JarFileFilter
+//                       JarFileFilter
 //=================================================================
 //
 //    This class provides a custom FileFilter instance to be used
-// in selecting MyJSQLView plugin module files, JAR.
+// in selecting plugin module files, JAR.
 //
 //                  << JarFileFilter.java >>
 //
 //=================================================================
-// Copyright (C) 2005-2016 Dana M. Proctor
-// Version 1.5 04/27/2016
+// Copyright (C) 2016 Dana M. Proctor
+// Version 1.1 09/18/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,18 +30,14 @@
 // in the present version number. Author information should
 // also be included with the original copyright author.
 //=================================================================
-// Version 1.0 Original MyJSQLView JarFileFilter Class.
-//         1.1 Copyright Update.
-//         1.2 Copyright Update.
-//         1.3 Changed Package Name to com.dandymadeproductions.myjsqlview.utilities.
-//         1.4 Minor Comment Changes.
-//         1.5 Method accept() Use of Locale With toLowerCase().
+// Version 1.0 Production JarFileFilter Class.
+//         1.1 Corrected Package.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
 //=================================================================
 
-package com.dandymadeproductions.myjsqlview.utilities;
+package com.dandymadeproductions.ajqvue.utilities;
 
 import java.io.File;
 import java.util.Locale;
@@ -50,10 +46,10 @@ import javax.swing.filechooser.FileFilter;
 
 /**
  *    The JarJFileFilter class provides a customer FileFilter instance to
- * be used in selecting MyJSQLView plugin module files, JAR.
+ * be used in selecting plugin module files, JAR.
  * 
  * @author Dana M. Proctor
- * @version 1.5 04/27/2016
+ * @version 1.1 09/18/2016
  */
 
 public class JarFileFilter extends FileFilter
@@ -72,7 +68,7 @@ public class JarFileFilter extends FileFilter
       if (file.isDirectory())
          return true;
       
-      // Only MyJSQLView Plugin Module Files, *.jar
+      // Only Plugin Module Files, *.jar
       extension = "";
       fileName = file.getName();
       lastIndexOfDot = fileName.lastIndexOf('.');
