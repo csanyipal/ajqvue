@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2005-2016 Dana M. Proctor
-// Version 2.0 09/17/2016
+// Version 1.0 09/17/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -29,18 +29,7 @@
 // in the present version number. Author information should
 // also be included with the original copyright author.
 //=================================================================
-// Version 1.0 Initial BlobTextKey Class.
-//         1.1 Set name and keyContentto "" in Constructor.
-//         1.2 Cleaned Up Javadoc Comments.
-//         1.3 Header Update.
-//         1.4 MyJSQLView Project Common Source Code Formatting.
-//         1.5 Header Format Changes/Update.
-//         1.6 Changed Package to Reflect Dandy Made Productions Code.
-//         1.7 Copyright Update.
-//         1.8 Copyright Update.
-//         1.9 Changed Package Name to com.dandymadeproductions.myjsqlview.utilities.
-//             Made Class, Constructor, & Getter/Setter Methods Public.
-//         2.0 Changed Package Name to com.dandymadeproductions.ajqvue.utilities.
+// Version 1.0 Production BlobTextKey Class.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -53,7 +42,7 @@ package com.dandymadeproductions.ajqvue.utilities;
  * SQL database that might consist of BLOB or TEXT data.
  * 
  * @author Dana M. Proctor
- * @version 2.0 09/17/2017
+ * @version 1.0 09/17/2017
  */
 
 public class BlobTextKey
