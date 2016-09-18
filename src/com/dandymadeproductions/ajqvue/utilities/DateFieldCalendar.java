@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2005-2016 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Version 1.1 09/18/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,6 +30,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/17/2016 Production DateFieldCalendar Class.
+//         1.1 09/18/2016 Corrected Instantiation of resourceBundle in
+//                        Constructor.
 //
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -75,7 +77,7 @@ import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
  * TableEntryForm.
  * 
  * @author Dana M. Proctor
- * @version 3.7 09/17/2016
+ * @version 1.1 09/18/2016
  */
 
 public class DateFieldCalendar extends JFrame implements ActionListener, KeyListener, MouseListener
@@ -85,7 +87,7 @@ public class DateFieldCalendar extends JFrame implements ActionListener, KeyList
    // variables for the JFrame.
    // =============================================
 
-   private static final long serialVersionUID = -5172877510265932315L;
+   private static final long serialVersionUID = -4172877510265932315L;
 
    private TableEntryForm callingForm;
    private Object columnName;
@@ -136,7 +138,7 @@ public class DateFieldCalendar extends JFrame implements ActionListener, KeyList
 
       // Setting up a icons directory  & other instances.
       iconsDirectory = Utils.getIconsDirectory() + Utils.getFileSeparator();
-      resourceBundle = MyJSQLView.getResourceBundle();
+      resourceBundle = Ajqvue.getResourceBundle();
 
       // Setting the frame's main layout & other required
       // fields.
