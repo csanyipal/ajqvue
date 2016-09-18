@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Version 1.1 09/18/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Original TableDefinitionGenerator Class.
+//         1.1 Corrected Import Package DataExportProperties.
 //             
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -54,7 +55,7 @@ import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionProperties;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
-import com.dandymadeproductions.ajqvie.structures.DataExportProperties;
+import com.dandymadeproductions.ajqvue.structures.DataExportProperties;
 
 /**
  *    The TableDefinitionGenerator class provides a common focus
@@ -62,7 +63,7 @@ import com.dandymadeproductions.ajqvie.structures.DataExportProperties;
  * structures that output via the SQL data export feature.
  * 
  * @author Dana Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 09/18/2016
  */
 
 public class TableDefinitionGenerator
