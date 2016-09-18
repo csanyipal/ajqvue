@@ -13,7 +13,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Version 1.1 09/18/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/17/2016 Original Production DataSourceDialog Class.
+//         1.1 09/18/2016 Corrected Class Instance resourceBundle Class
+//                        Reference. Corrected Reference to Utils Class.
 //
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -98,7 +100,7 @@ import com.dandymadeproductions.ajqvue.gui.XMLTranslator;
  *         object when finished.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 09/18/2016
  */
 
 public class DataSourceDialog extends JDialog implements ActionListener, PropertyChangeListener
@@ -122,7 +124,7 @@ public class DataSourceDialog extends JDialog implements ActionListener, Propert
    private String nonConfirmationString;
    private String actionResult;
    
-   private AJSQLView_ResourceBundle resourceBundle;
+   private AResourceBundle resourceBundle;
    
    private boolean siteSelected;
    private String resourceSuccess;
@@ -159,7 +161,7 @@ public class DataSourceDialog extends JDialog implements ActionListener, Propert
       resourceSuccess = resourceBundle.getResourceString(
          "DataSourceDialog.message.Success", "Success");
       successIcon = resourceBundle.getResourceImage(
-         AJSQLView_Utils.getIconsDirectory() + AJSQLView_Utils.getFileSeparator() + "successIcon.png");
+         Utils.getIconsDirectory() + Utils.getFileSeparator() + "successIcon.png");
 
       // Create a MenuBar to provide the ability to select
       // a datasource.
