@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Version 1.1 09/18/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/17/2016 Production DDLGenerator Class.
+//         1.1 09/18/2016 Corrected Import of Ajqvue Class.
+//
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
 //=================================================================
@@ -45,7 +47,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 
-import com.dandymadeproductions.ajqvue.Ajsvue;
+import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
 
@@ -55,7 +57,7 @@ import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
  * a given database query to an alternate database table. 
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 09/18/2016
  */
 
 public class DDLGenerator
