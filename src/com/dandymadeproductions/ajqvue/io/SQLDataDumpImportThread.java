@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 09/19/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production SQLDataDumpImportThread Class.
+//         1.1 Correction Import of Main_JMenuBar.
 //          
 //-----------------------------------------------------------------
 //             poisonerbg@users.sourceforge.net
@@ -55,7 +56,7 @@ import javax.swing.JOptionPane;
 import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.gui.Main_Frame;
-import com.dandymadeproductions.ajqvue.gui.Ajqvue_JMenuBar;
+import com.dandymadeproductions.ajqvue.gui.Main_JMenuBar;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
 import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel;
 import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
@@ -67,7 +68,7 @@ import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
  * to cancel the import.
  * 
  * @author Borislav Gizdov a.k.a. PoisoneR, Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 09/19/2016
  */
 
 public class SQLDataDumpImportThread implements Runnable
