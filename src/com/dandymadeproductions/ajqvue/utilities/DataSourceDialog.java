@@ -13,7 +13,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.1 09/18/2016
+// Version 1.2 09/19/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,8 @@
 // Version 1.0 09/17/2016 Original Production DataSourceDialog Class.
 //         1.1 09/18/2016 Corrected Class Instance resourceBundle Class
 //                        Reference. Corrected Reference to Utils Class.
+//         1.2 09/19/2016 Correction Collection of resourceBundle in
+//                        Constructor.
 //
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -100,7 +102,7 @@ import com.dandymadeproductions.ajqvue.gui.XMLTranslator;
  *         object when finished.
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/18/2016
+ * @version 1.2 09/19/2016
  */
 
 public class DataSourceDialog extends JDialog implements ActionListener, PropertyChangeListener
@@ -150,7 +152,7 @@ public class DataSourceDialog extends JDialog implements ActionListener, Propert
 
       // Setting up
       xmlTranslator = new XMLTranslator();
-      resourceBundle = AJSQLView.getResourceBundle();
+      resourceBundle = Ajqvue.getResourceBundle();
       actionResult = "";
       siteSelected = false;
       
