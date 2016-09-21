@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.1 09/19/2016
+// Version 1.2 09/20/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,6 +34,7 @@
 //=================================================================
 // Version 1.0 Production SQLDataDumpImportThread Class.
 //         1.1 Correction Import of Main_JMenuBar.
+//         1.2 Correction run to Main_JMenuBar.
 //          
 //-----------------------------------------------------------------
 //             poisonerbg@users.sourceforge.net
@@ -68,7 +69,7 @@ import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
  * to cancel the import.
  * 
  * @author Borislav Gizdov a.k.a. PoisoneR, Dana M. Proctor
- * @version 1.1 09/19/2016
+ * @version 1.2 09/20/2016
  */
 
 public class SQLDataDumpImportThread implements Runnable
@@ -123,7 +124,7 @@ public class SQLDataDumpImportThread implements Runnable
                
                // Reload
                Main_Frame.reloadDBTables();
-               Ajqvue_JMenuBar.reloadSchemasMenu();
+               Main_JMenuBar.reloadSchemasMenu();
                Main_Frame.reloadDBTables();
             }
             else
