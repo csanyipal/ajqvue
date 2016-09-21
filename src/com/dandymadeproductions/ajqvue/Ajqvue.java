@@ -15,7 +15,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 09/20/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/18/2016 Ajqvue Main Application.
+//         1.1 09/20/2016 Constructor Change in Description for popupMenuResources.
+//                        Updated VERSION.
 //                              
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -79,7 +81,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * Arguments -debug, -lang='locale'
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 09/20/2016
  */
 
 public class Ajqvue implements ActionListener
@@ -100,7 +102,7 @@ public class Ajqvue implements ActionListener
    private static AResourceBundle resourceBundle;
 
    // String for Information About the Ajqvue.
-   private static String[] VERSION = {"Ajqvue", "1.0", "Build ID: 20160918"};
+   private static String[] VERSION = {"Ajqvue", "1.1", "Build ID: 20160920"};
    private static final String WEBSITE = "http://ajqvue.com";
    
    private static GeneralProperties generalProperties = new GeneralProperties();
@@ -152,7 +154,7 @@ public class Ajqvue implements ActionListener
 
       menuItem = new JMenuItem(new DefaultEditorKit.CutAction()); 
       
-      popupMenuResource = resourceBundle.getResourceString("Ajqvue.action.Cut", "Cut");
+      popupMenuResource = resourceBundle.getResourceString("Ajqvue.popup.Cut", "Cut");
       menuItem.setText(popupMenuResource);
       menuItem.setMnemonic(KeyEvent.VK_X);
       menuItem.addActionListener(this);
@@ -160,7 +162,7 @@ public class Ajqvue implements ActionListener
 
       menuItem = new JMenuItem(new DefaultEditorKit.CopyAction());
       
-      popupMenuResource = resourceBundle.getResourceString("Ajqvue.action.Copy", "Copy");
+      popupMenuResource = resourceBundle.getResourceString("Ajqvue.popup.Copy", "Copy");
       menuItem.setText(popupMenuResource);
       menuItem.setMnemonic(KeyEvent.VK_C);
       menuItem.addActionListener(this);
@@ -168,7 +170,7 @@ public class Ajqvue implements ActionListener
 
       menuItem = new JMenuItem(new DefaultEditorKit.PasteAction());
       
-      popupMenuResource = resourceBundle.getResourceString("Ajqvue.action.Paste", "Paste");
+      popupMenuResource = resourceBundle.getResourceString("Ajqvue.popup.Paste", "Paste");
       menuItem.setText(popupMenuResource);
       menuItem.setText("Paste");
       menuItem.setMnemonic(KeyEvent.VK_V);
