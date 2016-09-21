@@ -11,7 +11,7 @@
 //
 //================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 09/20/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production PluginRepositoryPanel Class.
+//         1.1 Method loadPluginTableData() Replace Standard plugin.getXXX()
+//             Getters Relplaced With getControlledXXX() Methods.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -66,7 +68,7 @@ import com.dandymadeproductions.ajqvue.utilities.TableModel;
  * the panel to display and allow selecting of plugins.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 09/20/2016
  */
 
 public class PluginRepositoryPanel extends JPanel
@@ -169,9 +171,9 @@ public class PluginRepositoryPanel extends JPanel
          plugin = pluginsListIterator.next();
          
          pluginsTableData[i][TABICON_COLUMN] = tabIcon;
-         pluginsTableData[i][NAME_COLUMN] = plugin.getName();
-         pluginsTableData[i][VERSION_COLUMN] = plugin.getVersion();
-         pluginsTableData[i][CATEGORY_COLUMN] = plugin.getCategory();
+         pluginsTableData[i][NAME_COLUMN] = plugin.getControlledName();
+         pluginsTableData[i][VERSION_COLUMN] = plugin.getControlledVersion();
+         pluginsTableData[i][CATEGORY_COLUMN] = plugin.getControlledCategory();
          pluginsTableData[i][SIZE_COLUMN] = formatSize(plugin.getSize());
          
          i++;
