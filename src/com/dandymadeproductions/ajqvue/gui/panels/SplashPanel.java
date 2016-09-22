@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 09/21/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/18/2016 Production SplashPanel Class.
+//         1.1 09/21/2016 Modified loadingString Painting Gradient in drawPanel().
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -66,7 +67,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * successful login to indicate the progress of the application initialization.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 09/21/2016
  */
 
 public class SplashPanel extends JPanel implements Runnable
@@ -323,8 +324,8 @@ public class SplashPanel extends JPanel implements Runnable
       affineTransform = AffineTransform.getTranslateInstance(panelWidth / 2.0, panelHeight * 4.0 / 5.0);
       g2.transform(affineTransform);
       
-      gradientColor_0 = new Color(23, 190, 45);
-      gradientColor_1 = new Color(140, 30, 90);
+      gradientColor_0 = new Color(245, 180, 90);
+      gradientColor_1 = new Color(140, 110, 65);
       gradientPaint = new GradientPaint(15.0F, 30.0F, gradientColor_0,
                                               40.0F, 60.0F, gradientColor_1, true);
       g2.setPaint(gradientPaint);
