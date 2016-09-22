@@ -12,7 +12,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Version 1.1 09/21/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,6 +34,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production AccessDialog Class.
+//         1.1 Corrected logoIconPanel Resource in Constructor.
 //
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -97,7 +98,7 @@ import com.dandymadeproductions.ajqvue.utilities.NormalizeString;
  * to a database. 
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 09/21/2016
  */
 
 public class LoginFrame extends JFrame implements ActionListener
@@ -196,7 +197,7 @@ public class LoginFrame extends JFrame implements ActionListener
       else
          accessIcon = new ImageIcon(iconsDirectory + "loginFrameIconD.gif");
       
-      logoPanelIcon = new ImageIcon("images" + fileSeparator + "ajqvue_Logo.png");
+      logoPanelIcon = new ImageIcon("images" + fileSeparator + "Ajqvue_Logo.png");
       sshUpIcon = new ImageIcon(iconsDirectory + "sshUpIcon.png");
       sshDownIcon = new ImageIcon(iconsDirectory + "sshDownIcon.png");
       
