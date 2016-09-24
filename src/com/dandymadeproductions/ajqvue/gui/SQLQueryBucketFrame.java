@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/20/2016
+// Version 1.1 09/24/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production SQLQueryBucketFrame Class.
+//         1.1 Method openLastUsedList() Insured sqlQueryBucketDirectoryFile,
+//             Directory, Is Created Before Opening bucketFile.
 //         
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -102,7 +104,7 @@ import com.dandymadeproductions.ajqvue.utilities.SQLQueryBucketListObject;
  * storage of SQL Query statements derived from DBTablesTab.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/20/2016
+ * @version 1.1 09/24/2016
  */
 
 public class SQLQueryBucketFrame extends JFrame implements ActionListener, MouseListener
@@ -1399,6 +1401,24 @@ public class SQLQueryBucketFrame extends JFrame implements ActionListener, Mouse
          sqlQueryBucketDirectory = Utils.getAjqvueConfDirectory() + fileSeparator
                                    + SQL_QUERY_BUCKET_DIRECTORY + fileSeparator
                                    + ConnectionManager.getDataSourceType();
+         
+         File sqlQueryBucketDirectoryFile = new File(sqlQueryBucketDirectory);
+         
+         if (!sqlQueryBucketDirectoryFile.isDirectory())
+         {
+            try
+            {
+               if (!sqlQueryBucketDirectoryFile.mkdirs())
+                  throw new SecurityException();
+            }
+            catch (SecurityException se)
+            {
+               if (Ajqvue.getDebug())
+                     System.out.println("Failed to Make SQL Query Bucket Directory.\n"
+                                        + se.toString());
+               return;
+            }
+         }
          
          fileName = sqlQueryBucketDirectory + fileSeparator + databaseName + ".txt";
          File bucketFile = new File(fileName);
