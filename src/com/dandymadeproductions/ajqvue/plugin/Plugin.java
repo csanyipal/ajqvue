@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Version 1.1 09/24/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production Plugin Class.
+//         1.1 Updated References to PluginModule to Plugin_Module.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -47,10 +48,10 @@ import com.dandymadeproductions.ajqvue.gui.Main_Frame;
  * the Plugin Frame Repository Listings of Available Plugin Modules.  
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 09/24/2016
  */
 
-public class Plugin extends PluginModule
+public class Plugin extends Plugin_Module
 {
    // Class Instances
    private String jar;

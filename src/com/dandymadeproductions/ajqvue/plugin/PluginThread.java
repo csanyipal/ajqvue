@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Version 1.1 09/24/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production PluginThread Class.
+//         1.1 Updated References to PluginModule to Plugin_Module.
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -49,7 +50,7 @@ import com.dandymadeproductions.ajqvue.gui.Main_Frame;
  * adding of a correctly located plugin module to the main frame.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 09/24/2016
  */
 
 class PluginThread implements Runnable
@@ -58,14 +59,14 @@ class PluginThread implements Runnable
    Thread t;
 
    private Main_Frame parentFrame;
-   private PluginModule pluginModule;
+   private Plugin_Module pluginModule;
    private ImageIcon defaultIcon;
 
    //==============================================================
    // PluginThread Constructor.
    //==============================================================
 
-   PluginThread(Main_Frame parent, PluginModule module, ImageIcon defaultModuleIcon)
+   PluginThread(Main_Frame parent, Plugin_Module module, ImageIcon defaultModuleIcon)
    {
       parentFrame = parent;
       pluginModule = module;

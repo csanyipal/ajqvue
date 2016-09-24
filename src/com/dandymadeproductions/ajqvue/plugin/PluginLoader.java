@@ -5,13 +5,13 @@
 //    This class is used to cycle through the jar/zip files located
 // in the plugin directory under the framework's installation directory
 // lib to find Plugin Modules. Only classes that match the interface
-// PluginModule will be loaded.
+// Plugin_Module will be loaded.
 //
 //                     << PluginLoader.java >>
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Version 1.1 09/24/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/19/2016 Production PluginLoader Class.
+//         1.1 09/24/2016 Updated References to PluginModule to Plugin_Module.
 //                        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -82,10 +83,10 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  *    The PluginLoader class is used to cycle through the jar/zip files
  * located in the plugin directory under the framework's installation
  * directory lib to find Plugin Modules. Only classes that match the
- * interface PluginModule will be loaded.
+ * interface Plugin_Module will be loaded.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 09/24/2016
  */
 
 public class PluginLoader implements Runnable
@@ -753,9 +754,9 @@ public class PluginLoader implements Runnable
                {
                   Class<?> module = Class.forName(pluginEntry.getValue(), true, classLoader);
                   
-                  if (module.newInstance() instanceof PluginModule)
+                  if (module.newInstance() instanceof Plugin_Module)
                   {
-                     PluginModule pluginModule = (PluginModule) module.newInstance();
+                     Plugin_Module pluginModule = (Plugin_Module) module.newInstance();
                      pluginModule.path_FileName = pluginEntry.getKey() + pathClassSeparator + pluginEntry.getValue();
 
                      new PluginThread(parentFrame, pluginModule, defaultModuleIcon);
