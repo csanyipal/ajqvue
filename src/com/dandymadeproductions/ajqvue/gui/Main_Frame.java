@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Version 1.1 09/24/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/19/2016 Production Main_Frame Class.
+//         1.1 09/24/2016 Updated References to PluginModule to Plugin_Module.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -69,7 +70,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionProperties;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
 import com.dandymadeproductions.ajqvue.gui.panels.TopTabPanel;
 import com.dandymadeproductions.ajqvue.plugin.Default_JToolBar;
-import com.dandymadeproductions.ajqvue.plugin.PluginModule;
+import com.dandymadeproductions.ajqvue.plugin.Plugin_Module;
 import com.dandymadeproductions.ajqvue.plugin.PluginLoader;
 import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
@@ -81,7 +82,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * creation and inclusion.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 09/24/2016
  */
 
 public class Main_Frame extends JFrame implements ActionListener, ChangeListener
@@ -102,8 +103,8 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
    private static JPanel toolBarPanel = new JPanel(toolBarCardLayout);
    private static DBTablesPanel dbTablesPanel;
    
-   private static ArrayList<PluginModule> loadedPluginModules = 
-                                                  new ArrayList <PluginModule>();
+   private static ArrayList<Plugin_Module> loadedPluginModules = 
+                                                  new ArrayList <Plugin_Module>();
    private static SQLQueryBucketFrame sqlQueryBucketFrame = new SQLQueryBucketFrame();
    
    protected static final JButton pluginFrameListenButton = new JButton();
@@ -144,10 +145,10 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
             ConnectionManager.shutdown("Main_Frame WINDOW_CLOSING");
             
             // Notify plugins to pending close.
-            Iterator<PluginModule> pluginModulesIterator = loadedPluginModules.iterator();
+            Iterator<Plugin_Module> pluginModulesIterator = loadedPluginModules.iterator();
             while (pluginModulesIterator.hasNext())
             {
-               PluginModule currentPlugin = pluginModulesIterator.next();
+               Plugin_Module currentPlugin = pluginModulesIterator.next();
                currentPlugin.shutdown();
             }
             
@@ -370,7 +371,7 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
    // Class Method to add a new plugin tab to the frame interface.
    //==============================================================
    
-   public static synchronized void addTab(PluginModule plugin, Main_Frame parent)
+   public static synchronized void addTab(Plugin_Module plugin, Main_Frame parent)
    {
       if (plugin != null)
       {  
@@ -418,7 +419,7 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
       // Method Instances
       Connection dbConnection;
       String currentSelectedTable;
-      Iterator<PluginModule> pluginModulesIterator;
+      Iterator<Plugin_Module> pluginModulesIterator;
       
       // Create a connection, load the database tables again
       // then resetup the DBTablesPanel.
@@ -448,7 +449,7 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
          pluginModulesIterator = loadedPluginModules.iterator();
          while (pluginModulesIterator.hasNext())
          {
-            PluginModule currentPlugin = pluginModulesIterator.next();
+            Plugin_Module currentPlugin = pluginModulesIterator.next();
             currentPlugin.setDBTables(ConnectionManager.getTableNames());
          }
          
@@ -493,7 +494,7 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
    // Class Method to return the current loaded plugins.
    //==============================================================
    
-   public static ArrayList<PluginModule> getPlugins()
+   public static ArrayList<Plugin_Module> getPlugins()
    {
       return loadedPluginModules;
    }
