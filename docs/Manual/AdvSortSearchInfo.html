@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title>Advanced Sort/Search Information</title>
+
+		<style type="text/css" media="screen">
+    			body
+ 			{
+				margin: 0;
+      				padding: 10px, 0px, 5px;
+      			}
+			p
+			{
+				margin: 0;
+				padding: 10px;
+			}
+  		</style>
+	</head>
+	<body>
+		<div align="center">
+			<img src="advsortsearch.jpg" alt="" width="480" height="81" align="middle" border="0">
+		</div>
+		<p>
+			Distinct in the Advanced Sort/Search form will only return a single occurrence of rows which
+		   	have duplication in the fields. Two wild cards may be placed in the search string(s) for
+			the 'LIKE' operator;
+		</p>
+		
+		<ul>
+   			<li>Percent '%' - All characters, ex. 'c%t' will return 'cat', and 'coat'.</li>
+   			<li>Underscore '_' - Single character, ex. 'c_t' will return 'cat', and 'cot'.</li>
+ 		</ul>
+
+		<p>
+			Otherwise search string(s) based on the 'LIKE' operator use an exact character match.
+			The normal search interface automatically inserts a leading and trailing percent '%'
+			character using the 'LIKE' operator.
+		</p>
+
+		<p>
+			Many wild card type characters may be placed in the search string(s) for the <b>'REGEXP'</b> operator.
+			It is beyond the scope of this basic information frame to give a detailed account of pattern
+			matching with this option, but some common metacharacters are given below 
+		</p>
+		
+		<ul>
+   			<li>'+' - Match one or more occurrences of the preceding character.</li>
+   			<li>'*' - Match zero or more occurrences of the preceding character.</li>
+			<li>'?' - Match zero or one occurrences of the preceding character.</li>
+   			<li>'.' - Match any character.</li>
+			<li>'^' - Match the beginning of the string.</li>
+   			<li>'$' - Match the end of the string.</li>
+			<li>'\s' - Match a single white space character, including tabs and newline characters.</li>
+   			<li>'\S' - Match everything that is not a white space character.</li>
+			<li>'\d' - Match numbers from 0 to 9.</li>
+			<li>'\w' - Match letters, numbers, and underscores.</li>
+   			<li>'\W' - Match anything that does not match with \w.</li>
+			<li>'[...]' - Matches any item in list. ex. [ab] matches either a 'a' or 'b'.</li>
+			<li>'[^...]' - Matches any character except those items in the list.</li>
+ 		</ul>
+
+		<p>
+			Many wild card type characters may be placed in the search string(s) for the <b>'POSTFIX'</b> operator.
+			It is beyond the scope of this basic information frame to give a detailed account of pattern
+			matching with this option, but some common metacharacters are given below 
+		</p>
+		
+		<ul>
+   			<li>'~' - Match regular expression, case sensitive.</li>
+			<li>'~*' - Match regular expression, case insensitive.</li>
+			<li>'!~' - Does not match regular expression, case sensitive.</li>
+			<li>'!~*' - Does not match regular expression, case insensitive.</li>
+			<li>'.' - Match any character.</li>
+			<li>'+' - Match one or more occurrences of the preceding character.</li>
+   			<li>'*' - Match zero or more occurrences of the preceding character.</li>
+			<li>'?' - Match zero or one occurrences of the preceding character.</li>
+			<li>'^' - Match the beginning of the string.</li>
+   			<li>'$' - Match the end of the string.</li>
+			<li>'\' - Matches escape sequence. ex \t matches tab character. </li>
+			<li>'\s' - Match a single white space character.</li>
+			<li>'\S' - Match ^space character.</li>
+			<li>'\d' - Match numbers from 0 to 9.</li>
+			<li>'\D' - Match numbers ^ from 0 to 9.</li>
+			<li>'\m' - Matches only at begin of word.</li>
+			<li>'\M' - Matches only at end of word.</li>
+			<li>'\y' - Matches only at the beginning or end of word.</li>
+			<li>'\Y' - Matches only at a point that is not beginning or end or word.</li>
+			<li>'\Z' - Matches only at the end of word.</li>
+			<li>'[...]' - Matches any item in list. ex. [ab] matches either a 'a' or 'b'.</li>
+ 		</ul>
+
+		<p>
+			The operators AND and OR are based on the Intersection and Union respectively with
+                        a given search. The below example illustrate the difference between the typical boolean
+                        aspects of the these operators.<br /><br />
+
+			Given two search results:
+			<ul>
+				<li>A: {0.00, 11.0, 13.0, 22.00, 22.60, 34.23, 44.35}</li>
+				<li>B: {22.6, 34.23, 44.35, 100.00}</li>
+			</ul><br />
+
+			A AND B = {22.60, 34.23, 44.35}<br />
+			A OR B = {0.00, 11.00, 13.00, 22.00, 22.60, 34.35, 44.35, 100.00}			
+		</p>
+	</body>
+</html>
