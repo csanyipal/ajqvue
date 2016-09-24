@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/20/2016
+// Version 1.1 09/24/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production PluginFrame Class.
+//         1.1 Updated References to PluginModule to Plugin_Module.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -101,7 +102,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
 import com.dandymadeproductions.ajqvue.plugin.FILE_PluginRepository;
 // import com.dandymadeproductions.ajqvue.plugin.FTP_PluginRepository;
 import com.dandymadeproductions.ajqvue.plugin.HTTP_PluginRepository;
-import com.dandymadeproductions.ajqvue.plugin.PluginModule;
+import com.dandymadeproductions.ajqvue.plugin.Plugin_Module;
 import com.dandymadeproductions.ajqvue.plugin.PluginLoader;
 import com.dandymadeproductions.ajqvue.plugin.PluginRepository;
 import com.dandymadeproductions.ajqvue.structures.GeneralProperties;
@@ -117,7 +118,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * remove, and install new plugins to the application.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/20/2016
+ * @version 1.1 09/24/2016
  */
 
 //=================================================================
@@ -986,7 +987,7 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
    // name, etc. in the manage tab view table.
    //==============================================================
 
-   private void generateLoadedPluginsList(ArrayList<PluginModule> loadedPlugins)
+   private void generateLoadedPluginsList(ArrayList<Plugin_Module> loadedPlugins)
    {
       // Method Instances.
       String path;
@@ -1555,7 +1556,7 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
    // remove icon. This is the manage tab.
    //==============================================================
 
-   private JPanel createInstalledPluginsViewPanel(ArrayList<PluginModule> loadedPlugins)
+   private JPanel createInstalledPluginsViewPanel(ArrayList<Plugin_Module> loadedPlugins)
    {
       // Class Method Instances
       JPanel pluginViewPanel;

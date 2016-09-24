@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/20/2016
+// Version 1.1 09/24/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production Main_JMenuBarActions Class.
+//         1.1 Updated References to PluginModule to Plugin_Module.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -87,7 +88,7 @@ import com.dandymadeproductions.ajqvue.io.SQLDataDumpThread;
 import com.dandymadeproductions.ajqvue.io.SQLDatabaseDumpThread;
 import com.dandymadeproductions.ajqvue.io.SQLDatabaseSchemeDumpThread;
 import com.dandymadeproductions.ajqvue.io.SaveTableStateThread;
-import com.dandymadeproductions.ajqvue.plugin.PluginModule;
+import com.dandymadeproductions.ajqvue.plugin.Plugin_Module;
 import com.dandymadeproductions.ajqvue.utilities.InputDialog;
 import com.dandymadeproductions.ajqvue.utilities.MyJFileFilter;
 import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
@@ -100,7 +101,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * JMenuBar and JToolBar in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/20/2016
+ * @version 1.1 09/24/2016
  */
 
 class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
@@ -234,10 +235,10 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
          ConnectionManager.shutdown("Main_JMenuBarActions ACTION_EXIT");
          
          // Notify plugins to pending close.
-         Iterator<PluginModule> pluginModulesIterator = Main_Frame.getPlugins().iterator();
+         Iterator<Plugin_Module> pluginModulesIterator = Main_Frame.getPlugins().iterator();
          while (pluginModulesIterator.hasNext())
          {
-            PluginModule currentPlugin = pluginModulesIterator.next();
+            Plugin_Module currentPlugin = pluginModulesIterator.next();
             currentPlugin.shutdown();
          }
          
