@@ -1,5 +1,5 @@
-AJSQLView provides an easy to use Java based user interface frontend
-for viewing, adding, editing, or deleting entries in several mainstream
+Ajqvue provides an easy to use Java based user interface frontend for
+viewing, adding, editing, or deleting entries in several mainstream
 databases. A query tools allows the building of complex SQL statements
 and a SQL Query Bucket for saving such. The application allows easy
 sorting, searching, and import/export of table data. A plug-in framework

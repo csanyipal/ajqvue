@@ -1,1 +1,1 @@
-AJSQLView is a Java based GUI frontend for accessing data in several mainstream databases.
+Ajqvue is a Java based GUI frontend for accessing data in several mainstream databases.
