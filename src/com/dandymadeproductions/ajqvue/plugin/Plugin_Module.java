@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.1 09/24/2016
+// Version 1.2 09/25/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 //=================================================================
 // Version 1.0 Production PluginModule Class.
 //         1.1 Renamed to Plugin_Module Class.
+//         1.2 Comment Changes for getPanel() Methods.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -50,7 +51,7 @@ import javax.swing.JMenuBar;
  * the application.
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/24/2016
+ * @version 1.2 09/25/2016
  */
 
 public abstract class Plugin_Module implements PluginModuleInterface
@@ -258,8 +259,9 @@ public abstract class Plugin_Module implements PluginModuleInterface
    }
    
    //==============================================================
-   // Class method for returning a JPanel for inclusion in the
-   // application's main tab. Interface requirement.
+   // Class method for returning a JComponent, JPanel or JFXPanel
+   // for inclusion in the application's main tab. Interface
+   // requirement.
    //==============================================================
 
    public JComponent getPanel()
