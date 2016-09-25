@@ -1,0 +1,32 @@
+------------------------------
+Microsoft SQL Server 11.00.2100
+
+1 data_type_id Data Type Id java.lang.Long bigint 20
+2 char_type Char Type java.lang.String char 30
+3 nchar_type Nchar Type java.lang.String nchar 30
+4 varchar_type Varchar Type java.lang.String varchar 30
+5 nvarchar_type Nvarchar Type java.lang.String nvarchar 30
+6 binary_type Binary Type [B binary 14000
+7 varbinary_type Varbinary Type [B varbinary 14000
+8 image_type Image Type [B image 2147483647
+9 text_type Text Type java.lang.String text 2147483647
+10 ntext_type Ntext Type java.lang.String ntext 1073741823
+11 uniqueidentifier_type Uniqueidentifier Type java.lang.String uniqueidentifier 36
+12 xml_type Xml Type java.lang.String xml 1073741823
+13 bit_type Bit Type java.lang.Boolean bit 1
+14 tinyInt_type TinyInt Type java.lang.Short tinyint 3
+15 smallInt_type SmallInt Type java.lang.Short smallint 6
+16 int_type Int Type java.lang.Integer int 11
+17 bigInt_type BigInt Type java.lang.Long bigint 20
+18 float_type Float Type java.lang.Double float 22
+19 real_type Real Type java.lang.Float real 13
+20 decimal_type Decimal Type java.math.BigDecimal decimal 18
+21 numeric_type Numeric Type java.math.BigDecimal numeric 12
+22 money_type Money Type java.math.BigDecimal money 21
+23 smallmoney_type Smallmoney Type java.math.BigDecimal smallmoney 12
+24 date_type Date Type java.sql.Date date 10
+25 time_type Time Type java.sql.Time time 16
+26 dateTime_type DateTime Type java.sql.Timestamp datetime 23
+27 smalldatetime_type Smalldatetime Type java.sql.Timestamp smalldatetime 16
+28 datetime2_type Datetime2 Type java.sql.Timestamp datetime2 27
+29 datetimeoffset_type Datetimeoffset Type microsoft.sql.DateTimeOffset datetimeoffset 29

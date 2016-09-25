@@ -1,0 +1,14 @@
+1 data_type_id Data Type Id java.lang.Integer COUNTER 11
+2 binary_type Binary Type [B BINARY 510
+3 longbinary_type Longbinary Type [B LONGBINARY 2147483646
+4 varchar_type Varchar Type java.lang.String VARCHAR 50
+5 longText_type LongText Type java.lang.String LONGCHAR 1073741824
+6 bit_type Bit Type java.lang.Boolean BIT 1
+7 byte_type Byte Type java.lang.Byte BYTE 3
+8 short_type Short Type java.lang.Short SMALLINT 6
+9 long_type Long Type java.lang.Integer INTEGER 11
+10 single_type Single Type java.lang.Float REAL 13
+11 double_type Double Type java.lang.Double DOUBLE 22
+12 currency_type Currency Type java.math.BigDecimal CURRENCY 21
+13 guid_type Guid Type java.lang.String GUID 36
+14 dateTime_type DateTime Type java.sql.Timestamp DATETIME 19

@@ -1,0 +1,464 @@
+------------------------------
+PostgreSQL 9.5.4, JDBC 9.4.1209
+
+1 data_type_id Data Type Id java.lang.Integer serial 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 15
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 25
+9 serial_type Serial Type java.lang.Integer serial 11
+10 bigserial_type Bigserial Type java.lang.Long bigserial 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying5_type Bitvarying5 Type java.lang.Object varbit 5
+33 enum_type Enum Type java.lang.Object mood 2147483647
+
+------------------------------
+PostgreSQL 9.5.4, JDBC 9.4.1208
+
+1 data_type_id Data Type Id java.lang.Integer serial 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 15
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 25
+9 serial_type Serial Type java.lang.Integer serial 11
+10 bigserial_type Bigserial Type java.lang.Long bigserial 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying5_type Bitvarying5 Type java.lang.Object varbit 5
+33 enum_type Enum Type java.lang.Object mood 2147483647
+
+------------------------------
+PostgreSQL 9.4.1, JDBC 9.4.1208
+
+1 data_type_id Data Type Id java.lang.Integer serial 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 15
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 25
+9 serial_type Serial Type java.lang.Integer serial 11
+10 bigserial_type Bigserial Type java.lang.Long bigserial 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying5_type Bitvarying5 Type java.lang.Object varbit 5
+33 enum_type Enum Type java.lang.Object mood 2147483647
+
+------------------------------
+PostgreSQL 9.4.1, JDBC 9.4.1207
+
+1 data_type_id Data Type Id java.lang.Integer serial 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 15
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 25
+9 serial_type Serial Type java.lang.Integer serial 11
+10 bigserial_type Bigserial Type java.lang.Long bigserial 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying5_type Bitvarying5 Type java.lang.Object varbit 5
+33 enum_type Enum Type java.lang.Object mood 2147483647
+
+------------------------------
+PostgreSQL 9.4.1, JDBC 9.4.0-1205
+
+1 data_type_id Data Type Id java.lang.Integer serial 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 15
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 25
+9 serial_type Serial Type java.lang.Integer serial 11
+10 bigserial_type Bigserial Type java.lang.Long bigserial 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying5_type Bitvarying5 Type java.lang.Object varbit 5
+
+------------------------------
+PostgreSQL 9.2.1, JDBC 9.2.1003
+
+1 data_type_id Data Type Id java.lang.Integer serial 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 15
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 25
+9 serial_type Serial Type java.lang.Integer serial 11
+10 bigserial_type Bigserial Type java.lang.Long bigserial 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying5_type Bitvarying5 Type java.lang.Object varbit 5
+
+------------------------------
+PostgreSQL 9.0.1, JDBC 9.2.1003
+
+1 data_type_id Data Type Id java.lang.Integer serial 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 15
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 25
+9 serial_type Serial Type java.lang.Integer serial 11
+10 bigserial_type Bigserial Type java.lang.Long bigserial 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying5_type Bitvarying5 Type java.lang.Object varbit 5
+
+------------------------------
+PostgreSQL 9.0.1, JDBC 9.0-801
+
+1 data_type_id Data Type Id java.lang.Integer int4 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 14
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 24
+9 serial_type Serial Type java.lang.Integer int4 11
+10 bigserial_type Bigserial Type java.lang.Long int8 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying5_type Bitvarying5 Type java.lang.Object varbit 5
+
+-----------------------
+PostgreSQL 8.4-701, 8.4-702
+
+1 data_type_id Data Type Id java.lang.Integer int4 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 14
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 24
+9 serial_type Serial Type java.lang.Integer int4 11
+10 bigserial_type Bigserial Type java.lang.Long int8 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying5_type Bitvarying5 Type java.lang.Object varbit 5
+
+-----------------------
+PostgreSQL 8.3-603
+
+1 data_type_id Data Type Id java.lang.Integer int4 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 14
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 24
+9 serial_type Serial Type java.lang.Integer int4 11
+10 bigserial_type Bigserial Type java.lang.Long int8 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying5_type Bitvarying5 Type java.lang.Object varbit 5
+
+-----------------------
+PostgreSQL 8.2-506
+
+1 data_type_id Data Type Id java.lang.Integer int4 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 14
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 24
+9 serial_type Serial Type java.lang.Integer int4 11
+10 bigserial_type Bigserial Type java.lang.Long int8 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying2_type Bitvarying2 Type java.lang.Object varbit 5
+
+-----------------------
+PostgreSQL 8.3-603 Arrays (Class Now All Array)
+
+1 data_type_id Data Type Id java.lang.Integer int4 11
+2 smallint_array Smallint Array java.sql.Array _int2 2147483647
+3 int_array Int Array java.sql.Array _int4 2147483647
+4 bigint_array Bigint Array java.sql.Array _int8 2147483647
+5 decimal_array Decimal Array java.sql.Array _numeric 2147483647
+6 numeric_array Numeric Array java.sql.Array _numeric 2147483647
+7 real_array Real Array java.sql.Array _float4 2147483647
+8 doubleprecision_array Doubleprecision Array java.sql.Array _float8 2147483647
+9 varchar_array Varchar Array java.sql.Array _varchar 2147483647
+10 char_array Char Array java.sql.Array _bpchar 2147483647
+11 text_array Text Array java.sql.Array _text 2147483647
+12 date_array Date Array java.sql.Array _date 2147483647
+13 time_array Time Array java.sql.Array _time 2147483647
+14 timetz_array Timetz Array java.sql.Array _timetz 2147483647
+15 timestamp_array Timestamp Array java.sql.Array _timestamp 2147483647
+16 timestamptz_array Timestamptz Array java.sql.Array _timestamptz 2147483647
+17 interval_array Interval Array java.sql.Array _interval 2147483647
+18 boolean_array Boolean Array java.sql.Array _bool 2147483647
+19 point_array Point Array java.sql.Array _point 2147483647
+20 linesegment_array Linesegment Array java.sql.Array _lseg 2147483647
+21 box_array Box Array java.sql.Array _box 2147483647
+22 path_array Path Array java.sql.Array _path 2147483647
+23 polygon_array Polygon Array java.sql.Array _polygon 2147483647
+24 circle_array Circle Array java.sql.Array _circle 2147483647
+25 cidr_array Cidr Array java.sql.Array _cidr 2147483647
+26 inet_array Inet Array java.sql.Array _inet 2147483647
+27 macaddr_array Macaddr Array java.sql.Array _macaddr 2147483647
+28 bit2_array Bit2 Array java.sql.Array _bit 2147483647
+29 bitvarying5_array Bitvarying5 Array java.sql.Array _varbit 2147483647
+
+-----------------------
+PostgreSQL 8.2-506 Arrays (Class Object & Array)
+
+1 data_type_id Data Type Id java.lang.Integer int4 11
+2 smallint_array Smallint Array java.sql.Array _int2 2147483647
+3 int_array Int Array java.sql.Array _int4 2147483647
+4 bigint_array Bigint Array java.sql.Array _int8 2147483647
+5 decimal_array Decimal Array java.sql.Array _numeric 2147483647
+6 numeric_array Numeric Array java.sql.Array _numeric 2147483647
+7 real_array Real Array java.sql.Array _float4 2147483647
+8 doubleprecision_array Doubleprecision Array java.sql.Array _float8 2147483647
+9 varchar_array Varchar Array java.sql.Array _varchar 2147483647
+10 char_array Char Array java.sql.Array _bpchar 2147483647
+11 text_array Text Array java.sql.Array _text 2147483647
+12 date_array Date Array java.sql.Array _date 2147483647
+13 time_array Time Array java.sql.Array _time 2147483647
+14 timetz_array Timetz Array java.sql.Array _timetz 2147483647
+15 timestamp_array Timestamp Array java.sql.Array _timestamp 2147483647
+16 timestamptz_array Timestamptz Array java.sql.Array _timestamptz 2147483647
+17 interval_array Interval Array java.lang.Object _interval 2147483647
+18 point_array Point Array java.lang.Object _point 2147483647
+19 linesegment_array Linesegment Array java.lang.Object _lseg 2147483647
+20 box_array Box Array java.lang.Object _box 2147483647
+21 path_array Path Array java.lang.Object _path 2147483647
+22 polygon_array Polygon Array java.lang.Object _polygon 2147483647
+23 circle_array Circle Array java.lang.Object _circle 2147483647
+24 cidr_array Cidr Array java.lang.Object _cidr 2147483647
+25 inet_array Inet Array java.lang.Object _inet 2147483647
+26 macaddr_array Macaddr Array java.lang.Object _macaddr 2147483647
+27 bit2_array Bit2 Array java.sql.Array _bit 2147483647
+28 bitvarying5_array Bitvarying5 Array java.lang.Object _varbit 2147483647

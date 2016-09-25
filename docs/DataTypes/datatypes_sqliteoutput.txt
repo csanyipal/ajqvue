@@ -1,0 +1,8 @@
+-----------------------
+Xerial JDBC SQLite version: 3.7.6.3
+
+1 data_type_id Data Type Id java.lang.Object integer 2147483647
+2 int_type Int Type java.lang.Object integer 2147483647
+3 real_type Real Type java.lang.Object float 2147483647
+4 text_type Text Type java.lang.Object text 2147483647
+5 blob_type Blob Type java.lang.Object blob 2147483647

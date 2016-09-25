@@ -1,0 +1,26 @@
+HSQL
+
+DATE_TYPE DATE TYPE java.sql.Date DATE 10
+DATETIME_TYPE DATETIME TYPE java.sql.Timestamp TIMESTAMP 6
+TIMESTAMP_TYPE0 TIMESTAMP TYPE0 java.sql.Timestamp TIMESTAMP 29
+TIMESTAMP_TYPE TIMESTAMP TYPE java.sql.Timestamp TIMESTAMP 6
+
+MySQL
+
+date_type java.sql.Date DATE 10
+dateTime_type java.sql.Timestamp DATETIME 19
+timeStamp_2 java.sql.Timestamp TIMESTAMP 19
+
+Oracle
+
+DATE_TYPE DATE TYPE java.sql.Timestamp DATE 7
+TIMESTAMP_TYPE TIMESTAMP TYPE oracle.sql.TIMESTAMP TIMESTAMP 11
+TIMESTAMP_TZ TIMESTAMP TZ oracle.sql.TIMESTAMPTZ TIMESTAMPTZ 13
+TIMESTAMP_LTZ oracle.sql.TIMESTAMPLTZ TIMESTAMPLTZ 11
+
+PostgreSQL
+
+date_type Date Type java.sql.Date date 13
+timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+

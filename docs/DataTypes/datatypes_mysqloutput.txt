@@ -1,0 +1,270 @@
+-----------------------
+MySQL Version 5.0.84
+ConnectorJ Version: 5.1.8
+
+char_type java.lang.String CHAR 30
+varchar_type java.lang.String VARCHAR 30
+tinyBlob_type [B TINYBLOB 255
+blob_type [B BLOB 65535
+mediumBlob_type [B MEDIUMBLOB 16777215
+longBlob_type [B LONGBLOB 2147483647
+tinyText_type java.lang.String VARCHAR 255
+text_type java.lang.String VARCHAR 65535
+mediumText_type java.lang.String VARCHAR 16777215
+longText_type java.lang.String VARCHAR 2147483647
+enum_type java.lang.String CHAR 4
+set_type java.lang.String CHAR 5
+boolean_type java.lang.Boolean TINYINT 1
+bit5_type [B BIT 5
+tinyInt_type java.lang.Integer TINYINT 4
+smallInt_type java.lang.Integer SMALLINT UNSIGNED 5
+mediumInt_type java.lang.Integer MEDIUMINT 9
+int_type java.lang.Integer INT 11
+bigInt_type java.lang.Long BIGINT 20
+float_type java.lang.Float FLOAT 12
+double_type java.lang.Double DOUBLE 22
+decimal_type java.math.BigDecimal DECIMAL 18
+date_type java.sql.Date DATE 10
+time_type java.sql.Time TIME 8
+dateTime_type java.sql.Timestamp DATETIME 19
+timeStamp_2 java.sql.Timestamp TIMESTAMP 19
+timeStamp_4 java.sql.Timestamp TIMESTAMP 19
+timeStamp_6 java.sql.Timestamp TIMESTAMP 19
+timeStamp_8 java.sql.Timestamp TIMESTAMP 19
+timeStamp_10 java.sql.Timestamp TIMESTAMP 19
+timeStamp_12 java.sql.Timestamp TIMESTAMP 19
+33 timeStamp_14 java.sql.Timestamp TIMESTAMP 19
+34 year_2 java.sql.Date YEAR 2
+35 year_4 java.sql.Date YEAR 4
+
+-----------------------
+MySQL Version: 5.0.51a
+ConnectorJ Version: 5.1.6
+
+char_type java.lang.String CHAR 30
+varchar_type java.lang.String VARCHAR 30
+tinyBlob_type [B TINYBLOB 255
+blob_type [B BLOB 65535
+mediumBlob_type [B MEDIUMBLOB 16777215
+longBlob_type [B LONGBLOB 2147483647
+tinyText_type java.lang.String VARCHAR 255
+text_type java.lang.String VARCHAR 65535
+mediumText_type java.lang.String VARCHAR 16777215
+longText_type java.lang.String VARCHAR 2147483647
+enum_type java.lang.String CHAR 4
+set_type java.lang.String CHAR 5
+boolean_type java.lang.Boolean TINYINT 1
+bit5_type [B BIT 5
+tinyInt_type java.lang.Integer TINYINT 4
+smallInt_type java.lang.Integer SMALLINT 6
+mediumInt_type java.lang.Integer MEDIUMINT 9
+int_type java.lang.Integer INT 11
+bigInt_type java.lang.Long BIGINT 20
+float_type java.lang.Float FLOAT 12
+double_type java.lang.Double DOUBLE 22
+decimal_type java.math.BigDecimal DECIMAL 18
+date_type java.sql.Date DATE 10
+time_type java.sql.Time TIME 8
+dateTime_type java.sql.Timestamp DATETIME 19
+timeStamp_2 java.sql.Timestamp TIMESTAMP 19
+timeStamp_4 java.sql.Timestamp TIMESTAMP 19
+
+timeStamp_8 java.sql.Timestamp TIMESTAMP 19
+timeStamp_10 java.sql.Timestamp TIMESTAMP 19
+timeStamp_12 java.sql.Timestamp TIMESTAMP 19
+timeStamp_14 java.sql.Timestamp TIMESTAMP 19
+year_2 java.sql.Date YEAR 2
+year_4 java.sql.Date YEAR 4
+
+-----------------------
+MySQL Version: 5.0.24a
+ConnectorJ Version: 5.1.6
+
+char_type java.lang.String CHAR 30
+varchar_type java.lang.String VARCHAR 30
+tinyBlob_type [B TINYBLOB 255
+blob_type [B BLOB 65535
+mediumBlob_type [B MEDIUMBLOB 16777215
+longBlob_type [B LONGBLOB 2147483647
+tinyText_type java.lang.String VARCHAR 255
+text_type java.lang.String VARCHAR 65535
+mediumText_type java.lang.String VARCHAR 16777215
+longText_type java.lang.String VARCHAR 2147483647
+enum_type java.lang.String CHAR 4
+set_type java.lang.String CHAR 5
+boolean_type java.lang.Boolean TINYINT 1
+bit5_type [B BIT 5
+tinyInt_type java.lang.Integer TINYINT 4
+smallInt_type java.lang.Integer SMALLINT UNSIGNED 5
+mediumInt_type java.lang.Integer MEDIUMINT 9
+int_type java.lang.Integer INT 11
+bigInt_type java.lang.Long BIGINT 20
+float_type java.lang.Float FLOAT 12
+double_type java.lang.Double DOUBLE 22
+decimal_type java.math.BigDecimal DECIMAL 18
+date_type java.sql.Date DATE 10
+time_type java.sql.Time TIME 8
+dateTime_type java.sql.Timestamp DATETIME 19
+timeStamp_2 java.sql.Timestamp TIMESTAMP 19
+timeStamp_4 java.sql.Timestamp TIMESTAMP 19
+timeStamp_6 java.sql.Timestamp TIMESTAMP 19
+timeStamp_8 java.sql.Timestamp TIMESTAMP 19
+timeStamp_10 java.sql.Timestamp TIMESTAMP 19
+timeStamp_12 java.sql.Timestamp TIMESTAMP 19
+timeStamp_14 java.sql.Timestamp TIMESTAMP 19
+year_2 java.sql.Date YEAR 2
+year_4 java.sql.Date YEAR 4
+
+-----------------------
+MySQL Version: 5.0.24a
+ConnectorJ Version: 5.1.5
+
+char_type java.lang.String CHAR 30
+varchar_type java.lang.String VARCHAR 30
+tinyBlob_type [B TINYBLOB 255
+blob_type [B BLOB 65535
+mediumBlob_type [B MEDIUMBLOB 16777215
+longBlob_type [B LONGBLOB 2147483647
+tinyText_type java.lang.String VARCHAR 255
+text_type java.lang.String VARCHAR 65535
+mediumText_type java.lang.String VARCHAR 16777215
+longText_type java.lang.String VARCHAR 2147483647
+enum_type java.lang.String CHAR 4
+set_type java.lang.String CHAR 5
+boolean_type java.lang.Boolean TINYINT 1
+bit5_type [B BIT 5
+tinyInt_type java.lang.Integer TINYINT 4
+smallInt_type java.lang.Integer SMALLINT UNSIGNED 5
+mediumInt_type java.lang.Integer MEDIUMINT 9
+int_type java.lang.Integer INT 11
+bigInt_type java.lang.Long BIGINT 20
+float_type java.lang.Float FLOAT 12
+double_type java.lang.Double DOUBLE 22
+decimal_type java.math.BigDecimal DECIMAL 18
+date_type java.sql.Date DATE 10
+time_type java.sql.Time TIME 8
+dateTime_type java.sql.Timestamp DATETIME 19
+timeStamp_2 java.sql.Timestamp TIMESTAMP 19
+timeStamp_4 java.sql.Timestamp TIMESTAMP 19
+timeStamp_6 java.sql.Timestamp TIMESTAMP 19
+timeStamp_8 java.sql.Timestamp TIMESTAMP 19
+timeStamp_10 java.sql.Timestamp TIMESTAMP 19
+timeStamp_12 java.sql.Timestamp TIMESTAMP 19
+timeStamp_14 java.sql.Timestamp TIMESTAMP 19
+year_2 java.sql.Date YEAR 2
+year_4 java.sql.Date YEAR 4
+
+-----------------------
+MySQL Version: 5.0.24a
+ConnectorJ Version: 5.0.7
+
+char_type java.lang.String CHAR 30
+varchar_type java.lang.String VARCHAR 30
+tinyBlob_type [B TINYBLOB 255
+blob_type [B BLOB 65535
+mediumBlob_type [B MEDIUMBLOB 16777215
+longBlob_type [B LONGBLOB 2147483647
+tinyText_type java.lang.String VARCHAR 255
+text_type java.lang.String VARCHAR 65535
+mediumText_type java.lang.String VARCHAR 16777215
+longText_type java.lang.String VARCHAR 2147483647
+enum_type java.lang.String CHAR 4
+set_type java.lang.String CHAR 5
+boolean_type java.lang.Boolean TINYINT 1
+bit5_type [B BIT 5
+tinyInt_type java.lang.Integer TINYINT 4
+smallInt_type java.lang.Integer SMALLINT UNSIGNED 5
+mediumInt_type java.lang.Integer MEDIUMINT 9
+int_type java.lang.Integer INTEGER 11
+bigInt_type java.lang.Long BIGINT 20
+float_type java.lang.Float FLOAT 12
+double_type java.lang.Double DOUBLE 22
+decimal_type java.math.BigDecimal DECIMAL 18
+date_type java.sql.Date DATE 10
+time_type java.sql.Time TIME 8
+dateTime_type java.sql.Timestamp DATETIME 19
+timeStamp_2 java.sql.Timestamp TIMESTAMP 19
+timeStamp_4 java.sql.Timestamp TIMESTAMP 19
+timeStamp_6 java.sql.Timestamp TIMESTAMP 19
+timeStamp_8 java.sql.Timestamp TIMESTAMP 19
+timeStamp_10 java.sql.Timestamp TIMESTAMP 19
+timeStamp_12 java.sql.Timestamp TIMESTAMP 19
+timeStamp_14 java.sql.Timestamp TIMESTAMP 19
+year_2 java.sql.Date YEAR 2
+year_4 java.sql.Date YEAR 4
+
+-----------------------
+MySQL Version: 5.0.24a
+ConnectorJ Version: 3.0.13 
+
+char_type java.lang.String CHAR 30
+varchar_type java.lang.String VARCHAR 30
+tinyBlob_type [B TINYBLOB 255
+blob_type [B BLOB 65535
+mediumBlob_type [B MEDIUMBLOB 16777215
+longBlob_type [B LONGBLOB 2147483647
+tinyText_type java.lang.String VARCHAR 255
+text_type java.lang.String VARCHAR 65535
+mediumText_type java.lang.String VARCHAR 16777215
+longText_type java.lang.String VARCHAR 2147483647
+enum_type java.lang.String CHAR 4
+set_type java.lang.String CHAR 5
+boolean_type java.lang.Boolean TINYINT 1
+bit5_type [B BIT 5
+tinyInt_type java.lang.Integer TINYINT 4
+smallInt_type java.lang.Integer SMALLINT UNSIGNED 5
+mediumInt_type java.lang.Integer MEDIUMINT 9
+int_type java.lang.Integer INTEGER 11
+bigInt_type java.lang.Long BIGINT 20
+float_type java.lang.Float FLOAT 12
+double_type java.lang.Double DOUBLE 22
+decimal_type java.math.BigDecimal DECIMAL 18
+date_type java.sql.Date DATE 10
+time_type java.sql.Time TIME 8
+dateTime_type java.sql.Timestamp DATETIME 19
+timeStamp_2 java.sql.Timestamp TIMESTAMP 19
+timeStamp_4 java.sql.Timestamp TIMESTAMP 19
+timeStamp_6 java.sql.Timestamp TIMESTAMP 19
+timeStamp_8 java.sql.Timestamp TIMESTAMP 19
+timeStamp_10 java.sql.Timestamp TIMESTAMP 19
+timeStamp_12 java.sql.Timestamp TIMESTAMP 19
+timeStamp_14 java.sql.Timestamp TIMESTAMP 19
+year_2 java.sql.Date YEAR 2
+year_4 java.sql.Date YEAR 4
+
+-----------------------
+MySQL Version: 4.0.15a,
+ConnectorJ Version: 3.0.10 
+
+char_type java.lang.String VARCHAR 30
+varchar_type java.lang.String VARCHAR 30
+tinyBlob_type [B TINYBLOB 255
+blob_type [B BLOB 65535
+mediumBlob_type [B MEDIUMBLOB 16777215
+longBlob_type [B MEDIUMBLOB 16777215
+tinyText_type java.lang.String TINYBLOB 255
+text_type java.lang.String TEXT 65535
+mediumText_type java.lang.String MEDIUMBLOB 16777215
+longText_type java.lang.String MEDIUMBLOB 16777215
+enum_type java.lang.String CHAR 4
+set_type java.lang.String CHAR 5
+tinyInt_type java.lang.Integer TINYINT 4
+smallInt_type java.lang.Integer SMALLINT UNSIGNED 5
+mediumInt_type java.lang.Integer MEDIUMINT 9
+int_type java.lang.Integer INTEGER 11
+bigInt_type java.lang.Long BIGINT 20
+float_type java.lang.Float FLOAT 12
+double_type java.lang.Double DOUBLE 22
+decimal_type java.math.BigDecimal DECIMAL 18
+date_type java.sql.Date DATE 10
+time_type java.sql.Time TIME 8
+dateTime_type java.sql.Timestamp DATETIME 19
+timeStamp_YY java.sql.Timestamp TIMESTAMP 2
+timeStamp_YYMM java.sql.Timestamp TIMESTAMP 4
+timeStamp_YYMMDD java.sql.Timestamp TIMESTAMP 6
+timeStamp_YYYYMMDD java.sql.Timestamp TIMESTAMP 8
+timeStamp_YYMMDDHHMM java.sql.Timestamp TIMESTAMP 10
+timeStamp_YYMMDDHHMMSS java.sql.Timestamp TIMESTAMP 12
+timeStamp_YYYYMMDDHHMMSS java.sql.Timestamp TIMESTAMP 14
+year_2 java.sql.Date YEAR 2
+year_4 java.sql.Date YEAR 4
