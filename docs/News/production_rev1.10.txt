@@ -1,0 +1,19 @@
+Ajqvue Version 1.10 Released
+
+The Ajqvue project is pleased to release v1.10 to the public. The
+release marks a complete code review and cleanup. Updated libraries have
+also been included with this release along with the Table Field Profiler
+plugin. There have been many fixes in this release that stabilizes the
+application.
+
+Dana M. Proctor
+Ajqvue Project Manager
+http://ajqvue.com
+
+Ajqvue provides an easy to use Java based user interface front-end
+for viewing, adding, editing, or deleting entries in several mainstream
+databases. A query frame allows the building of complex SQL statements
+and a SQL Query Bucket for saving such. The application allows easy
+sorting, searching, and import/export of table data. A plug-in framework
+has allowed the inclusion of tools to visually build queries, profile and
+plot data for analysis.
