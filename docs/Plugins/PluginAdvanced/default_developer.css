@@ -1,0 +1,127 @@
+/* font tag overwrite */
+font{font-size:12px !important}
+
+/* fonts */
+body,th,td,p,div,span,a,input,select,textarea,ul,ol,dl,h1,h2,h3,h4,h5,h6,li,big,small,b,font{font-family:Arial,Helvetica,FreeSans,"Luxi-sans","Nimbus Sans L",sans-serif}
+code,kbd,tt,pre,pre *,code *,code a,kbd a,tt a,pre a,code span,kbd span,tt span,pre span,pre b,pre font{font-family:Monaco,Courier,"Courier New"}
+
+/* font sizes */
+.smaller,.smaller a,.smaller b,small,.small,small span,.small span,.small a,small a,div.sitelinks,div.sitelinks a,.breadcrumb,.breadcrumb a,div.footer,div.footer a,select,td.selectcell,table.topnavlight td,table.topnavlight td a,table.topnav td,table.topnav td a,span.dkcaption1,span.ltcaption1,span.dkcaption1 a,span.ltcaption1 a{font-size:11px}
+body,th,td,p,div,span,a,ul,ol,dl,li,select,input,textarea,code,kbd,tt,pre,code a,kbd a,tt a,pre a,code span,kbd span,tt span,pre span,h6,h6 a,h6 span{font-size:12px}
+td.sectiontitle2,td.sectiontitle2 a,td.sectiontitle2 div,h5,h5 a,h5 span,big,.big,big span,.big span,.big a,big a{font-size:13px}
+h4,h4 span,h4 a,td.sectiontitle1,td.sectiontitle1 a,td.sectiontitle1 div,.xbig,.xbig span,.xbig a{font-size:14px}
+h3,h3 span,h3 a,.xxbig,.xxbig span,.xxbig a,.xxlarge{font-size:15px}
+h1,h2,h1 span,h2 span,h1 a,h2 a{font-size:16px}
+div.pagetitle2{font-size:17px}
+div.smallpagetitle,div.pagetitle,div.pagetitle code,span.pagetitleblue,div.pagetitlenopad,div.smallpagetitle h1,div.pagetitle h1,div.pagetitlenopad h1{font-size:21px}
+div.pagetitlebig{font-size:36px}
+
+/* generic */
+body,th,td,p,h5,h5 a,h6,h6 a,h5 span,h6 span,h1,h2,h3,h1 span,h2 span,h3 span,h1 a,h2 a,h3 a,h4,h4 span,h4 a{color:#000}
+code,kbd,tt,pre,code span,kbd span,tt span,pre span{color:#666}
+h1,h2,h3,h4,h5,h6{margin:3px 0px 0px 0px;padding:0px;text-decoration:none}
+a[name]:hover{text-decoration:none}
+a{text-decoration:none}
+a:visited,a:visited code{color:#917E9C}
+a:link,a.named:visited,div.sitelinks a:visited,a code,.e2 table.navblue a:visited{color:#3E6B8A}
+a:hover,b.error,span.error,p.error{text-decoration:underline}
+dt{font-weight:bold;padding:5px 0px 0px 0px}
+ul li{list-style-image:url("ul_bullet.jpg")}
+form{display:inline}
+form,select,input,textarea,ul li{margin:0px;padding:0px}
+li{margin-left:14px;padding-left:0px}
+ul,ul li,ol,ol li{margin-left:12px;padding-left:0px}
+h1 + p,h2 + p,h3 + p,h4 + p,h5 + p{margin-top:0px}
+
+/* text styles */
+div.pagetitle2{font-weight:bold}
+div.pagetitle{padding:0px 10px}
+div.pagetitle,div.pagetitle h1{font-weight:bold;color:#E76F00;margin:0px}
+div.smallpagetitle{padding:0px 10px}
+div.smallpagetitle,div.smallpagetitle h1{font-weight:bold;color:#E76F00;margin:0px}
+div.resultstitle{padding:0px 10px;font-weight:bold;color:#888;margin:0px}
+div.pagetitlenopad,div.pagetitlebig,div.pagetitlenopad h1,div.pagetitlebig h1{padding:0px;font-weight:bold;color:#E76F00;margin:0px}
+span.pagetitleblue{color:#35556B}
+div.navtitle{padding:0px 0px 5px 0px;font-weight:bold}
+p.compact{margin:0px}
+p.compact2{margin:0px 0px 7px 0px}
+a.redlink,a.redlink:visited,.red,b.error,p.error,span.error{color:#D12124}
+.new{color:#F00}
+.note{color:#000}
+.new,.note{text-transform:uppercase;font-weight:bold}
+p.compact{margin:0px}
+p.compact2{margin:0px 0px 7px 0px}
+.highlight{background-color:#FF9}
+.centertext{text-align:center}
+.lefttext{text-align:left}
+.righttext{text-align:right}
+
+/* pad & spacer */
+div.breadcrumb{padding:0px 25px}
+div.pad0x10,div.sitelinks,div.pagetitle2{padding:0px 10px}
+div.pad6{padding:6px}
+div.pad8{padding:8px}
+div.pad10{padding:10px}
+div.pad5x10{padding:5px 10px}
+div.pad10x0{padding:10px 0px}
+div.pad3x0{padding:3px 0px}
+div.contentdivider{padding:3px 0px 6px 0px}
+div.pad2x0x10x0{padding:2px 0px 10px 0px}
+.sp10{font-size:8px !important}
+.sp8{font-size:7px !important}
+.sp5{font-size:4px !important}
+.sp4{font-size:3px !important}
+.sp2{font-size:2px !important}
+span.sp20{font-size:19px !important}
+
+/* table colors */
+table.dkgrey{background:#666}
+table.white,td.white,th.white,tr.white td,tr.white th,table tr td.white,table tr th.white,td.white,table.white1,td.white1,th.white1,tr.white1 td,tr.white1 th,table tr td.white1,table tr th.white1,td.white1{background:#FFF}
+table.ltgrey,td.ltgrey,th.ltgrey,tr.ltgrey td,tr.ltgrey th,table tr td.ltgrey,table tr th.ltgrey{background:#CCC}
+table.vltgrey,td.vltgrey,th.vltgrey,tr.vltgrey td,tr.vltgrey th,table tr td.vltgrey,table tr th.vltgrey{background:#DDD}
+table.grey3,td.grey3,th.grey3,tr.grey3 td,tr.grey3 th,table tr td.grey3,table tr th.grey3{background:#E3E3E3}
+table.blue1,td.blue1,th.blue1,tr.blue1 td,tr.blue1 th,table tr td.blue1,table tr th.blue1{background:#8A9CE8}
+table.yellow2,td.yellow2,th.yellow2,tr.yellow2 td,tr.yellow2 th,table tr td.yellow2,table tr th.yellow2{background:#FFFFE2}
+
+/* misc */
+hr.ltgrey{background:#CCC;color:#CCC}
+hr.grey3{color:#E3E3E3}
+.sectiontitle1,.sectiontitle1 a,.sectiontitle2,.sectiontitle2 a{font-size:16px;font-weight:bold}
+span.quotehighlight{color:#666;font-size:16px;line-height:21px}
+div.sectiontitle1 a{font-weight:bold}
+td.selectcell{font-size:12px}
+a:visited span.ltcaption1{color:#96C}
+a:link span.ltcaption1{color:#5382A1}
+p{margin-top:3px;margin-bottom:17px}
+table.dkgrey2,tr.dkgrey2,th.dkgrey2,td.dkgrey2{background-color:#D6D6D6}
+table.grey4,tr.grey4,th.grey4,td.grey4{background-color:#E7E7E7}
+table.grey5,tr.grey5,th.grey5,td.grey5{background-color:#F1F1F1}
+div.datacell{padding:3px 6px 4px 6px}
+div.pad4x9{padding:4px 9px}
+div.pad3x5{padding:3px 5px}
+div.pad3{padding:3px}
+div.colpadding1{padding:7px 10px 8px 10px}
+div.colpadding2{padding:4px 8px 8px 8px}
+div.colpadding3{padding:4px 10px 8px 10px}
+div.colcaption1{padding:4px 6px 0px 6px}
+div.padbottom10{padding-bottom:10px}
+div.headerpadding2{padding:1px 6px 2px 6px}
+input.medium{width:95px}
+input.large,select.large,textarea.large{width:155px}
+input.xxlarge,textarea.xxlarge,select.xxlarge{width:300px}
+div.greyformfield select,div.greyformfield input,div.greyformfield textarea{background:#F1F1F1}
+/* input.buttonltblue,input.buttonblue2{cursor:hand;color:#FFF;height:1.45em;font-size:11px;padding:0px;margin:0px;border:0px none #000;font-weight:bold} */
+div.leftnav1{font-weight:bold;color:#999}
+div.leftnav1 a{font-weight:bold}
+input.buttonblue2{background:#5382A1}
+input.buttonltblue{background:#87A8BD}
+table.photobackground{background-repeat:no-repeat}
+.hyphen{color:#5382A1;text-align:right;white-space:nowrap}
+div.footer{color:#999;padding:5px 0px 10px 0px}
+a.red{color:#D12124;font-size:9px}
+a.red:link,a.red:visited,div.red a:visited{color:#D12124;font-size:10px;font-weight:bold}
+.trafficalert{color:#666;background-color:#F1F1F1;font-size:10px;margin:1px;font-weight:bold}
+table.highlight,td.highlight,th.highlight,tr.highlight td,tr.highlight th,table tr td.highlight,table tr th.highlight{background:#FFFFE2}
+.contentdivider table.grey4 img{height:2px}
+table.grey4 pre{font-size:11px}
+
