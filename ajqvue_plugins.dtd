@@ -1,0 +1,23 @@
+<!-- DTD used by Ajqvue to validate a repository XML file used to
+     describe available plugins at the location. The location would
+     normally desribed as a URL based resource. 
+
+     Version 1.0 09/25/2016 Original Production ajqvue_plugins.dtd.
+     
+     danap@dandymadeproductions.com
+-->
+
+<!ENTITY % att-bool '( TRUE | FALSE )' >
+
+<!ELEMENT PLUGINS ( PLUGIN+ ) >
+
+<!ELEMENT PLUGIN ( AUTHOR?, VERSION, PATH, DESCRIPTION?, CATEGORY?, SIZE? ) >
+<!ATTLIST PLUGIN
+	NAME CDATA #REQUIRED 
+	JAR CDATA #REQUIRED >
+
+<!ELEMENT AUTHOR ( #PCDATA ) >
+<!ELEMENT VERSION ( #PCDATA ) >
+<!ELEMENT DESCRIPTION ( #PCDATA ) >
+<!ELEMENT CATEGORY ( #PCDATA ) >
+<!ELEMENT SIZE ( #PCDATA ) >
