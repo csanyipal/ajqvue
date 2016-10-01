@@ -57,6 +57,6 @@ the system administrator of your workstation. The likely location will be in
 the /usr/local or a public directory, which all users have access to for
 application execution.
 
-Copyright Notice:
+Copyright (C) 2016 Dana M. Proctor
 
 This program is licensed under the GNU GPL.
