@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Version 1.1 10/03/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production FILE_PluginRepository Class.
+//         1.1 Method loadPluginList() Correct Debug System.out Comment.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -56,7 +57,7 @@ import java.net.UnknownHostException;
  * networked file system.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 10/03/2016
  */
 
 public class FILE_PluginRepository extends PluginRepository
@@ -165,7 +166,7 @@ public class FILE_PluginRepository extends PluginRepository
          catch (IOException ioe1)
          {
             if (debugMode)
-               System.out.println("FILE_PluginRepository loadloadPluginList() "
+               System.out.println("FILE_PluginRepository loadPluginList() "
                                   + "Failed to close BufferedOutputStream. " + ioe1.toString());
          }
          finally
