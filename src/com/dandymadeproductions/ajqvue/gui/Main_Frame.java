@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.1 09/24/2016
+// Version 1.2 10/08/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,6 +34,8 @@
 //=================================================================
 // Version 1.0 09/19/2016 Production Main_Frame Class.
 //         1.1 09/24/2016 Updated References to PluginModule to Plugin_Module.
+//         1.2 10/08/2016 Replaced mainTabPanel Instance in Constructor Type
+//                        TopTabPanel to TopTabStaticPanel.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -68,7 +70,8 @@ import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionProperties;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
-import com.dandymadeproductions.ajqvue.gui.panels.TopTabPanel;
+// import com.dandymadeproductions.ajqvue.gui.panels.TopTabPanel;
+import com.dandymadeproductions.ajqvue.gui.panels.TopTabStaticPanel;
 import com.dandymadeproductions.ajqvue.plugin.Default_JToolBar;
 import com.dandymadeproductions.ajqvue.plugin.Plugin_Module;
 import com.dandymadeproductions.ajqvue.plugin.PluginLoader;
@@ -82,7 +85,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * creation and inclusion.
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/24/2016
+ * @version 1.2 10/08/2016
  */
 
 public class Main_Frame extends JFrame implements ActionListener, ChangeListener
@@ -90,7 +93,8 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
    // Class Instances.
    private static final long serialVersionUID = 9033690016117959449L;
 
-   private TopTabPanel mainTabPanel;
+   // private TopTabPanel mainTabPanel;
+   private TopTabStaticPanel mainTabPanel;
    private Main_JMenuBar menuBar;
    private Top_JMenuBar topMenuBar;
    
@@ -219,9 +223,13 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
       //=========================================
       // Standard dmp Main Tab
       
-      mainTabPanel = new TopTabPanel(true);
-      Thread mainTabPanelThread = new Thread(mainTabPanel, "TopTabPanelThread");
-      mainTabPanelThread.start();
+      // Animated
+      // mainTabPanel = new TopTabPanel(true);
+      // Thread mainTabPanelThread = new Thread(mainTabPanel, "TopTabPanelThread");
+      // mainTabPanelThread.start();
+      
+      // Static
+      mainTabPanel = new TopTabStaticPanel();
       
       mainTabsPane.addTab(null, mainTabIcon, mainTabPanel, "Dandy Made Productions");   
       
