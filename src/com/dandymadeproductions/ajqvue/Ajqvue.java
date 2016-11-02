@@ -15,7 +15,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.10 09/25/2016
+// Version 1.11 11/01/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,8 @@
 //         1.1  09/20/2016 Constructor Change in Description for popupMenuResources.
 //                         Updated VERSION.
 //         1.10 09/25/2016 Ajqvue Release v1.10. Updated VERSION.
+//         1.11 11/01/2016 Relocated Creation of Popup Menu for popupListener
+//                         to Utils.createPopupMenu(). Updated VERSION.
 //                              
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -49,17 +51,13 @@ package com.dandymadeproductions.ajqvue;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.text.DefaultEditorKit;
 
 import com.dandymadeproductions.ajqvue.gui.LoginFrame;
 import com.dandymadeproductions.ajqvue.gui.Main_Frame;
@@ -82,7 +80,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * Arguments -debug, -lang='locale'
  * 
  * @author Dana M. Proctor
- * @version 1.10 09/25/2016
+ * @version 1.11 11/01/2016
  */
 
 public class Ajqvue implements ActionListener
@@ -103,7 +101,7 @@ public class Ajqvue implements ActionListener
    private static AResourceBundle resourceBundle;
 
    // String for Information About the Ajqvue.
-   private static String[] VERSION = {"Ajqvue", "1.10", "Build ID: 20160925"};
+   private static String[] VERSION = {"Ajqvue", "1.11", "Build ID: 20161101"};
    private static final String WEBSITE = "http://ajqvue.com";
    
    private static GeneralProperties generalProperties = new GeneralProperties();
@@ -115,9 +113,6 @@ public class Ajqvue implements ActionListener
    public Ajqvue()
    {
       // Constructor Instances.
-      JPopupMenu popupMenu;
-      JMenuItem menuItem;
-      String popupMenuResource;
       StringBuilder uiManagerError;
 
       // ==================================================
@@ -150,35 +145,8 @@ public class Ajqvue implements ActionListener
       
       // ==================================================
       // Setting up a PopupMenu for cut, copy, and pasting.
-
-      popupMenu = new JPopupMenu();
-
-      menuItem = new JMenuItem(new DefaultEditorKit.CutAction()); 
       
-      popupMenuResource = resourceBundle.getResourceString("Ajqvue.popup.Cut", "Cut");
-      menuItem.setText(popupMenuResource);
-      menuItem.setMnemonic(KeyEvent.VK_X);
-      menuItem.addActionListener(this);
-      popupMenu.add(menuItem);
-
-      menuItem = new JMenuItem(new DefaultEditorKit.CopyAction());
-      
-      popupMenuResource = resourceBundle.getResourceString("Ajqvue.popup.Copy", "Copy");
-      menuItem.setText(popupMenuResource);
-      menuItem.setMnemonic(KeyEvent.VK_C);
-      menuItem.addActionListener(this);
-      popupMenu.add(menuItem);
-
-      menuItem = new JMenuItem(new DefaultEditorKit.PasteAction());
-      
-      popupMenuResource = resourceBundle.getResourceString("Ajqvue.popup.Paste", "Paste");
-      menuItem.setText(popupMenuResource);
-      menuItem.setText("Paste");
-      menuItem.setMnemonic(KeyEvent.VK_V);
-      menuItem.addActionListener(this);
-      popupMenu.add(menuItem);
-
-      popupListener = new Main_MouseAdapter(popupMenu);
+      popupListener = new Main_MouseAdapter(Utils.createPopupMenu());
 
       // ==================================================
       // Setting up a component that will allow the
