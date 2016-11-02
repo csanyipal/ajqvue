@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Version 1.1 11/01/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Class to Provide Common Utilities.
+//         1.1 Added Class Method createPopuMenu(). Moved Routine For Select-All
+//             Menu Action From createEditMenu() to Method createSelectAllMenuItem().
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -85,6 +87,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
@@ -104,7 +107,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 10.9 09/17/2016
+ * @version 1.1 11/01/2016
  */
 
 public class Utils extends Ajqvue
@@ -492,7 +495,6 @@ public class Utils extends Ajqvue
       JMenuBar editorMenuBar;
       JMenu editMenu;
       JMenuItem menuItem;
-      JTextPane textComponent;
       AResourceBundle resourceBundle;
       String resource;
 
@@ -530,8 +532,17 @@ public class Utils extends Ajqvue
          editMenu.add(menuItem);
       }
 
-      editMenu.addSeparator();
-
+      menuItem = createSelectAllMenuItem(resourceBundle);
+      
+      if (menuItem != null)
+      {
+         editMenu.addSeparator();
+         editMenu.add(menuItem);
+        
+      }
+      editorMenuBar.add(editMenu);
+      
+      /*
       // Seems the DefaultEditorKit does not provide the ability
       // to obtain the action command directly for select-all?
       // editMenu.add(action.getActionByName(DefaultEditorKit.selectAllAction));
@@ -553,8 +564,97 @@ public class Utils extends Ajqvue
       }
       editMenu.add(menuItem);
       editorMenuBar.add(editMenu);
+      */
       
       return editorMenuBar;
+   }
+   
+   //==============================================================
+   // Class method to create a Popup Menu for Copy, Cut, Paste,
+   // and Select All.
+   //==============================================================
+
+   public static JPopupMenu createPopupMenu()
+   {
+      // Method Instances.
+      JPopupMenu popupMenu;
+      
+      JMenuItem menuItem;
+      AResourceBundle resourceBundle;
+      String resource;
+
+      // Create menu items cut, copy, paste, and
+      // select all.
+      
+      popupMenu = new JPopupMenu();
+      resourceBundle = Ajqvue.getResourceBundle();
+      
+      // Cut
+      menuItem = new JMenuItem(new DefaultEditorKit.CutAction());
+      resource = resourceBundle.getResourceString("Utils.menu.Cut", "Cut");
+      menuItem.setText(resource);
+      menuItem.setMnemonic(KeyEvent.VK_X);
+      //menuItem.addActionListener(this);
+      popupMenu.add(menuItem);
+      
+      // Copy
+      menuItem = new JMenuItem(new DefaultEditorKit.CopyAction());
+      resource = resourceBundle.getResourceString("Utils.menu.Copy", "Copy");
+      menuItem.setText(resource);
+      menuItem.setMnemonic(KeyEvent.VK_C);
+      //menuItem.addActionListener(this);
+      popupMenu.add(menuItem);
+
+      // Cut
+      menuItem = new JMenuItem(new DefaultEditorKit.PasteAction());
+      resource = resourceBundle.getResourceString("Utils.menu.Paste", "Paste");
+      menuItem.setText(resource);
+      menuItem.setMnemonic(KeyEvent.VK_V);
+      popupMenu.add(menuItem);
+
+      // Select All
+      menuItem = createSelectAllMenuItem(resourceBundle);
+      
+      if (menuItem != null)
+      {
+         popupMenu.addSeparator();
+         popupMenu.add(menuItem);
+      }
+      return popupMenu;
+   }
+   
+   //==============================================================
+   // Seems the DefaultEditorKit does not provide the ability
+   // to obtain the action command directly for select-all? So
+   // collect through editMenu.add(action.getActionByName(
+   // DefaultEditorKit.selectAllAction))
+   //==============================================================
+   
+   private static JMenuItem createSelectAllMenuItem(AResourceBundle resourceBundle)
+   {
+      // Method Instances
+      JMenuItem menuItem;
+      JTextPane textComponent;
+      String resource;
+      
+      textComponent = new JTextPane();
+      menuItem = null;
+      
+      Action[] textActionsArray = textComponent.getActions();
+      for (int i = 0; i < textActionsArray.length; i++)
+      {
+         Action currentAction = textActionsArray[i];
+         // System.out.println("Utils createMenuItemSelectAll() currentAction Value: "
+         //                    + currentAction.getValue(Action.NAME));
+         
+         if (currentAction.getValue(Action.NAME).equals("select-all"))
+         {
+            menuItem = new JMenuItem(currentAction);
+            resource = resourceBundle.getResourceString("Utils.menu.SelectAll", "Select All");
+            menuItem.setText(resource);
+         }
+      }
+      return menuItem;
    }
    
    //==============================================================
