@@ -1,4 +1,4 @@
-Ajqvue Version 1.0
+Ajqvue Version 1.11
 
 Copyright 2016
 by Dana Proctor
@@ -185,5 +185,6 @@ L.S. Proctor who provided support and mental clarity.
 Version History:
 
 Production (2016-09-17):
-Version 1.0 Code Review and Cleanup. Libraries and TableFieldProfiler Plugin
-            Updated. Bug Fixes for Query Bucket Feature.
+Version 1.0  Code Review and Cleanup. Libraries and TableFieldProfiler Plugin
+             Updated. Bug Fixes for Query Bucket Feature.
+        1.11 Minor Release to Mainly Highlight Updated QueryBuilder Plugin.
