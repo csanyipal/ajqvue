@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.1 09/18/2016
+// Version 1.2 11/03/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 //=================================================================
 // Version 1.0 Production JarFileFilter Class.
 //         1.1 Corrected Package.
+//         1.2 Minor Comment Changes.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -45,11 +46,11 @@ import java.util.Locale;
 import javax.swing.filechooser.FileFilter;
 
 /**
- *    The JarJFileFilter class provides a customer FileFilter instance to
+ *    The JarFileFilter class provides a customer FileFilter instance to
  * be used in selecting plugin module files, JAR.
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/18/2016
+ * @version 1.2 11/03/2016
  */
 
 public class JarFileFilter extends FileFilter
