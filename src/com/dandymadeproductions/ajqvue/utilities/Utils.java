@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.1 11/01/2016
+// Version 1.2 11/04/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,8 @@
 // Version 1.0 Class to Provide Common Utilities.
 //         1.1 Added Class Method createPopuMenu(). Moved Routine For Select-All
 //             Menu Action From createEditMenu() to Method createSelectAllMenuItem().
+//         1.2 Removed Commented Code From v1.1 createEditMenu() That was Moved to
+//             createSelectAllMenuItem().
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -107,7 +109,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 1.1 11/01/2016
+ * @version 1.2 11/04/2016
  */
 
 public class Utils extends Ajqvue
@@ -541,30 +543,6 @@ public class Utils extends Ajqvue
         
       }
       editorMenuBar.add(editMenu);
-      
-      /*
-      // Seems the DefaultEditorKit does not provide the ability
-      // to obtain the action command directly for select-all?
-      // editMenu.add(action.getActionByName(DefaultEditorKit.selectAllAction));
-
-      textComponent = new JTextPane();
-      Action[] textActionsArray = textComponent.getActions();
-      for (int i = 0; i < textActionsArray.length; i++)
-      {
-         Action currentAction = textActionsArray[i];
-         // System.out.println("Utils createEditMenu()" + currentAction.getValue(Action.NAME));
-         
-         if (currentAction.getValue(Action.NAME).equals("select-all"))
-         {
-            menuItem = new JMenuItem(currentAction);
-            resource = resourceBundle.getResourceString("Utils.menu.SelectAll", "Select All");
-            menuItem.setText(resource);
-            editMenu.add(menuItem);
-         }
-      }
-      editMenu.add(menuItem);
-      editorMenuBar.add(editMenu);
-      */
       
       return editorMenuBar;
    }
@@ -1499,7 +1477,7 @@ public class Utils extends Ajqvue
       bufferedReader = null;
 
       try
-      {  
+      {
          // Language not selected so allow the user to choose.
          if (!fileError && (localeFile.createNewFile() || localeFile.length() == 0))
          {
