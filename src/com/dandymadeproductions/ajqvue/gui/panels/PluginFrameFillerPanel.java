@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 11/06/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,7 +30,8 @@
 // in the present version number. Author information should
 // also be included with the original copyright author.
 //=================================================================
-// Version 1.0 09/18/2016 Production PluginFrameFillerPanel Class.                      
+// Version 1.0 09/18/2016 Production PluginFrameFillerPanel Class.
+//         1.1 11/06/2016 Minor Format Changes.
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
 //=================================================================
@@ -61,7 +62,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * in the PluginFrame to provide a generic animated filler graphic.   
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 11/06/2016
  */
 
 public class PluginFrameFillerPanel extends JPanel implements Runnable
@@ -203,7 +204,7 @@ public class PluginFrameFillerPanel extends JPanel implements Runnable
       
       for (int i = 0; i < baseImageHeight; i++)
       {
-         // dispy defines the vertical sine displacement. It
+         // displacementY defines the vertical sine displacement. It
          // attenuates higher up the image, for perspective.
          
          disp_Y = (int) ((baseImageHeight / 14.0)
