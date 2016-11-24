@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.2 10/08/2016
+// Version 1.3 11/24/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,8 @@
 //         1.1 09/24/2016 Updated References to PluginModule to Plugin_Module.
 //         1.2 10/08/2016 Replaced mainTabPanel Instance in Constructor Type
 //                        TopTabPanel to TopTabStaticPanel.
+//         1.3 11/24/2016 Method stateChanged() setJMenuBar for the Plugin Panel Used
+//                        getControlledMenuBar().
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -85,7 +87,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * creation and inclusion.
  * 
  * @author Dana M. Proctor
- * @version 1.2 10/08/2016
+ * @version 1.3 11/24/2016
  */
 
 public class Main_Frame extends JFrame implements ActionListener, ChangeListener
@@ -361,7 +363,7 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
          else
          {
             if ((selectedIndex - 2) <= loadedPluginModules.size())
-               setJMenuBar((loadedPluginModules.get(selectedIndex - 2)).getMenuBar());
+               setJMenuBar((loadedPluginModules.get(selectedIndex - 2)).getControlledMenuBar());
          }
          
          // Set the ToolBar required by the tab.
