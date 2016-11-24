@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.2 09/24/2016
+// Version 1.3 11/24/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,8 @@
 // Version 1.0 Production PluginThread Class.
 //         1.1 Updated References to PluginModule to Plugin_Module.
 //         1.2 Method run() pluginmodule.tabIcon Changed Scaling to 14x14.
+//         1.3 Method run() pluginmodule.tabIcon Set to defaultIcon on
+//             Width/Height <= 0.
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -51,7 +53,7 @@ import com.dandymadeproductions.ajqvue.gui.Main_Frame;
  * adding of a correctly located plugin module to the main frame.
  * 
  * @author Dana M. Proctor
- * @version 1.2 09/24/2016
+ * @version 1.3 11/24/2016
  */
 
 class PluginThread implements Runnable
@@ -136,7 +138,8 @@ class PluginThread implements Runnable
          pluginModule.description = pluginModule.getDescription();
       
       // Tab Icon
-      if (pluginModule.getTabIcon() == null)
+      if (pluginModule.getTabIcon() == null || pluginModule.getTabIcon().getIconWidth() <= 0
+          || pluginModule.getTabIcon().getIconHeight() <= 0)
          pluginModule.tabIcon = defaultIcon;
       else
          pluginModule.tabIcon = new ImageIcon((pluginModule.getTabIcon()).getImage().getScaledInstance(14,
