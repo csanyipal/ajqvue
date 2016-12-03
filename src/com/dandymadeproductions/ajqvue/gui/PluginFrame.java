@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016 Dana M. Proctor
-// Version 1.1 09/24/2016
+// Version 1.3 12/03/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,10 @@
 //=================================================================
 // Version 1.0 Production PluginFrame Class.
 //         1.1 Updated References to PluginModule to Plugin_Module.
+//         1.2 Method createRepository() Corrected Proper Assignment of HTTPS Repository Type
+//             Creation.
+//         1.3 Method createRepository() Changed centralTabPane Tooltip to pluginRepository.
+//             getPath().
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -118,7 +122,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * remove, and install new plugins to the application.
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/24/2016
+ * @version 1.3 12/03/2016
  */
 
 //=================================================================
@@ -1011,7 +1015,7 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
          loadedPluginTableData[i][PATH_COLUMN] = loadedPlugins.get(i).getPath_FileName();
          loadedPluginTableData[i][DESCRIPTION_COLUMN] = loadedPlugins.get(i).getDescription();
          loadedPluginTableData[i][REMOVE_COLUMN] = removeIcon;
-
+         
          // Remove plugins from loading list.
          path = loadedPlugins.get(i).getPath_FileName().substring(0,
             loadedPlugins.get(i).getPath_FileName().indexOf("<$$$>"));
@@ -1377,15 +1381,13 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
 
          // Create an appropriate repository.
 
-         // http.
+         // http, https.
          if (repositoryURLString.toLowerCase(Locale.ENGLISH).startsWith(PluginRepository.HTTP))
          {
-            pluginRepository = new HTTP_PluginRepository(PluginRepository.HTTP);
-         }
-         // https.
-         else if (repositoryURLString.toLowerCase(Locale.ENGLISH).startsWith(PluginRepository.HTTPS))
-         {
-            pluginRepository = new HTTP_PluginRepository(PluginRepository.HTTPS);
+            if (repositoryURLString.toLowerCase(Locale.ENGLISH).startsWith(PluginRepository.HTTPS))
+               pluginRepository = new HTTP_PluginRepository(PluginRepository.HTTPS);
+            else
+               pluginRepository = new HTTP_PluginRepository(PluginRepository.HTTP);
          }
          // ftp, ftps
          /*
@@ -1395,7 +1397,7 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
          }
          */
          // file.
-         else 
+         else
          {
             if (!repositoryURLString.toLowerCase(Locale.ENGLISH).startsWith(PluginRepository.FILE))
                repositoryURLString = "file:" + repositoryURLString;
@@ -1414,7 +1416,7 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
                   .createEmptyBorder(4, 4, 4, 4), BorderFactory.createLoweredBevelBorder()));
 
             centralTabsPane.insertTab(pluginRepository.getName(), null, pluginRepositoryPanel,
-               pluginRepository.getName(), addedTabIndex);
+               pluginRepository.getPath(), addedTabIndex);
 
             // Manage tracking and indexing on tabs.
 
