@@ -3,15 +3,15 @@
 //=================================================================
 //
 //    This class provides the general framework to create a FTP
-// type repository that would be derived from a ftp server. A web
+// type repository that would be derived from a ftp(s) server. A web
 // FTP type repository will try to cache the plugin list as derived
 // from a XML file at the resource.
 //
 //                 << FTP_PluginRepository.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.2 01/30/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,13 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production FTP_PluginRepository Class.
+//         1.1 Removed All Class Instances. Set options in Constructor to Parent Class
+//             PluginRepository. Removed Class Method configureOptions(). Method
+//             loadPluginList() Replaced Technical Aspects of Setting up ftpClient
+//             Instance With New Class to Handle the Details, FTP_Client. Retained
+//             the Basic I/O Details of Collecting Repository and Creating Cache.
+//         1.2 Method loadPluginList() Passed Repository Type Only to FTP_Client
+//             Constructor.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -40,26 +47,21 @@
 
 package com.dandymadeproductions.ajqvue.plugin;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
-import java.net.Proxy;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
+import java.io.OutputStream;
+
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
 
 /**
  *    The FTP_PluginRepository class provides the general framework
- * to create a FTP type repository that would be derived from a server.
- * A FTP type repository will try to cache the plugin list as derived
- * from a XML file at the resource.
+ * to create a FTP type repository that would be derived from a ftp(s)
+ * server. A FTP type repository will try to cache the plugin list as
+ * derived from a XML file at the resource.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.2 01/30/2017
  */
 
 public class FTP_PluginRepository extends PluginRepository
@@ -68,13 +70,33 @@ public class FTP_PluginRepository extends PluginRepository
    
    //==============================================================
    // FTP_PluginRepository Constructor
+   //
+   // !Note: Only supports FTP/FTPS (FTP over SSL).
+   // Most hosted servers should support this configuration.
+   //
+   // Usage: No agrgument constructor excepts defaults. 
+   // Possible Parameters: [options]
+   //
+   // -A - Anonymous login (omit username and password parameters).
+   // -E - Encoding to use for control channel, ISO-8859-1, FTP.DEFAULT_CONTROL_ENCODING. 
+   // -k secs - Use keep-alive timer (setControlKeepAliveTimeout).
+   // -p true|false|protocol[,true|false] - Use FTPSClient with the specified protocol,
+   //    ex. TLS/SSL, and/or isImplicit setting.
+   // -S - SystemType set server system type (e.g. UNIX VMS WINDOWS).
+   // -T all|valid|none - Use one of the built-in TrustManager implementations (none = JVM default).
    //==============================================================
 
-   public FTP_PluginRepository()
+   public FTP_PluginRepository(String type)
+   {
+      this(null, type);
+   }
+   
+   public FTP_PluginRepository(String[] options, String type)
    {
       super(true);
       
-      setType(PluginRepository.FTP);
+      setType(type);
+      setOptions(options);
    }
    
    //==============================================================
@@ -84,151 +106,83 @@ public class FTP_PluginRepository extends PluginRepository
    
    public boolean loadPluginList()
    {
-      // Method Instances
-      Proxy httpProxy;
-      URL downloadURL;
-      URLConnection ftpConnection;
-      
-      InputStream inputStream;
-      BufferedInputStream bufferedInputStream;
-      FileOutputStream fileOutputStream;
-      BufferedOutputStream bufferedOutputStream;
+   // Method Instances
+      FTPClient ftpClient;
+      OutputStream outputStream;
       
       String cacheFileName;
-      byte[] inputBytes;
-      
       boolean validDownload;
-      boolean testftp = false;
       
       // Setup
-      inputStream = null;
-      bufferedInputStream = null;
-      fileOutputStream = null;
-      bufferedOutputStream = null;
+      ftpClient = null;
+      outputStream = null;
       validDownload = false;
+      
+      FTP_Client ftp_Client = new FTP_Client(getRepositoryType(), remoteRepositoryURL, getRepositoryOptions());
+      ftpClient = ftp_Client.createFTPClient();
+      
+      if (ftpClient == null)
+         return validDownload;
       
       try
       {
          if (debugMode)
+         {
             System.out.println("FTP_PluginRepository loadPluginList() Downloading Repository List");
+            System.out.println("FTP_PluginRepository loadPluginList() Repository: " + remoteRepositoryURL);
+            System.out.println("FTP_PluginRepository loadPluginList() Type: " + getRepositoryType());
+         }
          
-         downloadURL = new URL(remoteRepositoryURL);
+         // Collect repository list file.
+         cacheFileName = cachedRepositoryURL.replaceFirst("file:", "");
          
-         // Proxy as Needed.
-         if (generalProperties.getEnableProxy())
+         outputStream = new FileOutputStream(cacheFileName);
+         ftpClient.retrieveFile(PluginRepository.REPOSITORY_FILENAME, outputStream);
+         
+         if (ftpClient.getReplyCode() == FTPReply.FILE_UNAVAILABLE)
          {
-            httpProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(
-               generalProperties.getProxyAddress(), generalProperties.getProxyPort()));
-            ftpConnection = downloadURL.openConnection(httpProxy);
+            displayErrors("FTP_PluginRepository loadPluginList() Repository Not Found:\n"
+                          + ftpClient.getReplyCode() + " : "
+                          + ftpClient.getReplyString());
          }
          else
-            ftpConnection = downloadURL.openConnection(Proxy.NO_PROXY);
-         
-         // Code not implemented as of v1.1
-      
-         // Control
-         if (!testftp)
-         {
-            displayErrors("FTP_PluginRepository loadPlugins()\n"
-                          + "Set testftp to true to test.");
-         }
-         // Looks Good.
-         else
-         {
-            cacheFileName = cachedRepositoryURL.replaceFirst("file:", "");
-            
-            // Create Streams
-            
-            inputStream = ftpConnection.getInputStream();
-            bufferedInputStream = new BufferedInputStream(inputStream);
-            
-            fileOutputStream = new FileOutputStream(cacheFileName);
-            bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-             
-            // Setup Buffer, read, write, flush.
-            inputBytes = new byte[4096];
-            
-            int n;
-            
-            while ((n = bufferedInputStream.read(inputBytes)) != -1)
-               bufferedOutputStream.write(inputBytes, 0, n);
-            
-            bufferedOutputStream.flush();
-            fileOutputStream.flush();
-            
             validDownload = true;
-            
-         }
+         
+         ftpClient.noop();
+         ftpClient.logout();
       }
-      catch(MalformedURLException e)
-      {
-         displayErrors("FTP_PluginRepository loadPluginList() Exception:\n" + e.toString());
-      }
-      catch (UnknownHostException e)
-      {
-         displayErrors("FILE_PluginRepository loadPluginList() Exception:\n" + e.toString());
-      }
-      // IOException & FileNotFoundException
       catch (IOException e)
       {
-         displayErrors("HTTP_PluginRepository loadPluginList() Exception:\n" + e.toString());
+         displayErrors("FTP_PluginRepository loadPluginList() IOException:\n" + e.toString());
       }
       finally
       {
          try
          {
-            if (bufferedOutputStream != null)
-               bufferedOutputStream.close();
+            if (outputStream != null)
+               outputStream.close();
          }
-         catch (IOException ioe1)
+         catch (IOException e)
          {
             if (debugMode)
                System.out.println("FTP_PluginRepository loadPluginList() "
-                                  + "Failed to close BufferedOutputStream. " + ioe1.toString());
+                                  + "Failed to close outputStream. " + e.toString());
          }
          finally
          {
             try
             {
-               if (fileOutputStream != null)
-                  fileOutputStream.close();
+               if (ftpClient != null && ftpClient.isConnected())
+                  ftpClient.disconnect();
             }
-            catch (IOException ioe2)
+            catch (IOException ioe)
             {
                if (debugMode)
                   System.out.println("FTP_PluginRepository loadPluginList() "
-                                     + "Failed to close FileOutputStream. " + ioe2.toString());
-            }
-            finally
-            {
-               try
-               {
-                  if (bufferedInputStream != null)
-                     bufferedInputStream.close();
-               }
-               catch (IOException ioe3)
-               {
-                  if (debugMode)
-                     System.out.println("FTP_PluginRepository loadPluginList() "
-                                        + "Failed to close BufferedInputStream. " + ioe3.toString());
-               }
-               finally
-               {
-                  try
-                  {
-                     if (inputStream != null)
-                        inputStream.close();
-                  }
-                  catch (IOException ioe4)
-                  {
-                     if (debugMode)
-                        System.out.println("FTP_PluginRepository loadPluginList() "
-                                           + "Failed to close InputStream. " + ioe4.toString());
-                  }
-               }
-            }
+                                     + "Failed to disconnet ftpClient. " + ioe.toString());
+            }     
          }
       }
-      return validDownload;
+      return validDownload; 
    }
 }
