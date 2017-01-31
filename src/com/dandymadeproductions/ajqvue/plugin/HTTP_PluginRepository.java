@@ -10,8 +10,8 @@
 //                 << HTTP_PluginRepository.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.1 01/31/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production HTTP_PluginRepository Class.
+//         1.1 Method loadPluginList() Added Additional Debug Output & try catch
+//             Clause for SSLHandshakeException.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -52,6 +54,7 @@ import java.net.Proxy;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLHandshakeException;
 
 /**
  *    The HTTP_PluginRepository class provides the general framework to
@@ -60,7 +63,7 @@ import javax.net.ssl.HttpsURLConnection;
  * from a XML file at the resource.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 01/31/2017
  */
 
 public class HTTP_PluginRepository extends PluginRepository
@@ -110,7 +113,11 @@ public class HTTP_PluginRepository extends PluginRepository
       try
       {
          if (debugMode)
+         {
             System.out.println("HTTP_PluginRepository loadPluginList() Downloading Repository List");
+            System.out.println("HTTP_PluginRepository loadPluginList() Repository: " + remoteRepositoryURL);
+            System.out.println("HTTP_PluginRepository loadPluginList() Type: " + getRepositoryType());
+         }
          
          downloadURL = new URL(remoteRepositoryURL);
          
@@ -143,19 +150,35 @@ public class HTTP_PluginRepository extends PluginRepository
          {
             HttpsURLConnection httpsConnection;
             
-            if (httpProxy != null)
-               httpsConnection = (HttpsURLConnection) downloadURL.openConnection(httpProxy);
-            else
-               httpsConnection = (HttpsURLConnection) downloadURL.openConnection(Proxy.NO_PROXY);
-            
-            if (httpsConnection.getResponseCode() == HttpsURLConnection.HTTP_OK)
-               inputStream = httpsConnection.getInputStream();
-            else
+            try
             {
-               displayErrors("HTTP_PluginRepository loadPluginList() HTTPS Error:\n"
-                             + httpsConnection.getResponseCode() + " : "
-                             + httpsConnection.getResponseMessage());
+               if (httpProxy != null)
+                  httpsConnection = (HttpsURLConnection) downloadURL.openConnection(httpProxy);
+               else
+                  httpsConnection = (HttpsURLConnection) downloadURL.openConnection(Proxy.NO_PROXY);
+               
+               // System.out.println("HTTP_PluginRepository loadPluginList() https response:"
+               //                    + httpsConnection.getResponseCode());
+               
+               if (httpsConnection.getResponseCode() == HttpsURLConnection.HTTP_OK)
+               {
+                  inputStream = httpsConnection.getInputStream();
+                  // System.out.println("HTTP_PluginRepository loadPluginList() Ciper: "
+                  //                    + httpsConnection.getCipherSuite());
+               }
+               else
+               {
+                  displayErrors("HTTP_PluginRepository loadPluginList() HTTPS Error:\n"
+                                + httpsConnection.getResponseCode() + " : "
+                                + httpsConnection.getResponseMessage());
+               }   
+               
             }
+            catch (SSLHandshakeException ssle)
+            {
+               displayErrors("HTTP_PluginRepository loadPluginList() Exception:\n" + ssle.toString());
+               return validDownload;
+            }   
          }
          // Wrong Type
          else
