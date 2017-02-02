@@ -10,8 +10,8 @@
 //                     << PluginLoader.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.1 09/24/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.4 02/02/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,6 +34,18 @@
 //=================================================================
 // Version 1.0 09/19/2016 Production PluginLoader Class.
 //         1.1 09/24/2016 Updated References to PluginModule to Plugin_Module.
+//         1.2 02/02/2017 Method cacheJAR() Added Additional Conditional to Handle Https
+//                        URLs Separate From Http.
+//         1.3 02/02/2017 Added Class Instance repositoryType & Used as Argument in Main
+//                        Constructor & init(). Comment Changes for loadPluginEntry() in
+//                        Addition to Breaking Out HTML jarFile Creation Into New Method
+//                        loadHTMLPluginEntry(). Added Conditional for FTP(S) jarFile Creation
+//                        Through New Method loadFTPPluginEntry().
+//         1.4 02/02/2017 Added Class Instance repositoryOptions. Added Same to Main Constructor
+//                        & init() Method. Method loadPluginEntry() Added Processing for
+//                        Repository Types FTP(S). Removed Method loadHTMLPluginEntry() &
+//                        loadFTPPluginEntry(). Modified Method cacheJAR() to Handle FTP(S)
+//                        Repositories. Contained cacheJAR() Exceptions.
 //                        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -72,6 +84,9 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
+
 import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.gui.Main_Frame;
 import com.dandymadeproductions.ajqvue.gui.PluginFrame;
@@ -86,7 +101,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * interface Plugin_Module will be loaded.
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/24/2016
+ * @version 1.4 02/02/2017
  */
 
 public class PluginLoader implements Runnable
@@ -96,10 +111,13 @@ public class PluginLoader implements Runnable
    private Main_Frame parentFrame;
    private URL pluginURL;
    private String repositoryName;
+   private String repositoryType;
+   private String[] repositoryOptions;
    
    private String fileSeparator;
    private String pluginDirectoryString;
    private String pluginFileName;
+   
    private String pluginConfigFileString;
    private HashMap<String, String> pluginEntriesHashMap;
    
@@ -125,7 +143,7 @@ public class PluginLoader implements Runnable
    {
       try
       {
-         init(parent, new URL("file:"), "");
+         init(parent, new URL("file:"), "", PluginRepository.FILE, null);
       }
       catch (MalformedURLException mfe)
       {
@@ -134,20 +152,24 @@ public class PluginLoader implements Runnable
       }
    }
    
-   public PluginLoader(Main_Frame parent, URL pluginURL, String repositoryName)
+   public PluginLoader(Main_Frame parent, URL pluginURL, String repositoryName, String repositoryType,
+                       String[] repositoryOptions)
    {
-      init(parent, pluginURL, repositoryName);
+      init(parent, pluginURL, repositoryName, repositoryType, repositoryOptions);
    }
    
    //==============================================================
    // Class method for initialization and starting the class thread.
    //==============================================================
    
-   private void init(Main_Frame parent, URL pluginURL, String repositoryName)
+   private void init(Main_Frame parent, URL pluginURL, String repositoryName, String repositoryType,
+                     String[] repositoryOptions)
    {
       parentFrame = parent;
       this.pluginURL = pluginURL;
       this.repositoryName = repositoryName;
+      this.repositoryType = repositoryType;
+      this.repositoryOptions = repositoryOptions;
       
       if (pluginURL == null)
          return;
@@ -221,9 +243,9 @@ public class PluginLoader implements Runnable
    // the framework Plugin Management tool in the top tab.
    //
    // File URL - file:lib/plugins/TableRecordCount.jar
-   // Http URL - http://dandymadeproductions.com/temp/TableRecordCount.jar
+   // Http URL - http(s)://dandymadeproductions.com/temp/TableRecordCount.jar
    // JAR URL - jar:file:/home/duke/duke.jar!
-   // FTP URL - ftp:/dandymadeproductions.com/
+   // FTP URL - ftp(s):/dandymadeproductions.com/
    //
    // Other Valid Java URL protocols, gopher, mailto, appletresource,
    // doc, netdoc, systemresource, & verbatim.
@@ -261,52 +283,38 @@ public class PluginLoader implements Runnable
                pluginURL.toExternalForm().indexOf("file:") + 5)));
          }
          
-         // Http(s) plugin
-         else if (pluginURL.getProtocol().equals(PluginRepository.HTTP)
-                  || pluginURL.getProtocol().equals(PluginRepository.HTTPS))
+         // Http(s)/Ftp(s) plugin
+         else if (pluginURL.getProtocol().startsWith(PluginRepository.HTTP)
+                  || pluginURL.getProtocol().startsWith(PluginRepository.FTP))
          { 
             Proxy httpProxy = null;
             String cachedJAR_FileName;
             
             // Try proxy
-            if (generalProperties.getEnableProxy())
+            if (generalProperties.getEnableProxy() && repositoryType.startsWith(PluginRepository.HTTP))
                httpProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(
                   generalProperties.getProxyAddress(), generalProperties.getProxyPort()));
             
-            // Try to Cache
+            // Try to Cache, all remote network plugins MUST
+            // be cached!
             cachedJAR_FileName = Utils.getCacheDirectory() + repositoryName
                                  + fileSeparator + pluginFileName;
                
-            try
+            if (cacheJAR(pluginURL.toExternalForm(), cachedJAR_FileName, httpProxy, true))
             {
-               if (cacheJAR(pluginURL.toExternalForm(), cachedJAR_FileName, httpProxy, true))
-               {
-                  loadingPluginURL = new URL("file:" + cachedJAR_FileName);
-                  System.out.println("PluginLoader loadPluginEntry() JAR Cached: " + cachedJAR_FileName);
-               }
-               else
-               {
-                  if (Ajqvue.getDebug())
-                     JOptionPane.showMessageDialog(null, "PluginLoader loadPluginEntry() "
-                                                   + "Failed Cache of Network JAR", "Alert",
-                                                   JOptionPane.ERROR_MESSAGE);
-                  // !Review ?????
-                  // If is http/https without authorization then
-                  // can proceed, because the resource bundle does
-                  // not need to be cached.
-                  
-                  // For now aprove all http/https on
-                  // failure of caching.
-                  // return;
-               }
-            }
-            catch (IOException ioe)
-            {
+               loadingPluginURL = new URL("file:" + cachedJAR_FileName);
                if (Ajqvue.getDebug())
-                  System.out.println("PluginLoader loadPluginEntry()\n"
-                                     + "Failed to Close Cache Stream.\n" + ioe.toString());
+                  System.out.println("PluginLoader loadPluginEntry() JAR Cached: " + cachedJAR_FileName);
+            }
+            else
+            {
+               JOptionPane.showMessageDialog(null, "PluginLoader loadPluginEntry() "
+                                             + "Failed Cache of Network JAR", "Alert",
+                                             JOptionPane.ERROR_MESSAGE);
+               return;
             }
             
+            // Proceed to use the cached plugin.
             URL jarUrl = new URL(loadingPluginURL, "jar:" + loadingPluginURL + "!/");
             JarURLConnection conn = (JarURLConnection) jarUrl.openConnection();
             jarFile = conn.getJarFile();
@@ -336,7 +344,7 @@ public class PluginLoader implements Runnable
                
                pluginEntriesHashMap.put(loadingPluginURL.toExternalForm(), className);
                // System.out.println("PluginLoader loadPluginEntry() Located: "
-               //                    + loadingPluginURL.toExternalForm() + " " + className);
+               //                     + loadingPluginURL.toExternalForm() + " " + className);
             }
          }
          
@@ -398,9 +406,10 @@ public class PluginLoader implements Runnable
    //==============================================================
 
    private boolean cacheJAR(String resourceURLString, String cachedJAR_FileName,
-                            Proxy proxy, boolean debugMode) throws IOException
+                            Proxy proxy, boolean debugMode)
    {
       // Method Instances
+      FTPClient ftpClient;
       InputStream inputStream;
       BufferedInputStream inputBuffer;
       int inByte;
@@ -412,11 +421,13 @@ public class PluginLoader implements Runnable
       boolean cached;
 
       // Setup
-      cached = false;
+      ftpClient = null;
       inputStream = null;
       inputBuffer = null;
       fileOutputStream = null;
       fileOutputBuffer = null;
+      
+      cached = false;
 
       // Open a stream for the JAR then byte it to the
       // local cache file.
@@ -439,7 +450,7 @@ public class PluginLoader implements Runnable
             {
                displayErrors("PluginLoader cacheJAR()\n"
                              + httpConnection.getResponseMessage());
-               return false;
+               return cached;
             }
             else
                inputStream = httpConnection.getInputStream();
@@ -461,9 +472,44 @@ public class PluginLoader implements Runnable
               {
                  displayErrors("PluginLoader cacheJAR()\n"
                                + httpsConnection.getResponseMessage());
-                 return false;
+                 return cached;
               }
                  
+         }
+         // Handle FTP(S)
+         else if (pluginURL.getProtocol().startsWith(PluginRepository.FTP))
+         {  
+            FTP_Client ftp_Client;
+            
+            if (repositoryType.equals(PluginRepository.FTPS))
+               ftp_Client = new FTP_Client(repositoryType, PluginRepository.FTPS
+                                           + resourceURLString.substring(resourceURLString.indexOf(":")),
+                                           repositoryOptions);
+            else
+               ftp_Client = new FTP_Client(repositoryType, resourceURLString, repositoryOptions);
+            
+            ftpClient = ftp_Client.createFTPClient();
+            
+            if (ftpClient == null)
+               return cached;
+            
+            fileOutputStream = new FileOutputStream(cachedJAR_FileName);
+            
+            ftpClient.retrieveFile(pluginFileName, fileOutputStream);
+            
+            if (ftpClient.getReplyCode() == FTPReply.FILE_UNAVAILABLE)
+            {
+               displayErrors("PluginLoader cacheJAR() Plugin Not Found:\n"
+                             + ftpClient.getReplyCode() + " : "
+                             + ftpClient.getReplyString());
+            }
+            else
+               cached = true;
+            
+            ftpClient.noop();
+            ftpClient.logout();
+            
+            return cached;   
          }
          // Handle File
          else
@@ -539,8 +585,31 @@ public class PluginLoader implements Runnable
                }
                finally
                {
-                  if (inputStream != null)
-                     inputStream.close();
+                  try
+                  {
+                     if (inputStream != null)
+                        inputStream.close();  
+                  }
+                  catch (IOException ioe)
+                  {
+                     if (debugMode)
+                        System.out.println("PluginLoader cacheJAR()() Failed to Close "
+                                           + "inputStream.\n" + ioe.toString());
+                  }
+                  finally
+                  {
+                     try
+                     {
+                        if (ftpClient != null && ftpClient.isConnected())
+                           ftpClient.disconnect();
+                     }
+                     catch (IOException ioe)
+                     {
+                        if (debugMode)
+                           System.out.println("PluginLoader cacheJAR() "
+                                              + "Failed to disconnet ftpClient. " + ioe.toString());
+                     }     
+                  }
                }
             }
          }    
