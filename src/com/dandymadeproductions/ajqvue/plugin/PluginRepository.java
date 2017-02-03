@@ -10,8 +10,8 @@
 //                 << PluginRepository.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.2 02/03/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,9 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production PluginRepository Class.
+//         1.1 Corrected Class Instance FTPS Value to ftps.
+//         1.2 Added Class Instance repositoryOptions Along With Getter/Setter. Made
+//             Method displayErrors() Protected.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -73,7 +76,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * to properly derive a file/network repository.   
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.2 02/03/2017
  */
 
 public abstract class PluginRepository implements PluginRepositoryInterface
@@ -82,6 +85,7 @@ public abstract class PluginRepository implements PluginRepositoryInterface
    private String repositoryName;
    private String repositoryPath;
    private String repositoryType;
+   private String[] repositoryOptions;
    private ArrayList<Plugin> pluginsList;
    
    protected GeneralProperties generalProperties;
@@ -94,7 +98,7 @@ public abstract class PluginRepository implements PluginRepositoryInterface
    
    public static final String FILE = "file";
    public static final String FTP = "ftp";
-   public static final String FTPS = "sftp";
+   public static final String FTPS = "ftps";
    public static final String HTTP = "http";
    public static final String HTTPS = "https";
    public static final String UNKNOWN = "unknown";
@@ -168,6 +172,15 @@ public abstract class PluginRepository implements PluginRepositoryInterface
    public void setType(String type)
    {
       repositoryType = type; 
+   }
+   
+   //==============================================================
+   // Class method to set the repository options, ftp(s).
+   //==============================================================
+   
+   public void setOptions(String[] options)
+   {
+      repositoryOptions = options; 
    }
    
    //==============================================================
@@ -481,6 +494,16 @@ public abstract class PluginRepository implements PluginRepositoryInterface
    }
    
    //==============================================================
+   // Class method to allow the return of some predifined type,
+   // example file, http, ftp, other?
+   //==============================================================
+   
+   public String[] getRepositoryOptions()
+   {
+      return repositoryOptions;
+   }
+   
+   //==============================================================
    // Class method to allow the collection of the list of plugins
    // that are associated with the repository.
    //==============================================================
@@ -514,7 +537,7 @@ public abstract class PluginRepository implements PluginRepositoryInterface
    // if something goes wrong with the loading of repository.
    //==============================================================
 
-   public void displayErrors(String errorString)
+   protected void displayErrors(String errorString)
    {
       if (errorString.length() > 200)
          errorString = errorString.substring(0, 200);
