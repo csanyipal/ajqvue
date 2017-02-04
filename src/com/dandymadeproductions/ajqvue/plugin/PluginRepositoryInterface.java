@@ -8,8 +8,8 @@
 //              << PluginRepositoryInterface.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.1 02/04/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production PluginRepositoryInterface Class.
+//         1.1 Added Interfaces setOptions() & getRepositoryOptions().
 //
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -46,7 +47,7 @@ import java.util.ArrayList;
  * within the  framework as a repository definition for plugins.   
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 02/04/2017
  */
 
 public interface PluginRepositoryInterface
@@ -68,6 +69,12 @@ public interface PluginRepositoryInterface
    //==============================================================
    
    void setType(String repositoryType);
+   
+   //==============================================================
+   // Interface method to set the repository options.
+   //==============================================================
+   
+   void setOptions(String[] repositoryOptions);
    
    //==============================================================
    // Interface method to setup up the repository.
@@ -136,6 +143,13 @@ public interface PluginRepositoryInterface
    //==============================================================
    
    String getRepositoryType();
+   
+   //==============================================================
+   // Interface method to allow the return of some options for
+   // ftp(s).
+   //==============================================================
+   
+   String[] getRepositoryOptions();
    
    //==============================================================
    // Interface method to allow the collection of the list of
