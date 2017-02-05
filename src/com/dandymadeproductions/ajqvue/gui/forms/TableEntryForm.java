@@ -8,8 +8,8 @@
 //                  << TableEntryForm.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.1 02/05/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/18/2016 Production TableEntryForm Class.
+//         1.1 02/05/2017 Method selectFunctionOperator() Correction in
+//                        Spelling for message Resource.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -103,7 +105,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 02/05/2016
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -2217,7 +2219,7 @@ public class TableEntryForm extends JFrame implements ActionListener
       catch (IOException ioe)
       {
          message = resourceBundle.getResourceString("TableEntryForm.dialogmessage.ErrorDirectory",
-            "Error in creating home directory .ajqvue funtions file");
+            "Error in creating home directory .ajqvue functions file");
          
          errorString = message + "\n" + ioe;
          JOptionPane.showMessageDialog(null, errorString, resourceAlert, JOptionPane.ERROR_MESSAGE);
