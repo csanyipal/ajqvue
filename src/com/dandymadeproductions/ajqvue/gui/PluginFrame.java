@@ -7,8 +7,8 @@
 //                   << PluginFrame.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.3 12/03/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.6 02/08/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,14 @@
 //             Creation.
 //         1.3 Method createRepository() Changed centralTabPane Tooltip to pluginRepository.
 //             getPath().
+//         1.4 Method actionPerformed() Consolidated Conditional for All Valid Repository
+//             Types in Call to loadPlugin(). Method loadPlugin() Added Argument repositoryType.
+//             In Same Method Change of URLString for FTPS Repositories to Just FTP, FTPS
+//             Not Valid URL. Method createRepository() Passing of Proper Repository Type, FTP,
+//             FTPS to new FTP_PluginRepository().
+//         1.5 Method loadPlugin() Added Argument options, Along With Passing Same to Class
+//             PluginLoader Constructor.
+//         1.6 Constructor Corrected Resource PluginManagement Description.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -116,13 +124,14 @@ import com.dandymadeproductions.ajqvue.utilities.JarFileFilter;
 import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
 import com.dandymadeproductions.ajqvue.utilities.TableModel;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
+import com.dandymadeproductions.ajqvue.plugin.FTP_PluginRepository;
 
 /**
  *    The PluginFrame class provides a frame that is used to view,
  * remove, and install new plugins to the application.
  * 
  * @author Dana M. Proctor
- * @version 1.3 12/03/2016
+ * @version 1.6 02/08/2017
  */
 
 //=================================================================
@@ -439,7 +448,7 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
                String fileLocation = optainFile(this, true).toString();
                
                if (!fileLocation.isEmpty())
-                  loadPlugin(fileLocation, "");
+                  loadPlugin(fileLocation, "", PluginRepository.FILE, null);
             }
             // Repository
             else
@@ -470,18 +479,14 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
                      return;
                   }
                   
-                  if (repositoryType.equals(PluginRepository.FILE))
+                  if (repositoryType.equals(PluginRepository.FILE)
+                      || repositoryType.equals(PluginRepository.FTP)
+                      || repositoryType.equals(PluginRepository.FTPS)
+                      || repositoryType.equals(PluginRepository.HTTP)
+                      || repositoryType.equals(PluginRepository.HTTPS))
                   {
-                     loadPlugin(selectedPluginPath, repositoryName);
-                  }
-                  else if (repositoryType.equals(PluginRepository.FTP))
-                  {
-                     System.out.println("FTP Repository Install");
-                  }
-                  else if (repositoryType.equals(PluginRepository.HTTP)
-                           || repositoryType.equals(PluginRepository.HTTPS))
-                  {
-                     loadPlugin(selectedPluginPath, repositoryName);
+                     loadPlugin(selectedPluginPath, repositoryName, repositoryType,
+                                selectedRepositoryPanel.getRepositoryOptions());
                   }
                   else
                   {
@@ -962,7 +967,8 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
    // plugin into the Main_Frame.
    //==============================================================
    
-   private void loadPlugin(String URLString, String repositoryName)
+   private void loadPlugin(String URLString, String repositoryName, String repositoryType,
+                           String[] repositoryOptions)
    {
       // Method Instances
       String resource;
@@ -971,9 +977,14 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
 
       try
       {
-         new PluginLoader(parentFrame, new URL(URLString), repositoryName);
+         if (repositoryType.equals(PluginRepository.FTPS))
+            new PluginLoader(parentFrame, new URL(PluginRepository.FTP + URLString.substring(4)),
+                             repositoryName, repositoryType, repositoryOptions);
+         else
+            new PluginLoader(parentFrame, new URL(URLString), repositoryName, repositoryType,
+                             repositoryOptions);
          
-         loadingPluginsList.add((new URL(URLString).toString()));
+         loadingPluginsList.add(URLString);
          displayLoadingPluginsData();
       }
       catch (MalformedURLException mfe)
@@ -1390,12 +1401,13 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
                pluginRepository = new HTTP_PluginRepository(PluginRepository.HTTP);
          }
          // ftp, ftps
-         /*
          else if (repositoryURLString.toLowerCase(Locale.ENGLISH).startsWith(PluginRepository.FTP))
          {
-            pluginRepository = new FTP_PluginRepository();
+            if (repositoryURLString.toLowerCase(Locale.ENGLISH).startsWith(PluginRepository.FTPS))
+               pluginRepository = new FTP_PluginRepository(PluginRepository.FTPS);
+            else
+               pluginRepository = new FTP_PluginRepository(PluginRepository.FTP);
          }
-         */
          // file.
          else
          {
