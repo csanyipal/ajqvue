@@ -10,8 +10,8 @@
 //             << PluginRepositoryPanel.java >>
 //
 //================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.1 09/20/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.2 02/09/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@
 // Version 1.0 Production PluginRepositoryPanel Class.
 //         1.1 Method loadPluginTableData() Replace Standard plugin.getXXX()
 //             Getters Relplaced With getControlledXXX() Methods.
+//         1.2 Added Class Method getRepositoryOptions().
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -68,7 +69,7 @@ import com.dandymadeproductions.ajqvue.utilities.TableModel;
  * the panel to display and allow selecting of plugins.
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/20/2016
+ * @version 1.2 02/09/2017
  */
 
 public class PluginRepositoryPanel extends JPanel
@@ -232,6 +233,16 @@ public class PluginRepositoryPanel extends JPanel
    public String getRepositoryType()
    {
       return pluginRepository.getRepositoryType();
+   }
+   
+   //==============================================================
+   // Class method to return the options, ftp(s), of plugin
+   // repository.
+   //==============================================================
+   
+   public String[] getRepositoryOptions()
+   {
+      return pluginRepository.getRepositoryOptions();
    }
    
    //==============================================================
