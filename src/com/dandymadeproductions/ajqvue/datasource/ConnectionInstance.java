@@ -7,8 +7,8 @@
 //               << ConnectionInstance.java >>
 //
 //=================================================================
-// Copyright (C) 2005-2016 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Copyright (C) 2005-2017 Dana M. Proctor
+// Version 1.1 02/11/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,6 +30,9 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/17/2016 Initial ConnectionInstance Class.
+//         1.1 02/11/2017 Made Default Derby, H2, SQLite, & HSQL2 Memory Connection Instances
+//                        public Along With PROTOCOL. Changed Class Instance HOST to LOCALHOST
+//                        & Also Made public.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -64,7 +67,7 @@ import com.sun.rowset.WebRowSetImpl;
  * connections to a distinct set of databases.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 02/11/2017
  */
 
 public class ConnectionInstance
@@ -90,28 +93,28 @@ public class ConnectionInstance
    public static final String OTHERDB = ConnectionManager.OTHERDB;
    
    // Default Derby, H2, SQLite, & HSQL2 Memory Connection Instances.
-   private static final String DERBY_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
-   private static final String DERBY_SUBPROTOCOL = "derby";
-   private static final String DERBY_PORT = "1527";
-   private static final String DERBY_MEMORY_DB = "memory:dbname0";
+   public static final String DERBY_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
+   public static final String DERBY_SUBPROTOCOL = "derby";
+   public static final String DERBY_PORT = "1527";
+   public static final String DERBY_MEMORY_DB = "memory:dbname0";
    
-   private static final String H2_DRIVER = "org.h2.Driver";
-   private static final String H2_SUBPROTOCOL = "h2";
-   private static final String H2_PORT = "9092";
-   private static final String H2_MEMORY_DB = "mem:dbname1";
+   public static final String H2_DRIVER = "org.h2.Driver";
+   public static final String H2_SUBPROTOCOL = "h2";
+   public static final String H2_PORT = "9092";
+   public static final String H2_MEMORY_DB = "mem:dbname1";
    
-   private static final String SQLITE_DRIVER = "org.sqlite.JDBC";
-   private static final String SQLITE_SUBPROTOCOL = "sqlite";
-   private static final String SQLITE_PORT = "0000";
-   private static final String SQLITE_MEMORY_DB = ":memory:";
+   public static final String SQLITE_DRIVER = "org.sqlite.JDBC";
+   public static final String SQLITE_SUBPROTOCOL = "sqlite";
+   public static final String SQLITE_PORT = "0000";
+   public static final String SQLITE_MEMORY_DB = ":memory:";
    
-   private static final String HSQL2_DRIVER = "org.hsqldb.jdbcDriver";
-   private static final String HSQL2_SUBPROTOCOL = "hsqldb:hsql";
-   private static final String HSQL2_PORT = "9001";
-   private static final String HSQL2_MEMORY_DB = "mem:dbname2";
+   public static final String HSQL2_DRIVER = "org.hsqldb.jdbcDriver";
+   public static final String HSQL2_SUBPROTOCOL = "hsqldb:hsql";
+   public static final String HSQL2_PORT = "9001";
+   public static final String HSQL2_MEMORY_DB = "mem:dbname2";
    
-   private static final String PROTOCOL = "jdbc";
-   private static final String HOST = "localhost";
+   public static final String PROTOCOL = "jdbc";
+   public static final String LOCALHOST = "localhost";
    private static final String USER = "sa";
    private static final String PASSWORD = " ";
    private static final String SSH = "false";
@@ -208,7 +211,7 @@ public class ConnectionInstance
       connectionProperties.setProperty(ConnectionProperties.DRIVER, driver);
       connectionProperties.setProperty(ConnectionProperties.PROTOCOL, PROTOCOL);
       connectionProperties.setProperty(ConnectionProperties.SUBPROTOCOL, subProtocol);
-      connectionProperties.setProperty(ConnectionProperties.HOST, HOST);
+      connectionProperties.setProperty(ConnectionProperties.HOST, LOCALHOST);
       connectionProperties.setProperty(ConnectionProperties.PORT, port);
       connectionProperties.setProperty(ConnectionProperties.DB, db);
       connectionProperties.setProperty(ConnectionProperties.USER, USER);
