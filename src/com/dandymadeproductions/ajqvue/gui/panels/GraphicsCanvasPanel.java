@@ -8,8 +8,8 @@
 //                   << GraphicsCanvasPanel.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.1 05/06/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/18/2016 Production GraphicsCanvasPanel Class.
+//         1.1 05/06/2017 Method drawPanel() Removed Redundant Call to super.
+//                        paint.Component().
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -56,7 +58,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * supplied image as its main component.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 05/06/2017
  */
 
 public class GraphicsCanvasPanel extends JPanel
@@ -130,8 +132,6 @@ public class GraphicsCanvasPanel extends JPanel
    
    private void drawPanel(Graphics g)
    {
-      super.paintComponent(g);
-      
       // Class Methods
       Graphics2D g2d;
       int panelWidth, panelHeight;
