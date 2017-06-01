@@ -1,4 +1,41 @@
 -----------------------
+MySQL 10.0.26-MariaDB
+mariadb-java-client-2.0.1.jar
+
+0 Data Type Id data_type_id java.lang.Long INTEGER UNSIGNED 10
+1 Char Type char_type java.lang.String CHAR 30
+2 Varchar Type varchar_type java.lang.String VARCHAR 30
+3 TinyBlob Type tinyBlob_type [B TINYBLOB 255
+4 Blob Type blob_type [B BLOB 65535
+5 MediumBlob Type mediumBlob_type [B MEDIUMBLOB 16777215
+6 LongBlob Type longBlob_type [B LONGBLOB -1
+7 TinyText Type tinyText_type java.lang.String VARCHAR 255
+8 Text Type text_type java.lang.String VARCHAR 65535
+9 MediumText Type mediumText_type java.lang.String VARCHAR 16777215
+10 LongText Type longText_type java.lang.String VARCHAR 2147483647
+11 Enum Type enum_type java.lang.String CHAR 4
+12 Set Type set_type java.lang.String CHAR 5
+13 Boolean Type boolean_type java.lang.Boolean TINYINT 1
+14 Bit5 Type bit5_type [B BIT 5
+15 TinyInt Type tinyInt_type java.lang.Integer TINYINT 4
+16 SmallInt Type smallInt_type java.lang.Integer SMALLINT UNSIGNED 5
+17 MediumInt Type mediumInt_type java.lang.Integer MEDIUMINT 9
+18 Int Type int_type java.lang.Integer INTEGER 11
+19 BigInt Type bigInt_type java.lang.Long BIGINT 20
+20 Float Type float_type java.lang.Float FLOAT 12
+21 Double Type double_type java.lang.Double DOUBLE 22
+22 Decimal Type decimal_type java.math.BigDecimal DECIMAL 18
+23 Date Type date_type java.sql.Date DATE 10
+24 Time Type time_type java.sql.Time TIME 10
+25 DateTime Type dateTime_type java.sql.Timestamp DATETIME 19
+26 TimeStamp 2 timeStamp_2 java.sql.Timestamp TIMESTAMP 22
+27 TimeStamp 4 timeStamp_4 java.sql.Timestamp TIMESTAMP 24
+28 TimeStamp 6 timeStamp_6 java.sql.Timestamp TIMESTAMP 26
+29 TimeStamp Type timeStamp_type java.sql.Timestamp TIMESTAMP 19
+30 Year 2 year_2 java.sql.Date YEAR 2
+31 Year 4 year_4 java.sql.Date YEAR 4
+
+-----------------------
 MySQL 5.5.32-MariaDB
 mariadb-java-client-1.3.2.jar
 
