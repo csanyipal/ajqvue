@@ -8,7 +8,7 @@
 //                 << Top_JMenuBar.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
+// Copyright (C) 2016-2017 Dana M. Proctor
 // Version 1.0 09/20/2016
 //
 // This program is free software; you can redistribute it and/or
