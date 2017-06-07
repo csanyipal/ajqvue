@@ -12,7 +12,7 @@
 //                 << DataSourcesDialog.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
+// Copyright (C) 2016-2017 Dana M. Proctor
 // Version 1.3 09/24/2016
 //
 // This program is free software; you can redistribute it and/or
