@@ -10,8 +10,8 @@
 //                  << TableTabPanel.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.1 06/07/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,9 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production TableTabPanel Class.
+//         1.1 Added Class Method clearHistory(). Added Popup MenuItem Clear History
+//             in createListTablePopupMenu() Along With Processing for Same in
+//             actionPerformed().
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -112,7 +115,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * access, while maintaining limited extensions.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/07/2017
  */
 
 public abstract class TableTabPanel extends JPanel implements TableTabInterface, ActionListener,
@@ -692,6 +695,10 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
                // Paste
                else if (actionCommand.equals((String) TransferHandler.getPasteAction().getValue(Action.NAME)))
                   pasteClipboardContents();
+               // Clear History
+               else if (actionCommand.equals("Clear History"))
+                  clearHistory();
+               // Save Image
                else if (actionCommand.equals("Save As Image"))
                {
                   listTable.clearSelection();
@@ -1474,6 +1481,16 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
          summaryTablePopupMenu.add(menuItem);
       }
       
+      // Summary Table clear history actions
+      
+      summaryTablePopupMenu.addSeparator();
+      
+      resource = resourceBundle.getResourceString("TableTabPanel.popup.ClearHistory",
+                                                  "Clear History");
+      menuItem = menuItem(resource, "Clear History");
+      summaryTablePopupMenu.add(menuItem);
+      
+      
       // Summary Table Save as Image, PNG.
       
       summaryTablePopupMenu.addSeparator();
@@ -1644,7 +1661,19 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
          nextStateButton.setEnabled(false);
    }
    
+   //==============================================================
+   // Class Method for clearing the state history.
+   //==============================================================
 
+   public void clearHistory()
+   { 
+      stateHistory.clear();
+      stateHistory.add(getState());
+      stateHistoryIndex = 0;
+      previousStateButton.setEnabled(false);
+      nextStateButton.setEnabled(false);
+   }
+   
    //==============================================================
    // Class method to view the current selected item in the table.
    //
