@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Version 1.1 06/08/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production MenuActionCommnds Class.
+//         1.1 Added Class Instance ACTION_CLEAR_HISTORY.
 //         
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -43,7 +44,7 @@ package com.dandymadeproductions.ajqvue.gui;
  * point for allocation of Action Commands used by the menu system.  
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 06/08/2017
  */
 
 public interface MenuActionCommands
@@ -74,6 +75,9 @@ public interface MenuActionCommands
    
    // ===========
    // Edit Menu
+   
+   // Clear History
+   public static final String ACTION_CLEAR_HISTORY = "ECH";
    
    // Preferences
    public static final String ACTION_PREFERENCES = "EP";
