@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/20/2016
+// Version 1.1 06/08/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production Main_JMenuBar Class.
+//         1.1 Method createEditMenu() Added Clear History.
 //         
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -65,7 +66,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * application frame.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/20/2016
+ * @version 1.1 06/08/2017
  */
 
 public class Main_JMenuBar extends JMenuBar implements MenuActionCommands
@@ -229,6 +230,11 @@ public class Main_JMenuBar extends JMenuBar implements MenuActionCommands
       menuItem.setText(resource + "       " + "Ctrl+v");
       menuItem.setMnemonic(KeyEvent.VK_V);
       editMenu.add(menuItem);
+      editMenu.addSeparator();
+      
+      // Clear Table History
+      resource = resourceBundle.getResourceString("Main_JMenuBar.menu.ClearHistory", "Clear History");
+      editMenu.add(menuItem(resource, ACTION_CLEAR_HISTORY));
       editMenu.addSeparator();
 
       // Preferences
