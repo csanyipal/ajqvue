@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 09/24/2016
+// Version 1.2 06/08/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,8 @@
 //=================================================================
 // Version 1.0 Production Main_JMenuBarActions Class.
 //         1.1 Updated References to PluginModule to Plugin_Module.
+//         1.2 Method actionSelection() Added Processing for Clear Table
+//             History Action.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -101,7 +103,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * JMenuBar and JToolBar in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/24/2016
+ * @version 1.2 06/08/2017
  */
 
 class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
@@ -255,6 +257,13 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
       // Edit Menu Item Selection Routing
       // ==================================
 
+      // Clear Table History
+      if (actionCommand.equals(ACTION_CLEAR_HISTORY) && DBTablesPanel.getTableCount() != 0)
+      {
+         DBTablesPanel.getSelectedTableTabPanel().clearHistory();
+         return;
+      }
+      
       // Preferences
       if (actionCommand.equals(ACTION_PREFERENCES) && DBTablesPanel.getTableCount() != 0)
       {
