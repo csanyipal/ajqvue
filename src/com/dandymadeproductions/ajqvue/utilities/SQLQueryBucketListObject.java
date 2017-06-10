@@ -10,7 +10,7 @@
 // 
 // Copyright (C) 2016-2017 Dana M. Proctor
 // All rights reserved.
-// Version 1.1 09/17/2016
+// Version 1.2 06/10/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,7 +32,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 05/01/2007 Original Sun Microsystems, Inc TransparentButton Class.
-//         1.1 09/17/2017 Integration Into Ajqvue as SQLQueryBucketListObject.
+//         1.1 09/17/2016 Integration Into Ajqvue as SQLQueryBucketListObject.
+//         1.2 06/10/2017 Method constructSQLQueryBucketListObject() setBorder().
 //                           
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -46,6 +47,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
 //=================================================================
@@ -57,7 +59,7 @@ import javax.swing.JButton;
  * standard Swing button that exempts translucency.
  * 
  * @author Chet, Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.2 06/10/2017
  */
 
 public class SQLQueryBucketListObject extends JButton
@@ -91,6 +93,7 @@ public class SQLQueryBucketListObject extends JButton
       sqlStatementString = new StringBuffer();
       isLimited = false;
       
+      setBorder(BorderFactory.createRaisedSoftBevelBorder());
       setFont(getFont().deriveFont(Font.BOLD));
       setContentAreaFilled(false);
       setOpaque(false);
