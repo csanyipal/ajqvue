@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Version 1.1 06/10/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,6 +30,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production SQLQueryBucketListCellRenderer Class.
+//         1.1 Method getListCellRendererComponent() Changed Border for Selected
+//             Object to Soft Lower Bevel.
 //                            
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -51,7 +53,7 @@ import javax.swing.ListCellRenderer;
  * list cell renderer component used in the SQLQueryBucketFrame JList.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 06/10/2017
  */
 
 public class SQLQueryBucketListCellRenderer extends SQLQueryBucketListObject implements ListCellRenderer<Object>
@@ -91,13 +93,9 @@ public class SQLQueryBucketListCellRenderer extends SQLQueryBucketListObject imp
       setBackground(buttonColor);
 
       if (isSelected)
-      {
-         setBorder(BorderFactory.createLineBorder(list.getSelectionForeground(), 1));
-      }
+         setBorder(BorderFactory.createLoweredSoftBevelBorder());
       else
-      {
          setBorder(((SQLQueryBucketListObject) value).getBorder());
-      }
 
       setEnabled(list.isEnabled());
       setFont(buttonFont.deriveFont(Font.BOLD));
