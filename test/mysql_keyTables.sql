@@ -19,7 +19,8 @@
 --         11/28/2008 Reformat of Key Table Order.
 --         07/21/2010 Updated Contact, Email, Address.
 --         06/08/2017 Removed Engine and Charaset Definitions. Also
---                    Clarified the Use of Primary Keys Only, 
+--                    Clarified the Use of Primary Keys Only.
+--         06/10/2017 Corrected SQL Statements for keY_taAble2.
 --      
 -- danap@dandymadeproductions.com
 -- =============================================================
@@ -42,11 +43,11 @@ CREATE TABLE `key_table1` (
 
 DROP TABLE IF EXISTS `keY_tAble2`;
 CREATE TABLE `keY_tAble2` (
-  `Host` char(60) character set latin1 collate latin1_bin NOT NULL default '',
-  `Db` char(64) character set latin1 collate latin1_bin NOT NULL default '',
-  `User` char(16) character set latin1 collate latin1_bin NOT NULL default '',
+  `Host` char(60) NOT NULL default '',
+  `Db` char(64) NOT NULL default '',
+  `User` char(16) NOT NULL default '',
   `Select_priv` enum('N','Y') NOT NULL default 'N',
-  PRIMARY KEY  (`Host`,`Db`,`User`),
+  PRIMARY KEY  (`Host`,`Db`,`User`)
 );
 
 --
