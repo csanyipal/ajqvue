@@ -1,4 +1,28 @@
 ------------------------------
+Apache Derby 10.13.1.1
+
+1 data_type_id Data Type Id java.lang.Long BIGINT 20
+2 char_type Char Type java.lang.String CHAR 30
+3 char_bit_type Char Bit Type byte[] CHAR FOR BIT DATA 60
+4 varchar_type Varchar Type java.lang.String VARCHAR 30
+5 varchar_bit_type Varchar Bit Type byte[] VARCHAR FOR BIT DATA 60
+6 blob_type Blob Type java.sql.Blob BLOB 2097152
+7 longvarchar_type Longvarchar Type java.lang.String LONG VARCHAR 32700
+8 longvarchar_bit_type Longvarchar Bit Type byte[] LONG VARCHAR FOR BIT DATA 65400
+9 clob_type Clob Type java.sql.Clob CLOB 1048576
+10 boolean_type Boolean Type java.lang.Boolean BOOLEAN 5
+11 smallInt_type SmallInt Type java.lang.Integer SMALLINT 6
+12 int_type Int Type java.lang.Integer INTEGER 11
+13 bigInt_type BigInt Type java.lang.Long BIGINT 20
+14 float_type Float Type java.lang.Double DOUBLE 24
+15 real_type Real Type java.lang.Float REAL 15
+16 double_type Double Type java.lang.Double DOUBLE 24
+17 decimal_type Decimal Type java.math.BigDecimal DECIMAL 18
+18 date_type Date Type java.sql.Date DATE 10
+19 time_type Time Type java.sql.Time TIME 8
+20 timeStamp_type TimeStamp Type java.sql.Timestamp TIMESTAMP 29
+
+------------------------------
 Apache Derby 10.9.1.0
 
 1 DATA_TYPE_ID DATA TYPE ID java.lang.Integer INTEGER 11
