@@ -8,8 +8,8 @@
 //               << Default_JMenuBar.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.1 06/13/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production Default_JMenuBar Class.
+//         1.1 Class javadoc Constructor Comment Correction.
 //         
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -56,10 +57,10 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
 
 /**
  *    The Default_JMenuBar class is used to construct a menubar that
- * contains essentially only the menus File|Exit & Logo.  
+ * contains essentially only the menus File|Exit &amp; Logo.  
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 06/13/2017
  */
 
 public class Default_JMenuBar extends JMenuBar implements MenuActionCommands
