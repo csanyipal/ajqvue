@@ -12,7 +12,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 09/18/2016
+// Version 1.2 06/14/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,7 +34,10 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/17/2016 Production StockItemsTableModel
-//             09/18/2016 Corrected Error in Assignment for serialVersionUID.           
+//         1.1 09/18/2016 Corrected Error in Assignment for serialVersionUID.
+//         1.2 06/14/2017 Method getValueAt() Conditional Check on Caller
+//                        [row][column] Within Bounds, Prevents Null Pointer
+//                        Exception.
 //                        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -54,7 +57,7 @@ import javax.swing.table.AbstractTableModel;
  * generated.
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/18/2016
+ * @version 1.2 06/14/2017
  */
 
 public class TableModel extends AbstractTableModel
@@ -104,7 +107,10 @@ public class TableModel extends AbstractTableModel
 
    public Object getValueAt(int row, int column)
    {
-      return data[row][column];
+      if (row < data.length && column < data[0].length)
+         return data[row][column];
+      else
+         return null;
    }
 
    //==============================================================
