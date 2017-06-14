@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Version 1.1 06/14/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/17/2016 Production AResourceBundle Class.
+//         1.1 06/14/2017 Class javadoc Constructor Comment Correction.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -70,12 +71,12 @@ import com.dandymadeproductions.ajqvue.Ajqvue;
 
 /**
  *    The AResourceBundle class provides a method to more closely
- * control the loading of locale, image, & other types of resource
+ * control the loading of locale, image, &amp; other types of resource
  * files in a program. Handles also the methods needed to retrieve
  * these various resource.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 06/14/2017
  */
 
 public class AResourceBundle implements Serializable
