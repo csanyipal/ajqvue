@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 09/18/2016
+// Version 1.2 06/15/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,9 @@
 //=================================================================
 // Version 1.0 Original TableDefinitionGenerator Class.
 //         1.1 Corrected Import Package DataExportProperties.
+//         1.2 Class Method createDerbyTableDefinition() Eliminated Redundant
+//             Conditional for Character Types, Along With Correction to Not
+//             Include Size for Long Varchar for Bit Data.
 //             
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -63,7 +66,7 @@ import com.dandymadeproductions.ajqvue.structures.DataExportProperties;
  * structures that output via the SQL data export feature.
  * 
  * @author Dana Proctor
- * @version 1.1 09/18/2016
+ * @version 1.2 06/16/2017
  */
 
 public class TableDefinitionGenerator
@@ -2242,22 +2245,24 @@ public class TableDefinitionGenerator
             // Character Types
             if (columnType.indexOf("CHAR") != -1)
             {
-               if (columnType.indexOf("CHAR") != -1)
+               if (columnType.equals("CHAR"))
+                  tableDefinition.append("CHAR(" + columnSize + ")");
+               else if (columnType.equals("VARCHAR"))
+                  tableDefinition.append("VARCHAR(" + columnSize + ")");
+               else if (columnType.indexOf("FOR BIT DATA") != -1)
                {
-                  if (columnType.equals("CHAR"))
-                     tableDefinition.append("CHAR(" + columnSize + ")");
-                  else if (columnType.equals("VARCHAR"))
-                     tableDefinition.append("VARCHAR(" + columnSize + ")");
-                  else if (columnType.indexOf("FOR BIT DATA") != -1)
+                  if (columnType.indexOf("VARCHAR") != -1)
                   {
-                     if (columnType.indexOf("VARCHAR") != -1)
-                        tableDefinition.append("VARCHAR(" + columnSize + ") FOR BIT DATA");
+                     if (columnType.indexOf("LONG") != -1)
+                        tableDefinition.append("LONG VARCHAR FOR BIT DATA");
                      else
-                        tableDefinition.append("CHAR(" + columnSize + ") FOR BIT DATA");
+                        tableDefinition.append("VARCHAR(" + columnSize + ") FOR BIT DATA");
                   }
                   else
-                     tableDefinition.append(columnType);
+                     tableDefinition.append("CHAR(" + columnSize + ") FOR BIT DATA");
                }
+               else
+                  tableDefinition.append(columnType);
             }
             
             // Blob Types
