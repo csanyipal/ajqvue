@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/20/2016
+// Version 1.1 06/16/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production Top_JMenuBar Class.
+//         1.1 Class javadoc Constructor Comment Correction.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -54,10 +55,10 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
 
 /**
  *    The Top_JMenuBar class is used to construct a menubar that
- * contains the File|Exit, Plugin Management, & Logo.  
+ * contains the File|Exit, Plugin Management, &amp; Logo.  
  * 
  * @author Dana M. Proctor
- * @version 1.9 04/19/2013
+ * @version 1.1 06/16/2017
  */
 
 class Top_JMenuBar extends JMenuBar implements MenuActionCommands
