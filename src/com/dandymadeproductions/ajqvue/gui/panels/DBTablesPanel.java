@@ -10,8 +10,8 @@
 //                 << DBTablesPanel.java >>
 //
 //=================================================================
-// Copyright (C) 2005-2016 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.1 06/17/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production DBTablesPanel Class.
+//         1.1 Class javadoc Constructor Comment Correction.
 //                           
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -73,11 +74,11 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
 /**
  *    The DbTablesPanel class provides the panel that holds all the
  * database tables panels, aka. TableTabPanels. In addition the class
- * also provides a common mechanism for getting those panels & other
+ * also provides a common mechanism for getting those panels &amp; other
  * information about the database tables.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/17/2017
  */
 
 public class DBTablesPanel extends JPanel implements ActionListener
