@@ -1,4 +1,27 @@
 -----------------------
+H2 version: 1.4.196
+
+1 data_type_id Data Type Id java.lang.Long BIGINT 20
+2 char_type Char Type java.lang.String CHAR 30
+3 varchar_type Varchar Type java.lang.String VARCHAR 30
+4 varchar_type_ignorecase Varchar Type Ignorecase java.lang.String VARCHAR_IGNORECASE 30
+5 blob_type Blob Type java.sql.Blob BLOB 1048576
+6 clob_type Clob Type java.sql.Clob CLOB 1048576
+7 uuid_type Uuid Type [B UUID 2147483647
+8 boolean_type Boolean Type java.lang.Boolean BOOLEAN 5
+9 tinyInt_type TinyInt Type java.lang.Byte TINYINT 4
+10 smallInt_type SmallInt Type java.lang.Short SMALLINT 6
+11 int_type Int Type java.lang.Integer INTEGER 11
+12 bigInt_type BigInt Type java.lang.Long BIGINT 20
+13 real_type Real Type java.lang.Float REAL 15
+14 double_type Double Type java.lang.Double DOUBLE 24
+15 decimal_type Decimal Type java.math.BigDecimal DECIMAL 16
+16 date_type Date Type java.sql.Date DATE 10
+17 time_type Time Type java.sql.Time TIME 8
+18 timeStamp_type TimeStamp Type java.sql.Timestamp TIMESTAMP 23
+19 array_type Array Type java.sql.Array ARRAY 0
+
+-----------------------
 H2 version: 1.4.192
 
 1 data_type_id Data Type Id java.lang.Long BIGINT 20
