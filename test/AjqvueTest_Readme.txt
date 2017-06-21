@@ -62,7 +62,7 @@ Note: Insure for each test case that involves a menu command that the
 
 	c. Edit/View Forms Cutting, Copying, and Pasting.
 	
-4. Test Query Table Tool (Each Supported Database Application)
+4. Test Query Frame Tool (Each Supported Database Application)
 
 	a. Execute SELECT * FROM xxxxtypes. Where xxxx stands for the associated
 	   database application, ie mysql, hsql.
@@ -73,6 +73,7 @@ Note: Insure for each test case that involves a menu command that the
 	c. Execute SELECT SQL statements on data. Example SELECT 2*2.
 	   
 	   Note: Oracle requires the selection from the table DUAL.
+	   Note: Apache Derby Does Not Support Directly.
        
 5. Test Search Database Tool (Each Supported Database Application)
 
