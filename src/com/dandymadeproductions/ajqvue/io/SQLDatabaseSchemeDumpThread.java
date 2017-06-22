@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 06/22/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production SQLDatabaseSchemeDumpThread Class.
+//         1.1 Method generateHeaders() Code Formatting to Clarify & Removal
+//             of Dashes After Website."
 //                         
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -58,7 +60,7 @@ import com.dandymadeproductions.ajqvue.utilities.TableDefinitionGenerator;
  * to prematurely terminate the dump.
  * 
  * @author Dana Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/22/2017
  */
 
 public class SQLDatabaseSchemeDumpThread implements Runnable
@@ -179,11 +181,15 @@ public class SQLDatabaseSchemeDumpThread implements Runnable
       dateTimeFormat = new SimpleDateFormat("yyyy.MM.dd G 'at' hh:mm:ss z");
       dateTime = dateTimeFormat.format(new Date());
 
-      headers = "--\n" + "-- SQL Dump\n" + "-- Version: " + version[1] + "\n"
-                + "-- WebSite: " + Ajqvue.getWebSite() + "--\n" + "-- Host: "
-                + hostName + "\n" + "-- Generated On: " + dateTime + "\n"
+      headers = "--\n"
+                + "-- SQL Dump\n"
+                + "-- Version: " + version[1] + "\n"
+                + "-- WebSite: " + Ajqvue.getWebSite() + "\n"
+                + "-- Host: " + hostName + "\n"
+                + "-- Generated On: " + dateTime + "\n"
                 + "-- SQL version: " + ConnectionManager.getDBProductName_And_Version() + "\n"
-                + "-- Database: " + databaseName + "\n" + "--\n\n"
+                + "-- Database: " + databaseName + "\n"
+                + "--\n\n"
                 + "-- ------------------------------------------\n";
 
       // System.out.println(headers);
