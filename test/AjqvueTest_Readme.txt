@@ -47,6 +47,14 @@ Note: Insure for each test case that involves a menu command that the
 	   rows, and functions in the test database datatypes table xxxxtypes.
 	   Where xxxx stands for the associated database application, ie.
 	   mysql, hsql.
+	   
+	e. Test for each database that support such, ie {H2, HSQL, SQLite, ?},
+	   the creation of both memory and file databases.
+	   
+	f. Test for each database that support such feature the passing of
+	   parameters to Database Name on login.
+	   
+	   Example: dbname;PARAMETER_NAME='xxx'?PARAMETER_NAME='xxx'.
 
 2. Table Summary Printing
 
