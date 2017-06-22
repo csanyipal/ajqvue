@@ -12,8 +12,8 @@
 //           << TableTabPanel_Generic.java >>
 //
 //================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.1 06/22/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production TableTabPanel_Generic Class.
+//         1.1 Method viewSelectedItem() Corrected the Use of currentColumnName
+//             Instead of listTable.getColumnName() for columnSizeHashMap.get().
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -67,7 +69,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/22/2017
  */
 
 public class TableTabPanel_Generic extends TableTabPanel
@@ -803,7 +805,9 @@ public class TableTabPanel_Generic extends TableTabPanel
                         currentContentData = ((String) currentContentData).replaceAll("'", "''");
                      
                      // Reformat date keys.
-                     currentColumnType = (String) columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                     currentColumnType = (String) columnTypeHashMap.get(
+                        parseColumnNameField(currentDB_ColumnName));
+                     
                      if (currentColumnType.equals("DATE"))
                      {
                         sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
@@ -926,7 +930,7 @@ public class TableTabPanel_Generic extends TableTabPanel
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
             currentColumnType = columnTypeHashMap.get(currentColumnName);
-            columnSize = columnSizeHashMap.get(listTable.getColumnName(i)).intValue();
+            columnSize = columnSizeHashMap.get(currentColumnName).intValue();
 
             currentContentData = db_resultSet.getString(currentDB_ColumnName);
             // System.out.println(i + " " + currentColumnName + " " +
