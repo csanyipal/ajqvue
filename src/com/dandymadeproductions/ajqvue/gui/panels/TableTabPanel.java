@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 06/07/2017
+// Version 1.2 06/24/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,10 @@
 //         1.1 Added Class Method clearHistory(). Added Popup MenuItem Clear History
 //             in createListTablePopupMenu() Along With Processing for Same in
 //             actionPerformed().
+//         1.2 Method setSearchTextField() Set advancedSortSearch to False, Disabled
+//             searchComboBox Action, So Method Will NOT Reload Table, Must Perform
+//             Through Other Means. Race Condition Exists With SearchFrame DBTablesPanel
+//             TabPanel Selection.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -115,7 +119,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * access, while maintaining limited extensions.
  * 
  * @author Dana M. Proctor
- * @version 1.1 06/07/2017
+ * @version 1.2 06/24/2017
  */
 
 public abstract class TableTabPanel extends JPanel implements TableTabInterface, ActionListener,
@@ -2700,12 +2704,17 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
 
    //==============================================================
    // Class method to allow classes to set the summary table
-   // search string and reload the table.
+   // search string.
    //==============================================================
 
    public void setSearchTextField(String searchString)
    {
+      advancedSortSearch = false;
+      
+      searchComboBox.removeActionListener(this);
       searchComboBox.setSelectedIndex(0);
+      searchComboBox.addActionListener(this);
+      
       searchTextField.setText(searchString);
       setTableRowSize(tableRowLimit);
    }
