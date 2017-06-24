@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/20/2016
+// Version 1.1 06/24/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production SearchFrame Class.
+//         1.1 Minor Code Formatting, Syntax Changes.
 //                            
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -81,7 +82,7 @@ import com.dandymadeproductions.ajqvue.utilities.SearchResultTableCellRenderer;
  * a connection established in the application.
  * 
  * @author Dana M. Proctor
- * @version 4.6 10/05/2013
+ * @version 1.1 06/24/2017
  */
 
 class SearchFrame extends JFrame implements ActionListener, KeyListener, MouseListener
@@ -105,10 +106,11 @@ class SearchFrame extends JFrame implements ActionListener, KeyListener, MouseLi
    private JTable resultTable;
    private TableModel tableModel;
 
-   private JProgressBar searchProgressBar;
-   private JButton cancelButton;
    private TableTabPanel selectedTableTab;
    private String selectedTable;
+   
+   private JProgressBar searchProgressBar;
+   private JButton cancelButton;
    private String iconsDirectory;
    
    //==============================================================
@@ -160,7 +162,7 @@ class SearchFrame extends JFrame implements ActionListener, KeyListener, MouseLi
          }
       };
 
-      this.addWindowListener(searchFrameListener);
+      addWindowListener(searchFrameListener);
 
       // ===============================================
       // JMenu Bar for the Frame.
@@ -169,7 +171,7 @@ class SearchFrame extends JFrame implements ActionListener, KeyListener, MouseLi
       searchFrameMenuBar = new JMenuBar();
       searchFrameMenuBar.setBorder(BorderFactory.createEtchedBorder());
       createMenuBar(searchFrameMenuBar);
-      this.setJMenuBar(searchFrameMenuBar);
+      setJMenuBar(searchFrameMenuBar);
 
       // ===============================================
       // Popup Menu for the Center JTable.
@@ -333,7 +335,7 @@ class SearchFrame extends JFrame implements ActionListener, KeyListener, MouseLi
          if (actionCommand.equals("FE"))
          {
             Main_JMenuBarActions.setSearchFrameNotVisisble();
-            this.dispose();
+            dispose();
          }
 
          // Popup resultTable Select All
@@ -506,7 +508,7 @@ class SearchFrame extends JFrame implements ActionListener, KeyListener, MouseLi
    //==============================================================   
 
    public void mouseClicked(MouseEvent e)
-   {  
+   {
       Point coordinatePoint;
       int tableRow, tableColumn;
 
