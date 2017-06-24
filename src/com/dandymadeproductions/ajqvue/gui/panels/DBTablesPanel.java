@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 06/17/2017
+// Version 1.2 06/24/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,6 +34,8 @@
 //=================================================================
 // Version 1.0 Production DBTablesPanel Class.
 //         1.1 Class javadoc Constructor Comment Correction.
+//         1.2 Method setSelectedTableTabPanel() Revalidated tableSelectionComboBox
+//             on Setting Item With validTable.
 //                           
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -78,7 +80,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * information about the database tables.
  * 
  * @author Dana M. Proctor
- * @version 1.1 06/17/2017
+ * @version 1.2 06/24/2017
  */
 
 public class DBTablesPanel extends JPanel implements ActionListener
@@ -641,7 +643,10 @@ public class DBTablesPanel extends JPanel implements ActionListener
          if (tableTabHashMap.get(tableName) == null)
             return;
          else
+         {
             tableSelectionComboBox.setSelectedItem(tableName);
+            tableSelectionComboBox.revalidate();
+         }
       }
    }
 }
