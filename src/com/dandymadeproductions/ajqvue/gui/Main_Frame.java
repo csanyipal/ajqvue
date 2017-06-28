@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.3 11/24/2016
+// Version 1.4 06/28/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -38,6 +38,8 @@
 //                        TopTabPanel to TopTabStaticPanel.
 //         1.3 11/24/2016 Method stateChanged() setJMenuBar for the Plugin Panel Used
 //                        getControlledMenuBar().
+//         1.4 06/28/2017 Removed Class Instances version & webSiteString Along With
+//                        Same Arguments in Constructor.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -87,7 +89,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * creation and inclusion.
  * 
  * @author Dana M. Proctor
- * @version 1.3 11/24/2016
+ * @version 1.4 06/28/2017
  */
 
 public class Main_Frame extends JFrame implements ActionListener, ChangeListener
@@ -100,8 +102,6 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
    private Main_JMenuBar menuBar;
    private Top_JMenuBar topMenuBar;
    
-   private String[] version;
-   private String webSiteString;
    private int lastTabIndex;
    
    private static JTabbedPane mainTabsPane = new JTabbedPane();
@@ -121,16 +121,13 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
    // Main_Frame Constructor
    //==============================================================
 
-   public Main_Frame(String[] version, String webSiteString)
+   public Main_Frame()
    {
       // Displaying title and assigning instance associations.
 
       super("Ajqvue   "
             + ConnectionManager.getConnectionProperties().getProperty(ConnectionProperties.HOST) + ":"
             + ConnectionManager.getConnectionProperties().getProperty(ConnectionProperties.DB));
-
-      this.version = version.clone();
-      this.webSiteString = webSiteString;
       
       //==================================================
       // Frame Window closing listener to detect the frame
@@ -298,7 +295,7 @@ public class Main_Frame extends JFrame implements ActionListener, ChangeListener
 
    public void actionPerformed(ActionEvent evt)
    {
-      Main_JMenuBarActions.actionsSelection(this, evt, sqlQueryBucketFrame, version, webSiteString);
+      Main_JMenuBarActions.actionsSelection(this, evt, sqlQueryBucketFrame);
    }
    
    //==============================================================
