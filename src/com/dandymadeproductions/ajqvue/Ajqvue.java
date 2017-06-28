@@ -15,7 +15,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.12 06/03/2017
+// Version 1.13 06/28/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -43,6 +43,8 @@
 //         1.11 11/01/2016 Relocated Creation of Popup Menu for popupListener
 //                         to Utils.createPopupMenu(). Updated VERSION.
 //         1.12 06/03/2017 Updated Copyrigth & VERSION.
+//         1.13 06/28/2017 Removed Arguments VERSION & WEBSITE to Main_Frame() in
+//                         actionPerformed().
 //                              
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -81,7 +83,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * Arguments -debug, -lang='locale'
  * 
  * @author Dana M. Proctor
- * @version 1.12 06/03/2017
+ * @version 1.13 06/28/2017
  */
 
 public class Ajqvue implements ActionListener
@@ -188,7 +190,7 @@ public class Ajqvue implements ActionListener
 
             // Create the Ajqvue main application frame.
 
-            mainFrame = new Main_Frame(VERSION, WEBSITE);
+            mainFrame = new Main_Frame();
             mainFrame.loadQueryBucketList();
             mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             mainFrame.createGUI();
