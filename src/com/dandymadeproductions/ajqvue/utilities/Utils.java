@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 11/04/2016
+// Version 1.3 06/28/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@
 //             Menu Action From createEditMenu() to Method createSelectAllMenuItem().
 //         1.2 Removed Commented Code From v1.1 createEditMenu() That was Moved to
 //             createSelectAllMenuItem().
+//         1.3 Added Class Method generateHeaders().
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -55,11 +56,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -100,6 +104,7 @@ import javax.swing.text.DefaultEditorKit;
 
 import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
+import com.dandymadeproductions.ajqvue.datasource.ConnectionProperties;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
 import com.dandymadeproductions.ajqvue.io.PDFDataTableDumpThread;
 import com.dandymadeproductions.ajqvue.io.WriteDataFile;
@@ -109,7 +114,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 1.2 11/04/2016
+ * @version 1.3 06/28/2017
  */
 
 public class Utils extends Ajqvue
@@ -633,6 +638,42 @@ public class Utils extends Ajqvue
          }
       }
       return menuItem;
+   }
+   
+   //==============================================================
+   // Class method for generating dump header info
+   //==============================================================
+
+   public String generateHeaders(Connection dbConnection)
+   {
+      // Class Method Instances.
+      ConnectionProperties connectionProperties;
+      String hostName, databaseName;
+      String dateTime, headers;
+      SimpleDateFormat dateTimeFormat;
+
+      // Create Header.
+      
+      connectionProperties = ConnectionManager.getConnectionProperties();
+      hostName = connectionProperties.getProperty(ConnectionProperties.HOST);
+      databaseName = connectionProperties.getProperty(ConnectionProperties.DB);
+      
+      dateTimeFormat = new SimpleDateFormat("yyyy.MM.dd G 'at' hh:mm:ss z");
+      dateTime = dateTimeFormat.format(new Date());
+
+      headers = "--\n"
+                + "-- SQL Dump\n"
+                + "-- Version: " + Ajqvue.getVersion() + "\n"
+                + "-- WebSite: " + Ajqvue.getWebSite() + "\n"
+                + "-- Host: " + hostName + "\n"
+                + "-- Generated On: " + dateTime + "\n"
+                + "-- SQL version: " + ConnectionManager.getDBProductName_And_Version() + "\n"
+                + "-- Database: " + databaseName + "\n"
+                + "--\n\n"
+                + "-- ------------------------------------------\n";
+
+      // System.out.println(headers);
+      return headers;
    }
    
    //==============================================================
