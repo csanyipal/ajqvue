@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 06/08/2017
+// Version 1.3 06/28/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,8 @@
 //         1.1 Updated References to PluginModule to Plugin_Module.
 //         1.2 Method actionSelection() Added Processing for Clear Table
 //             History Action.
+//         1.3 Removed Arguments version & webSiteString From actionSelection().
+//             No Longer Required for Data Dump Threads or AboutFrame.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -103,7 +105,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * JMenuBar and JToolBar in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.2 06/08/2017
+ * @version 1.3 06/28/2017
  */
 
 class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
@@ -133,9 +135,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
    //==============================================================
 
    protected static void actionsSelection(Main_Frame parent, ActionEvent evt,
-                                          SQLQueryBucketFrame sqlQueryBucketFrame,
-                                          String[] version,
-                                          String webSiteString)
+                                          SQLQueryBucketFrame sqlQueryBucketFrame)
    {
       // Setting up some needed instance variables.
       String actionCommand;
@@ -301,7 +301,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
             || actionCommand.indexOf(DATA_EXPORT_SQL) != -1)
            && DBTablesPanel.getTableCount() != 0)
       {
-         dataExportAction(parent, actionCommand, version);
+         dataExportAction(parent, actionCommand);
          return;
       }
 
@@ -450,7 +450,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
       {
          ImageIcon ajqvueLogo = Ajqvue.getResourceBundle().getResourceImage("images" + fileSeparator
                                                                + "Ajqvue_Logo.png");
-         AboutFrame about_Frame = new AboutFrame(version, webSiteString, ajqvueLogo);
+         AboutFrame about_Frame = new AboutFrame(ajqvueLogo);
          about_Frame.setSize(400, 325);
          about_Frame.center();
          about_Frame.setResizable(true);
@@ -897,8 +897,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
    // action.
    //==============================================================
 
-   private static void dataExportAction(JFrame parent, String actionCommand,
-                                        String[] version)
+   private static void dataExportAction(JFrame parent, String actionCommand)
    {
       // Method Instances.
       JFileChooser dataFileChooser;
@@ -1063,8 +1062,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
                                                                            tableColumnNamesHashMap, useLimit,
                                                                            tableColumnClassHashMap,
                                                                            tableColumnTypeHashMap,
-                                                                           exportedTable, fileName,
-                                                                           version),
+                                                                           exportedTable, fileName),
                                                                            "SQLDataDumpThread");
                sqlDataDumpThread.start();
             }
@@ -1073,8 +1071,8 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
             
             else if (actionCommand.equals(ACTION_EXPORT_SQL_DATABASE))
             {
-               Thread sqlDatabaseDumpThread = new Thread(new SQLDatabaseDumpThread(
-                  fileName, version), "SQLDatabaseDumpThread");
+               Thread sqlDatabaseDumpThread = new Thread(new SQLDatabaseDumpThread(fileName),
+                                                                                   "SQLDatabaseDumpThread");
                sqlDatabaseDumpThread.start();
             }
 
@@ -1083,7 +1081,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
             else
             {
                Thread sqlDatabaseSchemeDumpThread = new Thread(
-                  new SQLDatabaseSchemeDumpThread(fileName, version),
+                  new SQLDatabaseSchemeDumpThread(fileName),
                   "SQLDatabaseSchemeDumpThread");
                sqlDatabaseSchemeDumpThread.start();
             }
