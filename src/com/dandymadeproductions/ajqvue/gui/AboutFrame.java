@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Version 1.1 06/29/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production AboutFrame Class.
+//         1.1 Removed Arguments version & webSiteString From Constructor.
 //         
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -67,7 +68,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * application when the Help About selection is made in the menu bar.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 06/29/2017
  */
 
 class AboutFrame extends JFrame implements ActionListener
@@ -82,7 +83,7 @@ class AboutFrame extends JFrame implements ActionListener
    // AboutFrame Constructor
    //==============================================================
 
-   protected AboutFrame(String[] version, String webSiteString, ImageIcon logoIcon)
+   protected AboutFrame(ImageIcon logoIcon)
    {
       // Constructor Instances.
       AResourceBundle resourceBundle;
@@ -118,7 +119,7 @@ class AboutFrame extends JFrame implements ActionListener
       centerPanel.add(logoPanel);
 
       // Information/Credits
-      creditsPanel = new CreditsPanel(version, webSiteString);
+      creditsPanel = new CreditsPanel();
       Thread creditsPanelThread = new Thread(creditsPanel, "Credits");
       creditsPanelThread.start();
 

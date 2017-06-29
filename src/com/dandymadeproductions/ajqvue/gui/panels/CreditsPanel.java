@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 06/29/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production CreditsPanel Class.
+//         1.1 Removed Arguments version & webSiteString From Constructor.
 //         
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -65,7 +66,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * credits.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/29/2017
  */
 
 public class CreditsPanel extends JPanel implements Runnable
@@ -93,10 +94,10 @@ public class CreditsPanel extends JPanel implements Runnable
    // CreditsPanel Constructor
    //===========================================================
 
-   public CreditsPanel(String[] version, String webSiteString)
+   public CreditsPanel()
    {
-      this.version = version.clone();
-      this.webSiteString = webSiteString;
+      version = Ajqvue.getVersion();
+      webSiteString = Ajqvue.getWebSite();
 
       AResourceBundle resourceBundle = Ajqvue.getResourceBundle();
       String fileSeparator = Utils.getFileSeparator();
