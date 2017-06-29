@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 06/22/2017
+// Version 1.2 06/29/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,7 +33,11 @@
 //=================================================================
 // Version 1.0 Production SQLDatabaseSchemeDumpThread Class.
 //         1.1 Method generateHeaders() Code Formatting to Clarify & Removal
-//             of Dashes After Website."
+//             of Dashes After Website.
+//         1.2 Added Extends to SQLDump. Used That Classes Instance fileName.
+//             Removed Class Instance version & Same as Argument From Constructor.
+//             Removed dbConnection Argument to generateHeaders(). Removed Class
+//             Methods generateHeaders() & genCommentSep(). Organized Imports.
 //                         
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -43,13 +47,9 @@ package com.dandymadeproductions.ajqvue.io;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 
-import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
-import com.dandymadeproductions.ajqvue.datasource.ConnectionProperties;
 import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
 import com.dandymadeproductions.ajqvue.utilities.TableDefinitionGenerator;
 
@@ -60,25 +60,21 @@ import com.dandymadeproductions.ajqvue.utilities.TableDefinitionGenerator;
  * to prematurely terminate the dump.
  * 
  * @author Dana Proctor
- * @version 1.1 06/22/2017
+ * @version 1.2 06/29/2017
  */
 
-public class SQLDatabaseSchemeDumpThread implements Runnable
+public class SQLDatabaseSchemeDumpThread extends SQLDump implements Runnable
 {
    // Class Instances.
-   String fileName;
-   String[] version;
-
    private ProgressBar databaseDumpProgressBar;
 
    //==============================================================
    // SQLDatabaseSchemeDumpThread Constructor.
    //==============================================================
 
-   public SQLDatabaseSchemeDumpThread(String fileName, String[] version)
+   public SQLDatabaseSchemeDumpThread(String fileName)
    {
       this.fileName = fileName;
-      this.version = version.clone();
    }
 
    //==============================================================
@@ -106,7 +102,7 @@ public class SQLDatabaseSchemeDumpThread implements Runnable
       databaseDumpProgressBar = new ProgressBar("SQL Database Scheme Dump");
 
       // Setup the dump Class and Header.
-      dumpData = generateHeaders(dbConnection);
+      dumpData = generateHeaders();
 
       // Start a progress bar for tracking/canceling.
       databaseDumpProgressBar.setTaskLength(ConnectionManager.getTableNames().size());
@@ -158,54 +154,5 @@ public class SQLDatabaseSchemeDumpThread implements Runnable
       }
 
       ConnectionManager.closeConnection(dbConnection, "DatabaseSchemeDumpThread run()");
-   }
-
-   //==============================================================
-   // Class method for generating dump header info
-   //==============================================================
-
-   public String generateHeaders(Connection dbConnection)
-   {
-      // Class Method Instances.
-      ConnectionProperties connectionProperties;
-      String hostName, databaseName;
-      String dateTime, headers;
-      SimpleDateFormat dateTimeFormat;
-
-      // Create Header.
-      
-      connectionProperties = ConnectionManager.getConnectionProperties();
-      hostName = connectionProperties.getProperty(ConnectionProperties.HOST);
-      databaseName = connectionProperties.getProperty(ConnectionProperties.DB);
-      
-      dateTimeFormat = new SimpleDateFormat("yyyy.MM.dd G 'at' hh:mm:ss z");
-      dateTime = dateTimeFormat.format(new Date());
-
-      headers = "--\n"
-                + "-- SQL Dump\n"
-                + "-- Version: " + version[1] + "\n"
-                + "-- WebSite: " + Ajqvue.getWebSite() + "\n"
-                + "-- Host: " + hostName + "\n"
-                + "-- Generated On: " + dateTime + "\n"
-                + "-- SQL version: " + ConnectionManager.getDBProductName_And_Version() + "\n"
-                + "-- Database: " + databaseName + "\n"
-                + "--\n\n"
-                + "-- ------------------------------------------\n";
-
-      // System.out.println(headers);
-      return headers;
-   }
-
-   //==============================================================
-   // Class method for generating
-   //==============================================================
-
-   public String genCommentSep(String str)
-   {
-      String res;
-      res = "\n--\n";
-      res += "-- " + str;
-      res += "\n--\n\n";
-      return res;
    }
 }
