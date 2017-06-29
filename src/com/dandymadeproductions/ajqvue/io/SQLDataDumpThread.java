@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 06/29/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,10 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production SQLDataDumpThread Class.
+//         1.1 Added Extends SQLDump. Removed Class Instance version & Same
+//             From Constructor. Removed String Argument Constructor. Removed
+//             Class Methods generateHeaders(), genCommentSep(), addEscapes(),
+//             & dumpChunkOfData(). Organized Imports.
 //             
 //-----------------------------------------------------------------
 //                poisonerbg@users.sourceforge.net
@@ -50,9 +54,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -61,7 +63,6 @@ import javax.swing.JOptionPane;
 
 import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
-import com.dandymadeproductions.ajqvue.datasource.ConnectionProperties;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
 import com.dandymadeproductions.ajqvue.structures.DataExportProperties;
 import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
@@ -74,10 +75,10 @@ import com.dandymadeproductions.ajqvue.utilities.TableDefinitionGenerator;
  * the dump.
  * 
  * @author Borislav Gizdov a.k.a. PoisoneR, Dana Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/29/2017
  */
 
-public class SQLDataDumpThread implements Runnable
+public class SQLDataDumpThread extends SQLDump implements Runnable
 {
    // Class Instances.
    private Object dumpData;
@@ -86,37 +87,15 @@ public class SQLDataDumpThread implements Runnable
    private HashMap<String, String> tableColumnNames;
    private HashMap<String, String> tableColumnClassHashMap;
    private HashMap<String, String> tableColumnTypeHashMap;
-   private String fileName;
    private String dataSourceType, schemaName, tableName;
    private String dbSchemaTableName, schemaTableName;
    private String dbIdentifierQuoteString, identifierQuoteString;
-   private String[] version;
 
    private boolean limits, insertReplaceDump, updateDump;
    private int limitIncrement, pluralValueLimit;
    private DataExportProperties sqlDataExportOptions;
-   private BufferedOutputStream filebuff;
    private ProgressBar dumpProgressBar;
-
-   //==============================================================
-   // SQLDataDumpThread Constructor.
-   //==============================================================
-
-   public SQLDataDumpThread(String[] version)
-   {
-      this.version = version.clone();
-
-      // Setup export options & identifer String.
-      dataSourceType = ConnectionManager.getDataSourceType();
-      dbIdentifierQuoteString = ConnectionManager.getIdentifierQuoteString();
-      sqlDataExportOptions = DBTablesPanel.getDataExportProperties();
-      identifierQuoteString = sqlDataExportOptions.getIdentifierQuoteString();
-      if (sqlDataExportOptions.getInsertReplaceUpdate().equals("Insert"))
-         pluralValueLimit = sqlDataExportOptions.getInsertPluralSize();
-      else
-         pluralValueLimit = sqlDataExportOptions.getReplacePluralSize();
-   }
-
+   
    //==============================================================
    // SQLDataDumpThread Constructor.
    //==============================================================
@@ -124,14 +103,13 @@ public class SQLDataDumpThread implements Runnable
    public SQLDataDumpThread(ArrayList<String> columnNameFields, HashMap<String, String> tableColumnNames,
                             boolean limits, HashMap<String, String> tableColumnClassHashMap,
                             HashMap<String, String> tableColumnTypeHashMap, String exportedTable,
-                            String fileName, String[] version)
+                            String fileName)
    {
       this.columnNameFields = columnNameFields;
       this.tableColumnNames = tableColumnNames;
       this.limits = limits;
       this.tableColumnClassHashMap = tableColumnClassHashMap;
       this.tableColumnTypeHashMap = tableColumnTypeHashMap;
-      this.version = version.clone();
       this.exportedTable = exportedTable;
       this.fileName = fileName;
       
@@ -1643,104 +1621,5 @@ public class SQLDataDumpThread implements Runnable
       }
       else
          dumpData = dumpData + "NULL, ";
-   }
-
-   //==============================================================
-   // Class method for generating dump header info
-   //==============================================================
-
-   public String generateHeaders()
-   {
-      // Class Method Instances.
-      ConnectionProperties connectionProperties;
-      String hostName, databaseName;
-      String dateTime, headers;
-      SimpleDateFormat dateTimeFormat;
-      
-      // Create Header.
-      
-      connectionProperties = ConnectionManager.getConnectionProperties();
-      hostName = connectionProperties.getProperty(ConnectionProperties.HOST);
-      databaseName = connectionProperties.getProperty(ConnectionProperties.DB);
-
-      dateTimeFormat = new SimpleDateFormat("yyyy.MM.dd G 'at' hh:mm:ss z");
-      dateTime = dateTimeFormat.format(new Date());
-
-      headers = "--\n" + "-- SQL Dump\n" + "-- Version: " + version[1] + "\n" 
-                + "-- WebSite: " + Ajqvue.getWebSite() 
-                + "--\n" + "-- Host: " + hostName + "\n" 
-                + "-- Generated On: " + dateTime + "\n" + "-- SQL version: " 
-                + ConnectionManager.getDBProductName_And_Version() + "\n"
-                + "-- Database: " + databaseName + "\n" + "--\n\n"
-                + "-- ------------------------------------------\n";
-
-      // System.out.println(headers);
-      return headers;
-   }
-
-   //==============================================================
-   // Class method for generating comment separator.
-   //==============================================================
-
-   public String genCommentSep(String str)
-   {
-      String res;
-      res = "\n--\n";
-      res += "-- " + str;
-      res += "\n--\n\n";
-      return res;
-   }
-
-   //==============================================================
-   // Class method for escaping a string.
-   //==============================================================
-
-   private String addEscapes(String str)
-   {
-      if (str == null)
-         return "";
-
-      // For some reason the sequence ;\n is not
-      // able to be properly pulled into either
-      // the MySQL or PostgreSQL. So what else hack
-      // it, add a space before newline. Could
-      // find no reason for this in either manual
-      // for characters that need escaping.
-
-      str = str.replaceAll(";\\n", "; \\n");
-
-      // Escape the single quote character which is
-      // the character being used to deliminate the
-      // content.
-      StringBuffer s = new StringBuffer((String) str);
-      for (int i = 0; i < s.length(); i++)
-      {
-         if (s.charAt(i) == '\'')
-            s.insert(i++, '\'');
-      }
-      return s.toString();
-   }
-
-   //==============================================================
-   // Class Method to dump a chunk of data to the output file.
-   //==============================================================
-
-   private void dumpChunkOfData(Object dumpData)
-   {
-      // Class Method Instances
-      byte[] currentBytes;
-
-      // Dump the Chunk.
-      try
-      {
-         currentBytes = dumpData.toString().getBytes();
-         filebuff.write(currentBytes);
-         filebuff.flush();
-      }
-      catch (IOException e)
-      {
-         String msg = "Error outputing data to: '" + fileName + "'.";
-         JOptionPane.showMessageDialog(null, msg, fileName, JOptionPane.ERROR_MESSAGE);
-      }
    }
 }
