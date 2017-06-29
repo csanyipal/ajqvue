@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2017 Dana M. Proctor
-// Version 1.0 06/29/2017
+// Version 1.1 06/29/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,6 +30,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production SQLDump Class.
+//         1.1 Removed System.out in dumpChunkOfData(). Added javadoc Comment
+//             for Constructor.
 //                         
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -47,6 +49,14 @@ import javax.swing.JOptionPane;
 import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionProperties;
+
+/**
+ *    The SQLDump Class provides some common methods that are used by the
+ * Ajqvue IO SQL Data Dump Threads.
+ * 
+ * @author Dana Proctor
+ * @version 1.1 06/29/2017
+ */
 
 public class SQLDump
 {
@@ -140,7 +150,6 @@ public class SQLDump
    {
       // Class Method Instances
       byte[] currentBytes;
-      System.out.println("dumping bytes");
 
       // Dump the Chunk.
       try
