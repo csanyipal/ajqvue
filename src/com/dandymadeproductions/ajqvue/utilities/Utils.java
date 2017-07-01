@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.3 06/28/2017
+// Version 1.4 07/01/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,8 @@
 //         1.2 Removed Commented Code From v1.1 createEditMenu() That was Moved to
 //             createSelectAllMenuItem().
 //         1.3 Added Class Method generateHeaders().
+//         1.4 Removed Class Method generateHeaders(), Moved to Correlated SQLDump
+//             Class With Other Common Methods to IO SQL Dumps.
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -56,14 +58,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -75,8 +74,6 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
-// import javax.sound.sampled.LineEvent;
-// import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.Action;
@@ -104,17 +101,18 @@ import javax.swing.text.DefaultEditorKit;
 
 import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
-import com.dandymadeproductions.ajqvue.datasource.ConnectionProperties;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
 import com.dandymadeproductions.ajqvue.io.PDFDataTableDumpThread;
 import com.dandymadeproductions.ajqvue.io.WriteDataFile;
+// import javax.sound.sampled.LineEvent;
+// import javax.sound.sampled.LineListener;
 
 /**
  *    The Utils class provides various usedful methods used in the
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 1.3 06/28/2017
+ * @version 1.4 07/01/2017
  */
 
 public class Utils extends Ajqvue
@@ -638,42 +636,6 @@ public class Utils extends Ajqvue
          }
       }
       return menuItem;
-   }
-   
-   //==============================================================
-   // Class method for generating dump header info
-   //==============================================================
-
-   public String generateHeaders(Connection dbConnection)
-   {
-      // Class Method Instances.
-      ConnectionProperties connectionProperties;
-      String hostName, databaseName;
-      String dateTime, headers;
-      SimpleDateFormat dateTimeFormat;
-
-      // Create Header.
-      
-      connectionProperties = ConnectionManager.getConnectionProperties();
-      hostName = connectionProperties.getProperty(ConnectionProperties.HOST);
-      databaseName = connectionProperties.getProperty(ConnectionProperties.DB);
-      
-      dateTimeFormat = new SimpleDateFormat("yyyy.MM.dd G 'at' hh:mm:ss z");
-      dateTime = dateTimeFormat.format(new Date());
-
-      headers = "--\n"
-                + "-- SQL Dump\n"
-                + "-- Version: " + Ajqvue.getVersion() + "\n"
-                + "-- WebSite: " + Ajqvue.getWebSite() + "\n"
-                + "-- Host: " + hostName + "\n"
-                + "-- Generated On: " + dateTime + "\n"
-                + "-- SQL version: " + ConnectionManager.getDBProductName_And_Version() + "\n"
-                + "-- Database: " + databaseName + "\n"
-                + "--\n\n"
-                + "-- ------------------------------------------\n";
-
-      // System.out.println(headers);
-      return headers;
    }
    
    //==============================================================
