@@ -55,6 +55,9 @@ Note: Insure for each test case that involves a menu command that the
 	   parameters to Database Name on login.
 	   
 	   Example: dbname;PARAMETER_NAME='xxx'?PARAMETER_NAME='xxx'.
+	   
+	g. Test for each database the ability to connect with FILTER = off.
+	   See ajqvue.conf file.
 
 2. Table Summary Printing
 
