@@ -12,7 +12,7 @@
 //           << TableTabPanel_HSQL.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
+// Copyright (C) 2016-2017 Dana M. Proctor
 // Version 1.0 09/18/2016
 //
 // This program is free software; you can redistribute it and/or
@@ -185,9 +185,9 @@ public class TableTabPanel_HSQL extends TableTabPanel
             columnSize = Integer.valueOf(tableMetaData.getColumnDisplaySize(i));
 
             // System.out.println(i + " " + colNameString + " " +
-            //                     comboBoxNameString + " " +
-            //                     columnClass + " " + columnType + " " +
-            //                     columnSize);
+            //                    comboBoxNameString + " " +
+            //                    columnClass + " " + columnType + " " +
+            //                    columnSize);
 
             // This going to be a problem so skip this column.
 
