@@ -7,6 +7,9 @@
 --                    Tables of SQLite data types.
 --         07/12/2017 Added Additional Testing Tables date_types, time_types,
 --                    and timestamp_types.
+--         07/13/2017 Updated to Correct, Have Table Creation and INSERT
+--                    Statements. Currently SQLite-JDBC 3.19.3 is Broken
+--                    Had to Comment the INSERTS for date_types & time_types.
 --      
 -- danap@dandymadeproductions.com
 -- =============================================================
