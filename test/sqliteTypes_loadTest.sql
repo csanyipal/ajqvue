@@ -10,6 +10,7 @@
 --         07/13/2017 Updated to Correct, Have Table Creation and INSERT
 --                    Statements. Currently SQLite-JDBC 3.19.3 is Broken
 --                    Had to Comment the INSERTS for date_types & time_types.
+--         07/17/2017 Added Additional Testing Table varchar_types.
 --      
 -- danap@dandymadeproductions.com
 -- =============================================================
@@ -23,6 +24,7 @@
 DROP TABLE IF EXISTS int_types;
 DROP TABLE IF EXISTS real_types;
 DROP TABLE IF EXISTS text_types;
+DROP TABLE IF EXISTS varchar_types;
 DROP TABLE IF EXISTS blob_types;
 
 DROP TABLE IF EXISTS date_types;
@@ -55,6 +57,13 @@ CREATE TABLE text_types (
 --  Table id and creation data entries.
     data_type_id INTEGER PRIMARY KEY,
     text_type TEXT
+);
+
+CREATE TABLE varchar_types (
+
+--  Table id and creation data entries.
+    data_type_id INTEGER PRIMARY KEY,
+    varchar_type VARCHAR(30)
 );
 
 CREATE TABLE blob_types (
@@ -100,6 +109,8 @@ INSERT INTO real_types (real_type) VALUES (-1.1e-39);
 INSERT INTO blob_types (blob_type) VALUES (x'0500');
 
 INSERT INTO text_types (text_type) VALUES ('text1');
+
+INSERT INTO varchar_types (varchar_type) VALUES ('varchar');
 
 -- INSERT INTO date_types (date_type) VALUES ('1000-01-01');
 -- INSERT INTO date_types (date_type) VALUES ('9999-12-31');
