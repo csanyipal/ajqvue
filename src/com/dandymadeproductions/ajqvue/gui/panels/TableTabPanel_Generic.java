@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 06/22/2017
+// Version 1.2 07/19/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,8 @@
 // Version 1.0 Production TableTabPanel_Generic Class.
 //         1.1 Method viewSelectedItem() Corrected the Use of currentColumnName
 //             Instead of listTable.getColumnName() for columnSizeHashMap.get().
+//         1.2 Method viewSelectedItem() Changed in TableViewForm Data Filling
+//             With Existing Derived columnSize Instance Rather then columnSizeHashMap.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -69,7 +71,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.1 06/22/2017
+ * @version 1.2 07/19/2017
  */
 
 public class TableTabPanel_Generic extends TableTabPanel
@@ -1067,8 +1069,7 @@ public class TableTabPanel_Generic extends TableTabPanel
                }
 
                // Text, & Clob Fields
-               else if (Utils.isText(currentColumnClass, currentColumnType, true,
-                        (columnSizeHashMap.get(currentColumnName)).intValue()))
+               else if (Utils.isText(currentColumnClass, currentColumnType, true, columnSize))
                {
                   if (((String) currentContentData).getBytes().length != 0)
                   {
