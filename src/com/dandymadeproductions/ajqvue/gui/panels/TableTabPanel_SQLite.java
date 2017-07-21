@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Version 1.1 07/20/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,7 +34,19 @@
 // in the present version number. Author information should
 // also be included with the original copyright author.
 //=================================================================
-// Version 1.0 Production TableTabPanel_SQLite Class.
+// Version 1.0 09/19/2016 Production TableTabPanel_SQLite Class.
+//         1.1 07/20/2017 Method getColumnNames() Included columnClassHashMap.
+//                        Also DATETIME as java.sql.Timestamp & Minor Formatting
+//                        Changes. Method loadTable() Minor Formatting Changes & Use
+//                        of DATETIME Processing. Method viewSelectedItem() Added
+//                        columnSize Instance, Minor Formating Changes & Added TEXT
+//                        Definition Processing for columnSize > 255. Changed in Same
+//                        the View of All TEXT Fields columnSize > 255 to be Displayed
+//                        as Buttons. Method addItem() Minor Formatting Changes,
+//                        Added Instances currentColumnClass & columnSize. Added
+//                        Processing for TEXT Fields. Method editSelectedItem() Minor
+//                        Formatting Changes & Proper Processing/Detection for TEXT
+//                        Fields.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -67,7 +79,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 07/20/2017
  */
 
 public class TableTabPanel_SQLite extends TableTabPanel
@@ -201,7 +213,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
                columnClassHashMap.put(comboBoxNameString, "java.sql.Date");
             else if (columnType.toUpperCase(Locale.ENGLISH).equals("TIME"))
                columnClassHashMap.put(comboBoxNameString, "java.sql.Time");
-            else if (columnType.toUpperCase(Locale.ENGLISH).indexOf("TIMESTAMP") != -1)
+            else if (columnType.toUpperCase(Locale.ENGLISH).indexOf("DATETIME") != -1
+                     || columnType.toUpperCase(Locale.ENGLISH).equals("TIMESTAMP"))
                columnClassHashMap.put(comboBoxNameString, "java.sql.Timestamp");
             else
                columnClassHashMap.put(comboBoxNameString, columnClass);
@@ -268,11 +281,10 @@ public class TableTabPanel_SQLite extends TableTabPanel
                   && !primaryKeys.contains(rs.getString("FKCOLUMN_NAME")))
             {
                primaryKeys.add(rs.getString("FKCOLUMN_NAME"));
-               
                columnSize = columnSizeHashMap.get(parseColumnNameField(rs.getString("FKCOLUMN_NAME")));
                
                if (columnSize == null || columnSize.intValue() > 255)
-                  columnSize = Integer.valueOf("255");
+                   columnSize = Integer.valueOf("255");
                   
                keyLengthHashMap.put(rs.getString("FKCOLUMN_NAME"), columnSize);
             }
@@ -419,10 +431,10 @@ public class TableTabPanel_SQLite extends TableTabPanel
             }
             
             searchQueryString.append(identifierQuoteString + columnSearchString + identifierQuoteString
-                                + " LIKE '%" + searchTextString + "%'");
+                                     + " LIKE '%" + searchTextString + "%'");
          }
-         // System.out.println(searchTextString);
       }
+      // System.out.println(searchTextString);
 
       // Connect to database to obtain the initial/new items set
       // and then sorting that set.
@@ -470,11 +482,11 @@ public class TableTabPanel_SQLite extends TableTabPanel
          {
             // Complete With All Fields.
             sqlTableStatement.append("SELECT " + sqlTableFieldsString + " FROM " + schemaTableName + " "
-                                 + "WHERE " + searchQueryString.toString() + " " + "ORDER BY "
-                                 + identifierQuoteString
-                                 + columnNamesHashMap.get(sortComboBox.getSelectedItem())
-                                 + identifierQuoteString + " " + ascDescString + " " + "LIMIT "
-                                 + tableRowLimit + " " + "OFFSET " + tableRowStart);
+                                      + "WHERE " + searchQueryString.toString() + " " + "ORDER BY "
+                                      + identifierQuoteString
+                                      + columnNamesHashMap.get(sortComboBox.getSelectedItem())
+                                      + identifierQuoteString + " " + ascDescString + " " + "LIMIT "
+                                      + tableRowLimit + " " + "OFFSET " + tableRowStart);
             
             // Summary Table Without LOBs.
             lobLessSQLStatement.append("SELECT " + lobLessFieldsString + " FROM " + schemaTableName + " "
@@ -560,6 +572,16 @@ public class TableTabPanel_SQLite extends TableTabPanel
                      currentContentData = rs.getTime(columnName);
                      tableData[i][j++] = (new SimpleDateFormat("HH:mm:ss z").format(currentContentData));
                   }
+                  
+                  // =============================================
+                  // Datetime
+                  else if (columnType.equals("DATETIME"))
+                  {
+                     currentContentData = rs.getTimestamp(columnName);
+                     tableData[i][j++] = (new SimpleDateFormat(
+                                           DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+                                           + " HH:mm:ss").format(currentContentData));
+                  }
 
                   // =============================================
                   // Timestamps
@@ -567,16 +589,16 @@ public class TableTabPanel_SQLite extends TableTabPanel
                   {
                      currentContentData = rs.getTimestamp(columnName);
                      tableData[i][j++] = (new SimpleDateFormat(
-                        DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                        + " HH:mm:ss.SSS").format(currentContentData));
+                                           DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+                                           + " HH:mm:ss.SSS").format(currentContentData));
                   }
 
                   else if (columnType.equals("TIMESTAMPTZ"))
                   {
                      currentContentData = rs.getTimestamp(columnName);
                      tableData[i][j++] = (new SimpleDateFormat(
-                        DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                        + " HH:mm:ss z").format(currentContentData));
+                                           DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+                                           + " HH:mm:ss z").format(currentContentData));
                   }
                   
                   // =============================================
@@ -617,7 +639,6 @@ public class TableTabPanel_SQLite extends TableTabPanel
                            && columnSize > 255)
                   {
                      String stringName;
-                     //stringName = (String) currentContentData;
                      stringName = rs.getString(columnName);
 
                      // Handles a key String
@@ -718,6 +739,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
       Iterator<String> keyIterator, textFieldNamesIterator;
       Object currentColumnName, currentContentData;
       String currentDB_ColumnName, currentColumnClass, currentColumnType;
+      int columnSize;
       int keyColumn = 0;
 
       // Connecting to the data base, to obtain
@@ -777,17 +799,21 @@ public class TableTabPanel_SQLite extends TableTabPanel
                   {
                      // Escape single quotes.
                      currentColumnClass = columnClassHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                     
                      if (currentColumnClass.indexOf("String") != -1)
                         currentContentData = ((String) currentContentData).replaceAll("'", "''");
                      
                      // Reformat date keys.
-                     currentColumnType = (String) columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                     currentColumnType = (String) columnTypeHashMap.get(
+                        parseColumnNameField(currentDB_ColumnName));
+                     
                      if (currentColumnType.equals("DATE"))
                      {
                         sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
                                                   + identifierQuoteString + "='"
                                                   + Utils.convertViewDateString_To_DBDateString(
-                                                     currentContentData + "", DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
+                                                     currentContentData + "",
+                                                     DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
                                                   + "' AND ");
                      }
                      else
@@ -810,14 +836,15 @@ public class TableTabPanel_SQLite extends TableTabPanel
                currentDB_ColumnName = (String) columnNamesHashMap.get(listTable.getColumnName(i));
                currentColumnClass = columnClassHashMap.get(listTable.getColumnName(i));
                currentColumnType = columnTypeHashMap.get(listTable.getColumnName(i));
+               columnSize = columnSizeHashMap.get(listTable.getColumnName(i)).intValue();
                
                // System.out.println("field:" + currentDB_ColumnName + " class:" + currentColumnClass
                //                    + " type:" + currentColumnType + " value:" + currentContentData);
                
                // Skip Blob, Text, & Float Unless NULL.
-               if ((currentColumnClass.indexOf("Object") != -1 && currentColumnType.equals("TEXT"))
-                    || (currentColumnType.indexOf("BLOB") != -1) 
-                    || (currentColumnType.indexOf("FLOAT") != -1))
+               if ((currentColumnClass.indexOf("Object") != -1 && currentColumnType.equals("TEXT")
+                    && columnSize > 255)
+                   || (currentColumnType.indexOf("BLOB") != -1))
                {
                   if (currentContentData.toString().toUpperCase(Locale.ENGLISH).equals("NULL"))
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
@@ -895,6 +922,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
             currentColumnType = columnTypeHashMap.get(currentColumnName);
+            columnSize = columnSizeHashMap.get(currentColumnName).intValue();
 
             if (currentColumnType.equals("BLOB"))
                currentContentData = db_resultSet.getBytes(currentDB_ColumnName);
@@ -902,7 +930,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
                currentContentData = db_resultSet.getString(currentDB_ColumnName);
             // System.out.println(i + " " + currentColumnName + " " +
             //                    currentDB_ColumnName + " " +
-            //                    currentColumnType + " " + /*columnSize +*/ " " + currentContentData);
+            //                    currentColumnType + " " + columnSize + " " + currentContentData);
 
             if (currentContentData != null)
             {
@@ -974,19 +1002,15 @@ public class TableTabPanel_SQLite extends TableTabPanel
                }
 
                // Text, Fields
-               else if (currentColumnClass.indexOf("Object") != -1 && currentColumnType.equals("TEXT"))
+               else if (currentColumnClass.indexOf("Object") != -1 && currentColumnType.equals("TEXT")
+                        && columnSize > 255)
                {
                   if (((String) currentContentData).getBytes().length != 0)
                   {
                      int size = ((String) currentContentData).getBytes().length;
+                     tableViewForm.setFormField(currentColumnName, (Object) ("TEXT " + size + " Bytes"));
+                     tableViewForm.setFormFieldText(currentColumnName, (String) currentContentData);
                      
-                     if (size > 255)
-                     {
-                        tableViewForm.setFormField(currentColumnName, (Object) ("TEXT " + size + " Bytes"));
-                        tableViewForm.setFormFieldText(currentColumnName, (String) currentContentData);
-                     }
-                     else
-                        tableViewForm.setFormField(currentColumnName, currentContentData);
                   }
                   else
                      tableViewForm.setFormField(currentColumnName, (Object) "TEXT 0 Bytes");
@@ -1036,12 +1060,12 @@ public class TableTabPanel_SQLite extends TableTabPanel
    {
       Iterator<String> textFieldNamesIterator;
       Object currentColumnName, currentContentData;
-      String currentColumnType;
+      String currentColumnClass, currentColumnType;
+      int columnSize;
 
       // Showing the Table Entry Form
       TableEntryForm addForm = new TableEntryForm("Add Table Entry: ", true, schemaTableName,
-                                                  -1, null, primaryKeys,
-                                                  autoIncrementHashMap, null,
+                                                  -1, null, primaryKeys, autoIncrementHashMap, null,
                                                   formFields, tableViewForm, columnNamesHashMap,
                                                   columnClassHashMap, columnTypeHashMap,
                                                   columnSizeHashMap, columnEnumHashMap,
@@ -1075,7 +1099,9 @@ public class TableTabPanel_SQLite extends TableTabPanel
       while (textFieldNamesIterator.hasNext())
       {
          currentColumnName = textFieldNamesIterator.next();
+         currentColumnClass = columnClassHashMap.get(currentColumnName);
          currentColumnType = columnTypeHashMap.get(currentColumnName);
+         columnSize = (columnSizeHashMap.get(currentColumnName)).intValue();
 
          // Auto-Increment Type Field
          if (autoIncrementHashMap.containsKey(currentColumnName))
@@ -1124,6 +1150,13 @@ public class TableTabPanel_SQLite extends TableTabPanel
          {
             addForm.setFormField(currentColumnName, (Object) ("BLOB Browse"));
          }
+         
+         // TEXT Type Field
+         if (currentColumnClass.indexOf("Object") != -1 && currentColumnType.equals("TEXT")
+             && columnSize > 255)
+         {
+            addForm.setFormField(currentColumnName, (Object) ("TEXT Browse"));
+         }
       }
    }
 
@@ -1132,7 +1165,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
    //==============================================================
 
    public void editSelectedItem(Connection dbConnection, int rowToEdit, Object columnName, Object id)
-                                throws SQLException
+                               throws SQLException
    {
       // Method Instances
       StringBuffer sqlStatementString;
@@ -1221,7 +1254,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
                else
                {
                   // Escape single quotes.
-                  currentColumnClass = (String) columnClassHashMap
+                  currentColumnClass = columnClassHashMap
                         .get(parseColumnNameField(currentDB_ColumnName));
                   if (currentColumnClass.indexOf("String") != -1)
                      currentContentData = ((String) currentContentData).replaceAll("'", "''");
@@ -1233,7 +1266,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
                                                + identifierQuoteString + "='"
                                                + Utils.convertViewDateString_To_DBDateString(
-                                                  currentContentData + "", DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
+                                                  currentContentData + "",
+                                                  DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
                                                + "' AND ");
                   }
                   else
@@ -1338,11 +1372,12 @@ public class TableTabPanel_SQLite extends TableTabPanel
                   // System.out.println(currentContentData);
                   editForm.setFormField(currentColumnName,
                      (Object) (new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                        + " HH:mm:ss.SSS").format(currentContentData)));
+                                                    + " HH:mm:ss.SSS").format(currentContentData)));
                }
                else
                   editForm.setFormField(currentColumnName,
-                     (Object) DBTablesPanel.getGeneralDBProperties().getViewDateFormat() + " HH:MM:SS");
+                                        (Object) DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+                                        + " HH:MM:SS");
             }
 
             else if (currentColumnType.equals("TIMESTAMPTZ"))
@@ -1393,7 +1428,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
             }
 
             // All Text But TinyText Type Field
-            else if (currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+            else if (currentColumnClass.indexOf("Object") != -1 && currentColumnType.equals("TEXT")
                      && currentColumnSize > 255)
             {
                if (currentContentData != null)
@@ -1444,8 +1479,6 @@ public class TableTabPanel_SQLite extends TableTabPanel
             if (sqlStatement != null)
                sqlStatement.close();
          }
-         if (sqlStatement != null)
-            sqlStatement.close();
       }
    }
 }
