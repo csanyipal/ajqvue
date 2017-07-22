@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 07/22/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,9 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/18/2016 Production TableViewForm Class.
+//         1.1 07/22/2017 Constructor & Method setFormField() Inclusion
+//                        of SQLite TEXT Type Fields to be Presented as
+//                        Button.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -78,7 +81,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * in the TableTabPanel summary table.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 07/22/2017
  */
 
 public class TableViewForm extends JPanel implements ActionListener, KeyListener
@@ -181,9 +184,10 @@ public class TableViewForm extends JPanel implements ActionListener, KeyListener
          }
 
          else if ((columnClass.indexOf("String") != -1 &&
-                  !columnType.equals("CHAR") &&
-                  (fieldSizeHashMap.get(itemName)).intValue() > 255) ||
-                   (columnClass.indexOf("String") != -1 && columnType.equals("LONG")))
+                  !columnType.equals("CHAR") && (fieldSizeHashMap.get(itemName)).intValue() > 255)
+                  || (columnClass.indexOf("Object") != -1 &&
+                      columnType.equals("TEXT") && (fieldSizeHashMap.get(itemName)).intValue() > 255)
+                  || (columnClass.indexOf("String") != -1 && columnType.equals("LONG")))
          {
             currentField = new JButton();
             ((JButton) currentField).addActionListener(this);
@@ -514,8 +518,10 @@ public class TableViewForm extends JPanel implements ActionListener, KeyListener
 
       // Text Button, TEXT, MEDIUMTEXT, & LONGTEXT
       else if ((columnClass.indexOf("String") != -1 && !columnType.equals("CHAR") &&
-                (fieldSizeHashMap.get(itemName)).intValue() > 255) ||
-               (columnClass.indexOf("String") != -1 && columnType.equals("LONG")))
+                (fieldSizeHashMap.get(itemName)).intValue() > 255)
+               || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT") &&
+                   (fieldSizeHashMap.get(itemName)).intValue() > 255)
+               || (columnClass.indexOf("String") != -1 && columnType.equals("LONG")))
          ((JButton) fieldHashMap.get(itemName)).setText((String) content);
 
       // Array Button
