@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 02/05/2017
+// Version 1.2 07/21/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,10 @@
 // Version 1.0 09/18/2016 Production TableEntryForm Class.
 //         1.1 02/05/2017 Method selectFunctionOperator() Correction in
 //                        Spelling for message Resource.
+//         1.2 07/21/2017 Constructor Included SQLite TEXT Type Fields
+//                        Larger Then 255 to be Included With Browse
+//                        Button. Proper Detection Therefore in addUpdate
+//                        TableEntry(), isTextField, & setFormField().
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -105,7 +109,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 1.1 02/05/2016
+ * @version 1.2 07/21/2017
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -381,8 +385,10 @@ public class TableEntryForm extends JFrame implements ActionListener
          }
 
          // TEXT Type Fields
-         else if ((columnClass.indexOf("String") != -1 && !columnType.equals("CHAR") && ((Integer) columnSizeHashMap
-               .get(columnName)).intValue() > 255)
+         else if ((columnClass.indexOf("String") != -1 && !columnType.equals("CHAR")
+                   && ((Integer) columnSizeHashMap.get(columnName)).intValue() > 255)
+                  || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT")
+                      && ((Integer) columnSizeHashMap.get(columnName)).intValue() > 255) 
                   || (columnClass.indexOf("String") != -1 && columnType.equals("LONG")))
          {
             // Place the remove checkbox for eliminating
@@ -992,6 +998,8 @@ public class TableEntryForm extends JFrame implements ActionListener
                columnSize = (columnSizeHashMap.get(columnName)).intValue();
                isTextField = (columnClass.indexOf("String") != -1 && !columnType.equals("CHAR")
                               && columnSize > 255)
+                             || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT")
+                                 && columnSize > 255)
                              || (columnClass.indexOf("String") != -1 && columnType.equals("LONG"))
                              || (columnClass.indexOf("String") != -1 && columnType.equals("XML"))
                              || (columnType.indexOf("CLOB") != -1);
@@ -1246,6 +1254,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                columnType = columnTypeHashMap.get(columnName);
                columnSize = (columnSizeHashMap.get(columnName)).intValue();
                isTextField = (columnClass.indexOf("String") != -1 && !columnType.equals("CHAR") && columnSize > 255)
+                             || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT") && columnSize > 255)
                              || (columnClass.indexOf("String") != -1 && columnType.equals("LONG"))
                              || (columnClass.indexOf("String") != -1 && columnType.equals("XML"))
                              || (columnType.indexOf("CLOB") != -1);
@@ -1603,6 +1612,7 @@ public class TableEntryForm extends JFrame implements ActionListener
             columnType = columnTypeHashMap.get(columnName);
             columnSize = (columnSizeHashMap.get(columnName)).intValue();
             isTextField = (columnClass.indexOf("String") != -1 && !columnType.equals("CHAR") && columnSize > 255)
+                          || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT") && columnSize > 255)
                           || (columnClass.indexOf("String") != -1 && columnType.equals("LONG"))
                           || (columnType.indexOf("CLOB") != -1);
             isBlobField = (columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1)
@@ -2479,8 +2489,10 @@ public class TableEntryForm extends JFrame implements ActionListener
          // Text Button
          else if ((columnClass.indexOf("String") != -1 && !columnType.equals("CHAR")
                    && (columnSizeHashMap.get(columnName)).intValue() > 255)
-                  || (columnClass.indexOf("String") != -1 && columnType.equals("LONG")
-                  || (columnType.indexOf("XML") != -1)))
+                  || (columnClass.indexOf("String") != -1 && columnType.equals("LONG"))
+                  || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT")
+                      && (columnSizeHashMap.get(columnName)).intValue() > 255)
+                  || (columnType.indexOf("XML") != -1))
             ((JButton) fieldHashMap.get(columnName)).setText((String) content);
 
          // Array Button
