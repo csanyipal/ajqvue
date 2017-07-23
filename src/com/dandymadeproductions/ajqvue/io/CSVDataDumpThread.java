@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 04/23/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,7 +30,9 @@
 // in the present version number. Author information should
 // also be included with the original copyright author.
 //=================================================================
-// Version 1.0 Production CSVDataDumpThread Class.
+// Version 1.0 09/18/2016 Production CSVDataDumpThread Class.
+//         1.1 07/23/2017 Method run() SQLite TEXT Type Fields Text Inclusion
+//                        Option Implemented for columnSize > 255.
 //             
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -66,7 +68,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * is provided to allow the ability to prematurely terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 07/23/2017
  */
 
 public class CSVDataDumpThread implements Runnable
@@ -338,9 +340,11 @@ public class CSVDataDumpThread implements Runnable
 
                      // Text, MediumText, LongText, & CLOB.
                      else if ((columnClass.indexOf("String") != -1 && !columnType.equals("CHAR") &&
-                               columnSize > 255) ||
-                              (columnClass.indexOf("String") != -1 && columnType.equals("LONG")) ||
-                              (columnType.indexOf("CLOB") != -1) || columnType.equals("XML"))
+                               columnSize > 255)
+                              || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT") &&
+                                    columnSize > 255)
+                              || (columnClass.indexOf("String") != -1 && columnType.equals("LONG"))
+                              || (columnType.indexOf("CLOB") != -1) || columnType.equals("XML"))
                      {
                         fieldContent = dbResultSet.getString(i);
                         
