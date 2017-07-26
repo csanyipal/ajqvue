@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 07/19/2017
+// Version 1.3 07/25/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -39,6 +39,7 @@
 //             Instead of listTable.getColumnName() for columnSizeHashMap.get().
 //         1.2 Method viewSelectedItem() Changed in TableViewForm Data Filling
 //             With Existing Derived columnSize Instance Rather then columnSizeHashMap.
+//         1.3 Method getColumnNames() Instance rs.close() Before Reuse.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -71,7 +72,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.2 07/19/2017
+ * @version 1.3 07/25/2017
  */
 
 public class TableTabPanel_Generic extends TableTabPanel
@@ -146,6 +147,7 @@ public class TableTabPanel_Generic extends TableTabPanel
                // System.out.println(rs.getString("COLUMN_NAME"));
             }
          }
+         rs.close();
 
          // Additional Indexes
 
