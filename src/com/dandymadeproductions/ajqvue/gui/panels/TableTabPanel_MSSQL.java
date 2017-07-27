@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 07/26/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production TableTabPanel_MSSQL Class.
+//         1.1 Method getColumnNames() Instance rs.close() Before Reuse.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -68,7 +69,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 07/26/2017
  */
 
 public class TableTabPanel_MSSQL extends TableTabPanel
@@ -153,6 +154,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                // System.out.println(rs.getString("COLUMN_NAME"));
             }
          }
+         rs.close();
 
          // Additional Indexes
 
