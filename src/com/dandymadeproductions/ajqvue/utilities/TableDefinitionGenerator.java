@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 06/15/2017
+// Version 1.3 07/27/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,8 @@
 //         1.2 Class Method createDerbyTableDefinition() Eliminated Redundant
 //             Conditional for Character Types, Along With Correction to Not
 //             Include Size for Long Varchar for Bit Data.
+//         1.3 Method createOracleTableDefinition() Insured resultSet Closed
+//             After Each Use.
 //             
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -66,7 +68,7 @@ import com.dandymadeproductions.ajqvue.structures.DataExportProperties;
  * structures that output via the SQL data export feature.
  * 
  * @author Dana Proctor
- * @version 1.2 06/16/2017
+ * @version 1.3 07/27/2017
  */
 
 public class TableDefinitionGenerator
@@ -1125,6 +1127,7 @@ public class TableDefinitionGenerator
             tableType = resultSet.getString(1);
          else
             tableType = "TABLE";
+         resultSet.close();
          
          // Drop Table Statements As Needed.
          if (DBTablesPanel.getDataExportProperties().getTableStructure())
@@ -1161,8 +1164,7 @@ public class TableDefinitionGenerator
 
          sqlStatementString = "SELECT * FROM " + schemaTableName + " WHERE ROWNUM=1";
          // System.out.println(sqlStatementString);
-
-         resultSet.close();
+         
          resultSet = sqlStatement.executeQuery(sqlStatementString);
          tableMetaData = resultSet.getMetaData();
 
