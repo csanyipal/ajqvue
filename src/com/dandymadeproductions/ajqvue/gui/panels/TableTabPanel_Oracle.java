@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Version 1.1 07/28/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production TableTabPanel_Oracle Class.
+//         1.1 Method getColumnNames() Instance rs.close() Before Reuse.
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -77,7 +78,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * provides the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 07/28/2017
  */
 
 public class TableTabPanel_Oracle extends TableTabPanel
@@ -164,6 +165,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
                // System.out.println(rs.getString("COLUMN_NAME"));
             }
          }
+         rs.close();
 
          // Additional Indexes, Exclude VIEWS.
          
@@ -188,6 +190,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
                }
             }
          }
+         rs.close();
          
          // Column Names, Form Fields, ComboBox Text, Special Fields,
          // and HashMaps.
@@ -318,6 +321,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
                   keyLengthHashMap.put(rs.getString("FKCOLUMN_NAME"), columnSize);
                }
          }
+         rs.close();
          
          // Debug for key resolution varification.
          /*
