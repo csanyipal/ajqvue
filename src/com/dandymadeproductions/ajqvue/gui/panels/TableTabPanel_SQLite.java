@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 07/20/2017
+// Version 1.2 07/29/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -47,6 +47,7 @@
 //                        Processing for TEXT Fields. Method editSelectedItem() Minor
 //                        Formatting Changes & Proper Processing/Detection for TEXT
 //                        Fields.
+//         1.2 07/29/2017 Method getColumnNames() Instance rs.close() Before Reuse.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -79,7 +80,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.1 07/20/2017
+ * @version 1.2 07/29/2017
  */
 
 public class TableTabPanel_SQLite extends TableTabPanel
@@ -158,6 +159,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
                // System.out.println(rs.getString("COLUMN_NAME"));
             }
          }
+         rs.close();
 
          // Additional Indexes
 
@@ -175,6 +177,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
                }
             }
          }
+         rs.close();
          
          // Column Names, Form Fields, ComboBox Text, Special Fields,
          // and HashMaps.
@@ -289,6 +292,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
                keyLengthHashMap.put(rs.getString("FKCOLUMN_NAME"), columnSize);
             }
          }
+         rs.close();
             
          // Debug for key resolution varification.
          /*
