@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 07/30/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/18/2016 Production AppGeneralPreferencesPanel Class.
+//         1.1 07/30/2017 Added Serialized ID.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -67,15 +68,15 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * font paramerters.   
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 07/30/2017
  */
 
 public class AppGeneralPreferencesPanel extends JPanel
 {
    // Class Instances.
-   //private static final long serialVersionUID = 5287224058215428943L;
-   private JComboBox<Object> localizationComboBox;
+   private static final long serialVersionUID = 5287224058215428943L;
    
+   private JComboBox<Object> localizationComboBox;
    private JSpinner fontSizeSpinner;
    
    //===========================================================
