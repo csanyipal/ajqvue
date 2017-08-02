@@ -12,8 +12,8 @@
 //           << TableTabPanel_PostgreSQL.java >>
 //
 //==============================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/19/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.1 08/02/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,10 @@
 // also be included with the original copyright author.
 //=============================================================
 // Version 1.0 Production TableTabPanel_PostgreSQL Class.
+//         1.1 Method getColumnNames() Insured rs.close() After Each Reuse.
+//             Method loadTable() Result Set Collection for Filling Table
+//             Data Conditional for BIT Types, getObject() Throws Exception,
+//             pgjdbc 42.0.0 Bug, Checked for Such Used getString().          
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -67,7 +71,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/19/2016
+ * @version 1.1 08/02/2017
  */
 
 public class TableTabPanel_PostgreSQL extends TableTabPanel //implements ActionListener
@@ -146,6 +150,7 @@ public class TableTabPanel_PostgreSQL extends TableTabPanel //implements ActionL
                // System.out.println(rs.getString("COLUMN_NAME"));
             }
          }
+         rs.close();
 
          // Additional Indexes
 
@@ -163,6 +168,7 @@ public class TableTabPanel_PostgreSQL extends TableTabPanel //implements ActionL
                }
             }
          }
+         rs.close();
          
          // Column Names, Form Fields, ComboBox Text, Special Fields,
          // and HashMaps.
@@ -181,9 +187,9 @@ public class TableTabPanel_PostgreSQL extends TableTabPanel //implements ActionL
             columnSize = Integer.valueOf(tableMetaData.getColumnDisplaySize(i));
 
             // System.out.println(i + " " + colNameString + " " +
-            // comboBoxNameString + " " +
-            // columnClass + " " + columnType + " " +
-            // columnSize);
+            //                    comboBoxNameString + " " +
+            //                    columnClass + " " + columnType + " " +
+            //                    columnSize);
 
             // This going to be a problem so skip this column.
 
@@ -517,9 +523,9 @@ public class TableTabPanel_PostgreSQL extends TableTabPanel //implements ActionL
                preferredColumnSize = (preferredColumnSizeHashMap.get(currentHeading)).intValue();
 
                // System.out.println(i + " " + j + " " + currentHeading + " " +
-               // columnName + " " + columnClass + " " +
-               // columnType + " " + columnSize + " " +
-               // preferredColumnSize + " " + keyLength);
+               //                    columnName + " " + columnClass + " " +
+               //                    columnType + " " + columnSize + " " +
+               //                    preferredColumnSize + " " + keyLength);
 
                // Storing data appropriately. If you have some date
                // or other formating, for a field here is where you
@@ -527,6 +533,8 @@ public class TableTabPanel_PostgreSQL extends TableTabPanel //implements ActionL
 
                if (lobDataTypesHashMap.containsKey(currentHeading))
                   currentContentData = "lob";
+               else if (columnType.indexOf("BIT") != 1)
+                  currentContentData = rs.getString(columnName);
                else
                   currentContentData = rs.getObject(columnName);
 
