@@ -8,8 +8,8 @@
 //                    << SQLTabPanel.java >>
 //
 //=================================================================
-// Copyright (C) 2016 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2017 Dana M. Proctor
+// Version 1.1 07/18/2016
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,7 +30,8 @@
 // in the present version number. Author information should
 // also be included with the original copyright author.
 //=================================================================
-// Version 1.0 Production SQLTabPanel Class.
+// Version 1.0 09/18/2016 Production SQLTabPanel Class.
+//         1.1 08/09/2017 Updated Copyright.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -88,7 +89,7 @@ import com.dandymadeproductions.ajqvue.utilities.TableSorter;
  * from the direct input of SQL commands executed on the database.  
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 08/09/2017
  */
 
 public class SQLTabPanel extends JPanel implements ActionListener, Printable
