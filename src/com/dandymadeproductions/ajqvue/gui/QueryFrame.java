@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/20/2016
+// Version 1.1 08/14/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,10 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/20/2016 Production QueryFrame Class.
+//         1.1 08/14/2017 Method actionPerformed() Action EDITPREFERENCES_TABLE_ROWS
+//                        Removed Conditional Check for queryTabsPane Selected
+//                        Component != Null. Checked in setRowPreferences(). Allows
+//                        Change in Fetch Row Size Before Any Tabs Present.
 //
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -117,7 +121,7 @@ import com.dandymadeproductions.ajqvue.utilities.TableClearingThread;
  * connection established in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/20/2016
+ * @version 1.1 06/14/2017
  */
 
 public class QueryFrame extends JFrame implements ActionListener, ChangeListener
@@ -623,8 +627,7 @@ public class QueryFrame extends JFrame implements ActionListener, ChangeListener
          // ==================================
 
          // Table Row Preferences
-         if (actionCommand.equals(EDITPREFERENCES_TABLE_ROWS)
-               && queryTabsPane.getSelectedComponent() != null)
+         if (actionCommand.equals(EDITPREFERENCES_TABLE_ROWS))
          {
             setRowPreferences();
          }
