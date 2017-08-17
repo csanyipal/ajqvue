@@ -13,7 +13,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.3 09/24/2016
+// Version 1.4 08/17/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,8 @@
 //         1.2 09/19/2016 Correction Collection of resourceBundle in
 //                        Constructor.
 //         1.3 09/24/2016 Renamed to DataSourcesDialog Class.
+//         1.4 08/17/2017 Method createConnectionProperties() Included MARIADB
+//                        useSSL.
 //
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -103,7 +105,7 @@ import com.dandymadeproductions.ajqvue.gui.XMLTranslator;
  *         object when finished.
  * 
  * @author Dana M. Proctor
- * @version 1.3 09/24/2016
+ * @version 1.4 08/17/2017
  */
 
 public class DataSourcesDialog extends JDialog implements ActionListener, PropertyChangeListener
@@ -557,6 +559,7 @@ public class DataSourcesDialog extends JDialog implements ActionListener, Proper
          ssh = "true";
 
          if (subProtocol.indexOf(ConnectionManager.HSQL) != -1
+             || subProtocol.equals(ConnectionManager.MARIADB)
              || subProtocol.equals(ConnectionManager.MYSQL)
              || subProtocol.equals(ConnectionManager.POSTGRESQL))
             connectProperties.setProperty("useSSL", "1");
