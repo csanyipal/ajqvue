@@ -12,7 +12,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 09/21/2016
+// Version 1.2 08/17/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@
 //=================================================================
 // Version 1.0 Production AccessDialog Class.
 //         1.1 Corrected logoIconPanel Resource in Constructor.
+//         1.2 Method accessCheck() Included MARIADB useSSL.
 //
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -98,7 +99,7 @@ import com.dandymadeproductions.ajqvue.utilities.NormalizeString;
  * to a database. 
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/21/2016
+ * @version 1.2 08/17/2017
  */
 
 public class LoginFrame extends JFrame implements ActionListener
@@ -887,6 +888,7 @@ public class LoginFrame extends JFrame implements ActionListener
             ssh = "true";
             
             if (subProtocol.indexOf(ConnectionManager.HSQL) != -1
+                || subProtocol.equals(ConnectionManager.MARIADB)  
                 || subProtocol.equals(ConnectionManager.MYSQL)
                 || subProtocol.equals(ConnectionManager.POSTGRESQL))
             connectProperties.setProperty("useSSL", "1");
