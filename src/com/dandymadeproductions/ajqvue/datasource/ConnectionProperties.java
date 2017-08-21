@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.6 09/17/2016
+// Version 1.7 08/21/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,6 +30,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production ConnectionProperties Class.
+//         1.1 Added Class Instance connectionProperties With Getter
+//             & Setter.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -37,19 +39,22 @@
 
 package com.dandymadeproductions.ajqvue.datasource;
 
+import java.util.Properties;
+
 /**
  * 
  *    This ConnectionProperties class provides the structure for the
  * connection properties storage.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 08/21/2017
  */
 
 public class ConnectionProperties
 {
    // Class Instances.
    private String connectionURLString;
+   private Properties connectionProperties;
    
    private String driver;
    private String protocol;
@@ -75,7 +80,18 @@ public class ConnectionProperties
    // ConnectionProperties Constructor
    //==============================================================
 
-   public ConnectionProperties(){}
+   public ConnectionProperties()
+   {
+      // These are additional properties passed with
+      // the database name, so initialize data structure.
+      // 
+      // Standard: db?prop1=x&prop2=y
+      //
+      // HSQL Standard: db;prop1=x;prop1=y
+      // HSQL Non-Standard: db;prop1=w;prop2=x?prop3=y&prop4=z
+      
+      connectionProperties = new Properties();
+   }
    
    //==============================================================
    // Class methods to allow classes to get the connection property
@@ -85,6 +101,11 @@ public class ConnectionProperties
    public String getConnectionURLString()
    {
       return connectionURLString;
+   }
+   
+   public Properties getConnectionProperties()
+   {
+      return connectionProperties;
    }
    
    public String getProperty(String property)
@@ -122,6 +143,11 @@ public class ConnectionProperties
    public void setConnectionURLString(String connectionURLString)
    {
       this.connectionURLString = connectionURLString;
+   }
+   
+   public void setProperties(Properties properties)
+   {
+      connectionProperties = properties;
    }
    
    public void setProperty(String property, String value)
