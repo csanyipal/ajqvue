@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 08/19/2017
+// Version 1.3 08/22/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,8 @@
 //         1.1 Class javadoc Constructor Comment Correction.
 //         1.2 Method init() db.substring() for Question Mark, Used
 //             to Pass Connection URL Properties. Debug Output.
+//         1.3 Method init() db String Removed v1.2 Change, But
+//             Clarified for HSQL Semicolon.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -62,7 +64,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * for the storage of database connection properties.
  * 
  * @author Dana M. Proctor
- * @version 1.2 08/19/2017
+ * @version 1.3 08/22/2017
  */
 
 public class DatabaseProperties
@@ -128,16 +130,11 @@ public class DatabaseProperties
       //======================================================
       // Collect the appropriate default database information.
       
-      // Most databases support property passing in
-      // the db string, so remove.
-      
-      if (db.indexOf("?") != -1)
-         db = db.substring(0, db.indexOf("?"));
-      
       // HSQL database uses a semicolon to add properties
-      // also, so remove.
+      // so remove.
       
-      if (db.indexOf(";") != -1)
+      if (subProtocol.indexOf(ConnectionManager.HSQL) != -1
+          && db.indexOf(";") != -1)
          db = db.substring(0, db.indexOf(";"));
       
       if (Ajqvue.getDebug())
