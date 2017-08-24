@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.3 08/22/2017
+// Version 1.4 08/24/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@
 //             to Pass Connection URL Properties. Debug Output.
 //         1.3 Method init() db String Removed v1.2 Change, But
 //             Clarified for HSQL Semicolon.
+//         1.4 Method init() Removed debug Output for db.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -64,7 +65,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * for the storage of database connection properties.
  * 
  * @author Dana M. Proctor
- * @version 1.3 08/22/2017
+ * @version 1.4 08/24/2017
  */
 
 public class DatabaseProperties
@@ -136,9 +137,6 @@ public class DatabaseProperties
       if (subProtocol.indexOf(ConnectionManager.HSQL) != -1
           && db.indexOf(";") != -1)
          db = db.substring(0, db.indexOf(";"));
-      
-      if (Ajqvue.getDebug())
-         System.out.println("DatabaseProperties init() db: " + db);
       
       // HSQL
       if (subProtocol.indexOf(ConnectionManager.HSQL) != -1)
