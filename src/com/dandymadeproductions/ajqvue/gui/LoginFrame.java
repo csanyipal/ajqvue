@@ -12,7 +12,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 08/17/2017
+// Version 1.3 08/24/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,10 @@
 // Version 1.0 Production AccessDialog Class.
 //         1.1 Corrected logoIconPanel Resource in Constructor.
 //         1.2 Method accessCheck() Included MARIADB useSSL.
+//         1.3 Method accessCheck() Reordered password, ssh Processing, &
+//             Included Proper Parsing db Input for Additional Connection
+//             Properties Then Stored in connectionProperties New Method
+//             setProperties(). Added debug Output for connectionProperties.
 //
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -62,7 +66,9 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Properties;
+//import java.util.Set;
 import java.util.TreeSet;
+//import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -99,7 +105,7 @@ import com.dandymadeproductions.ajqvue.utilities.NormalizeString;
  * to a database. 
  * 
  * @author Dana M. Proctor
- * @version 1.2 08/17/2017
+ * @version 1.3 08/24/2017
  */
 
 public class LoginFrame extends JFrame implements ActionListener
@@ -512,11 +518,16 @@ public class LoginFrame extends JFrame implements ActionListener
 
             // Temp debug.
             /*
-             * Enumeration sitesKeys = sites.keys(); while
-             * (sitesKeys.hasMoreElements()) { String currentKey = new
-             * String((String)sitesKeys.nextElement());
-             * System.out.println(currentKey); }
-             */
+            Set<String> sitesKeys = sites.keySet();
+            
+            sitesKeys.forEach(new Consumer<String>()
+            {
+               public void accept(final String currentKey)
+               {
+                  System.out.println("LoginFrame actionPerformed() sites:" + currentKey);
+               }
+            });
+            */
 
             // Closing out LoginManagerFrame and taking
             // action to update JMenu.
@@ -800,6 +811,7 @@ public class LoginFrame extends JFrame implements ActionListener
    private boolean accessCheck()
    {
       Connection dbConnection;
+      ConnectionProperties connectionProperties;
       
       String driver, protocol, subProtocol, host, port, db, user, passwordString, ssh;
       String connectionURLString;
@@ -869,9 +881,10 @@ public class LoginFrame extends JFrame implements ActionListener
          }
 
          // ================================================
-         // Obtaining the connection parameters & password.
+         // Obtaining the connection parameters.
          // ================================================
 
+         connectionProperties = new ConnectionProperties();
          connectProperties = new Properties();
          
          protocol = advancedParametersPanel.getProtocol();
@@ -880,21 +893,11 @@ public class LoginFrame extends JFrame implements ActionListener
          port = advancedParametersPanel.getPort();
          db = standardParametersPanel.getDatabase();
          
+         // Store user, password, ssh, other connection properties
+         // as properties.
+         
          user = standardParametersPanel.getUser();
          connectProperties.setProperty("user", user);
-      
-         if (sshCheckBox.isSelected())
-         {
-            ssh = "true";
-            
-            if (subProtocol.indexOf(ConnectionManager.HSQL) != -1
-                || subProtocol.equals(ConnectionManager.MARIADB)  
-                || subProtocol.equals(ConnectionManager.MYSQL)
-                || subProtocol.equals(ConnectionManager.POSTGRESQL))
-            connectProperties.setProperty("useSSL", "1");
-         }
-         else
-            ssh = "false";
          
          passwordString = "";
          passwordCharacters = standardParametersPanel.getPassword();
@@ -922,10 +925,42 @@ public class LoginFrame extends JFrame implements ActionListener
             passwordString = passwordString.replaceAll("%", "%" + Integer.toHexString(37));
          
          connectProperties.setProperty("password", passwordString);
+      
+         if (sshCheckBox.isSelected())
+         {
+            ssh = "true";
+            
+            if (subProtocol.indexOf(ConnectionManager.HSQL) != -1
+                || subProtocol.equals(ConnectionManager.MARIADB)  
+                || subProtocol.equals(ConnectionManager.MYSQL)
+                || subProtocol.equals(ConnectionManager.POSTGRESQL))
+            connectProperties.setProperty("useSSL", "1");
+         }
+         else
+            ssh = "false";
+         
+         // Parse db parameter for additional properties.
+         
+         if (db.indexOf("?") != -1)
+         {
+            String[] splitDB = db.split("\\?");
+            db = splitDB[0];
+            
+            String[] dbProperty = splitDB[1].split("&");
+            
+            for (int i=0; i < dbProperty.length; i++)
+            {
+               if (dbProperty[i].indexOf("=") != -1)
+               {
+                  connectProperties.setProperty(dbProperty[i].substring(0, dbProperty[i].indexOf("=")),
+                                                dbProperty[i].substring(dbProperty[i].indexOf("=") + 1,
+                                                dbProperty[i].length()));
+               }
+            }
+         }
          
          // Store parameters.
-         ConnectionProperties connectionProperties = new ConnectionProperties();
-         
+         connectionProperties.setProperties(connectProperties);
          connectionProperties.setProperty(ConnectionProperties.DRIVER, driver);
          connectionProperties.setProperty(ConnectionProperties.PROTOCOL, protocol);
          connectionProperties.setProperty(ConnectionProperties.SUBPROTOCOL, subProtocol);
@@ -941,8 +976,8 @@ public class LoginFrame extends JFrame implements ActionListener
          if (Ajqvue.getDebug())
          {
             System.out.println("LoginFrame accessCheck() Connection URL: " + connectionURLString);
-            // System.out.println("LoginFrame accessCheck() Connection Properties: "
-            //                    + connectProperties.toString());
+            System.out.println("LoginFrame accessCheck() Connection Properties: "
+                               + connectionProperties.toString());
          }
          
          connectionProperties.setConnectionURLString(connectionURLString);
