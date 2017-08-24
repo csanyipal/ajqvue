@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.3 06/28/2017
+// Version 1.4 08/24/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@
 //             History Action.
 //         1.3 Removed Arguments version & webSiteString From actionSelection().
 //             No Longer Required for Data Dump Threads or AboutFrame.
+//         1.4 Clarified Removal of Semicolon for database.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -105,7 +106,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * JMenuBar and JToolBar in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.3 06/28/2017
+ * @version 1.4 08/24/2017
  */
 
 class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
@@ -902,7 +903,9 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
       // Method Instances.
       JFileChooser dataFileChooser;
       String fileName;
-      String exportedTable, database;
+      String subProtocol;
+      String database;
+      String exportedTable;
       boolean useLimit;
       
       ArrayList<String> tableHeadings;
@@ -940,8 +943,12 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
          dataFileChooser = new JFileChooser(new File(lastExportDirectory));
 
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+      
       database = ConnectionManager.getConnectionProperties().getProperty(ConnectionProperties.DB);
-      if (database.indexOf(";") != -1)
+      subProtocol = ConnectionManager.getConnectionProperties().getProperty(
+         ConnectionProperties.SUBPROTOCOL);
+      
+      if (subProtocol.indexOf(ConnectionManager.HSQL) != -1 && database.indexOf(";") != -1)
          database = database.substring(0, database.indexOf(";"));
       
       if (DBTablesPanel.getSelectedTableTabPanel() == null)
