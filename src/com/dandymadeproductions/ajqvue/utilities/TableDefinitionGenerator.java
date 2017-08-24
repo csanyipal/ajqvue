@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.3 07/27/2017
+// Version 1.4 08/24/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@
 //             Include Size for Long Varchar for Bit Data.
 //         1.3 Method createOracleTableDefinition() Insured resultSet Closed
 //             After Each Use.
+//         1.4 Constructor Clarified Removal of Semicolon for databaseName.
 //             
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -68,7 +69,7 @@ import com.dandymadeproductions.ajqvue.structures.DataExportProperties;
  * structures that output via the SQL data export feature.
  * 
  * @author Dana Proctor
- * @version 1.3 07/27/2017
+ * @version 1.4 08/24/2017
  */
 
 public class TableDefinitionGenerator
@@ -94,7 +95,9 @@ public class TableDefinitionGenerator
       
       databaseName = ConnectionManager.getConnectionProperties().getProperty(
          ConnectionProperties.DB);
-      if (databaseName.indexOf(";") != -1)
+      
+      if (ConnectionManager.getDataSourceType().indexOf(ConnectionManager.HSQL) != -1
+          && databaseName.indexOf(";") != -1)
          databaseName = databaseName.substring(0, databaseName.indexOf(";"));
 
       // Setting up required instances.
