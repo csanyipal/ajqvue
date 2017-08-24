@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.7 08/21/2017
+// Version 1.2 08/23/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,8 @@
 // Version 1.0 Production ConnectionProperties Class.
 //         1.1 Added Class Instance connectionProperties With Getter
 //             & Setter.
+//         1.2 Changed getConnectionProperties() to protected. Added
+//             connectionProperties to toString() Output.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -39,6 +41,7 @@
 
 package com.dandymadeproductions.ajqvue.datasource;
 
+import java.util.Enumeration;
 import java.util.Properties;
 
 /**
@@ -47,7 +50,7 @@ import java.util.Properties;
  * connection properties storage.
  * 
  * @author Dana M. Proctor
- * @version 1.1 08/21/2017
+ * @version 1.2 08/23/2017
  */
 
 public class ConnectionProperties
@@ -103,7 +106,7 @@ public class ConnectionProperties
       return connectionURLString;
    }
    
-   public Properties getConnectionProperties()
+   protected Properties getConnectionProperties()
    {
       return connectionProperties;
    }
@@ -183,7 +186,11 @@ public class ConnectionProperties
 
    public String toString()
    {
-      StringBuffer parameters = new StringBuffer("[ConnectionProperties: ");
+      // Method Instances
+      StringBuffer parameters;
+      Enumeration<Object> propertyKeys;
+      
+      parameters = new StringBuffer("[ConnectionProperties: ");
       
       parameters.append("[" + ConnectionProperties.DRIVER + " = " + driver + "]");
       parameters.append("[" + ConnectionProperties.PROTOCOL + " = " + protocol + "]");
@@ -193,6 +200,16 @@ public class ConnectionProperties
       parameters.append("[" + ConnectionProperties.DB + " = " + db + "]");
       parameters.append("[" + ConnectionProperties.USER + " = " + user + "]");
       parameters.append("[" + ConnectionProperties.SSH + " = " + ssh + "]");
+      
+      propertyKeys = connectionProperties.keys();
+      
+      while (propertyKeys.hasMoreElements())
+      {
+         String key = (String) propertyKeys.nextElement();
+         
+         if (!key.equals(ConnectionProperties.USER) && !key.equals(ConnectionProperties.PASSWORD))
+            parameters.append("[" + key + " = " + connectionProperties.getProperty(key) + "]");
+      }
       
       return parameters.toString();
    }
