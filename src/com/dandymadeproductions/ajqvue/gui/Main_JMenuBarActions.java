@@ -903,7 +903,6 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
       // Method Instances.
       JFileChooser dataFileChooser;
       String fileName;
-      String subProtocol;
       String database;
       String exportedTable;
       boolean useLimit;
@@ -945,10 +944,9 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
       
       database = ConnectionManager.getConnectionProperties().getProperty(ConnectionProperties.DB);
-      subProtocol = ConnectionManager.getConnectionProperties().getProperty(
-         ConnectionProperties.SUBPROTOCOL);
       
-      if (subProtocol.indexOf(ConnectionManager.HSQL) != -1 && database.indexOf(";") != -1)
+      if (ConnectionManager.getDataSourceType().indexOf(ConnectionManager.HSQL) != -1
+          && database.indexOf(";") != -1)
          database = database.substring(0, database.indexOf(";"));
       
       if (DBTablesPanel.getSelectedTableTabPanel() == null)
