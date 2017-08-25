@@ -13,7 +13,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.4 08/17/2017
+// Version 1.5 08/25/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,8 +40,14 @@
 //         1.2 09/19/2016 Correction Collection of resourceBundle in
 //                        Constructor.
 //         1.3 09/24/2016 Renamed to DataSourcesDialog Class.
-//         1.4 08/17/2017 Method createConnectionProperties() Included MARIADB
-//                        useSSL.
+//         1.4 08/17/2017 Method createConnectionProperties() Included
+//                        MARIADB useSSL.
+//         1.5 08/25/2017 Method createConnectionProperties() Reordered
+//                        password, ssh Processing, & Included Proper
+//                        Parsing db Input for Additional Connection
+//                        Properties Then Stored in connectionProperties
+//                        New Method setProperties(). Added debug Output
+//                        for connectionProperties.
 //
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -105,7 +111,7 @@ import com.dandymadeproductions.ajqvue.gui.XMLTranslator;
  *         object when finished.
  * 
  * @author Dana M. Proctor
- * @version 1.4 08/17/2017
+ * @version 1.5 08/25/2017
  */
 
 public class DataSourcesDialog extends JDialog implements ActionListener, PropertyChangeListener
@@ -551,22 +557,12 @@ public class DataSourcesDialog extends JDialog implements ActionListener, Proper
       port = selectedSite.getPort();
       db = selectedSite.getDatabase();
 
+      // Store user, password, ssh, other conneciton properties
+      // as properties.
+      
       user = selectedSite.getUser();
       connectProperties.setProperty("user", user);
-
-      if (selectedSite.getSsh().equals("1"))
-      {
-         ssh = "true";
-
-         if (subProtocol.indexOf(ConnectionManager.HSQL) != -1
-             || subProtocol.equals(ConnectionManager.MARIADB)
-             || subProtocol.equals(ConnectionManager.MYSQL)
-             || subProtocol.equals(ConnectionManager.POSTGRESQL))
-            connectProperties.setProperty("useSSL", "1");
-      }
-      else
-         ssh = "false";
-
+      
       passwordString = "";
       passwordCharacters = passwordTextField.getPassword();
 
@@ -595,8 +591,40 @@ public class DataSourcesDialog extends JDialog implements ActionListener, Proper
 
       connectProperties.setProperty("password", passwordString);
 
-      // Store parameters.
+      if (selectedSite.getSsh().equals("1"))
+      {
+         ssh = "true";
 
+         if (subProtocol.indexOf(ConnectionManager.HSQL) != -1
+             || subProtocol.equals(ConnectionManager.MARIADB)
+             || subProtocol.equals(ConnectionManager.MYSQL)
+             || subProtocol.equals(ConnectionManager.POSTGRESQL))
+            connectProperties.setProperty("useSSL", "1");
+      }
+      else
+         ssh = "false";
+
+      // Parse db parameter for additional properties.
+      if (db.indexOf("?") != -1)
+      {
+         String[] splitDB = db.split("\\?");
+         db = splitDB[0];
+         
+         String[] dbProperty = splitDB[1].split("&");
+         
+         for (int i=0; i < dbProperty.length; i++)
+         {
+            if (dbProperty[i].indexOf("=") != -1)
+            {
+               connectProperties.setProperty(dbProperty[i].substring(0, dbProperty[i].indexOf("=")),
+                                             dbProperty[i].substring(dbProperty[i].indexOf("=") + 1,
+                                             dbProperty[i].length()));
+            }
+         }
+      }
+
+      // Store parameters.
+      connectionProperties.setProperties(connectProperties);
       connectionProperties.setProperty(ConnectionProperties.DRIVER, driver);
       connectionProperties.setProperty(ConnectionProperties.PROTOCOL, protocol);
       connectionProperties.setProperty(ConnectionProperties.SUBPROTOCOL, subProtocol);
@@ -613,6 +641,8 @@ public class DataSourcesDialog extends JDialog implements ActionListener, Proper
       {
          System.out.println("DataSourceDialog createConnectionProperties() Connection URL: "
                             + connectionURLString);
+         System.out.println("DataSourceDialog createConnectionProperties() Connection Properties: "
+                            + connectProperties.toString());
       }
 
       connectionProperties.setConnectionURLString(connectionURLString);
