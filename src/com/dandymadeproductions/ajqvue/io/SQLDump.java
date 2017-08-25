@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2017 Dana M. Proctor
-// Version 1.1 06/29/2017
+// Version 1.2 08/25/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 // Version 1.0 Production SQLDump Class.
 //         1.1 Removed System.out in dumpChunkOfData(). Added javadoc Comment
 //             for Constructor.
+//         1.2 Method generateHeaders() Removed Semicolon, Properties for HSQL.
 //                         
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -55,7 +56,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionProperties;
  * Ajqvue IO SQL Data Dump Threads.
  * 
  * @author Dana Proctor
- * @version 1.1 06/29/2017
+ * @version 1.2 08/25/2017
  */
 
 public class SQLDump
@@ -80,6 +81,10 @@ public class SQLDump
       connectionProperties = ConnectionManager.getConnectionProperties();
       hostName = connectionProperties.getProperty(ConnectionProperties.HOST);
       databaseName = connectionProperties.getProperty(ConnectionProperties.DB);
+      
+      if (ConnectionManager.getDataSourceType().indexOf(ConnectionManager.HSQL) != -1
+            && databaseName.indexOf(";") != -1)
+           databaseName = databaseName.substring(0, databaseName.indexOf(";"));
 
       dateTimeFormat = new SimpleDateFormat("yyyy.MM.dd G 'at' hh:mm:ss z");
       dateTime = dateTimeFormat.format(new Date());
