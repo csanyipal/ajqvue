@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2017 Dana M. Proctor
-// Version 1.2 08/25/2017
+// Version 1.3 08/25/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,8 @@
 //         1.1 Removed System.out in dumpChunkOfData(). Added javadoc Comment
 //             for Constructor.
 //         1.2 Method generateHeaders() Removed Semicolon, Properties for HSQL.
+//         1.3 Reverted v1.2, Multiple Databases Tag Properties on Connection
+//             URL, databaseName.
 //                         
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -56,7 +58,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionProperties;
  * Ajqvue IO SQL Data Dump Threads.
  * 
  * @author Dana Proctor
- * @version 1.2 08/25/2017
+ * @version 1.3 08/25/2017
  */
 
 public class SQLDump
