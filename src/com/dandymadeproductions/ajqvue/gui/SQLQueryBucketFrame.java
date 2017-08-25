@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 08/22/2017
+// Version 1.3 08/25/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,8 @@
 //             Directory, Is Created Before Opening bucketFile.
 //         1.2 Method openLastUsedList() Cleaned Up Some databaseName for
 //             HSQL Database Connections, Discounts Passed Properties.
+//         1.3 Reverted v1.2, Multiple Databases Tag Properties on Connection
+//             URL, databaseName.
 //         
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -106,7 +108,7 @@ import com.dandymadeproductions.ajqvue.utilities.SQLQueryBucketListObject;
  * storage of SQL Query statements derived from DBTablesTab.
  * 
  * @author Dana M. Proctor
- * @version 1.2 08/22/2017
+ * @version 1.3 08/25/2017
  */
 
 public class SQLQueryBucketFrame extends JFrame implements ActionListener, MouseListener
@@ -1395,8 +1397,7 @@ public class SQLQueryBucketFrame extends JFrame implements ActionListener, Mouse
       String slash = "\\";
       databaseName = databaseName.replaceAll(Matcher.quoteReplacement(slash), "_");
       
-      if (ConnectionManager.getDataSourceType().indexOf(ConnectionManager.HSQL) != -1
-          && databaseName.indexOf(";") != -1)
+      if (databaseName.indexOf(";") != -1)
            databaseName = databaseName.substring(0, databaseName.indexOf(";"));
       
       fileSeparator = Utils.getFileSeparator();
