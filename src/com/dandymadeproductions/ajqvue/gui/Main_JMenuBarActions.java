@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.4 08/24/2017
+// Version 1.5 08/25/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -38,6 +38,8 @@
 //         1.3 Removed Arguments version & webSiteString From actionSelection().
 //             No Longer Required for Data Dump Threads or AboutFrame.
 //         1.4 Clarified Removal of Semicolon for database.
+//         1.5 Reverted v1.4, Multiple Databases Tag Properties on Connection
+//             URL, database.         
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -106,7 +108,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * JMenuBar and JToolBar in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.4 08/24/2017
+ * @version 1.5 08/25/2017
  */
 
 class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
@@ -945,8 +947,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
       
       database = ConnectionManager.getConnectionProperties().getProperty(ConnectionProperties.DB);
       
-      if (ConnectionManager.getDataSourceType().indexOf(ConnectionManager.HSQL) != -1
-          && database.indexOf(";") != -1)
+      if (database.indexOf(";") != -1)
          database = database.substring(0, database.indexOf(";"));
       
       if (DBTablesPanel.getSelectedTableTabPanel() == null)
