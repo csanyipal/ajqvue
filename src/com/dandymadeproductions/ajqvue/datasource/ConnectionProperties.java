@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 08/23/2017
+// Version 1.3 08/27/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,6 +34,8 @@
 //             & Setter.
 //         1.2 Changed getConnectionProperties() to protected. Added
 //             connectionProperties to toString() Output.
+//         1.3 Method toString() Clarified Output Distinction Between
+//             Input Parameters & Optional Properties.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -50,7 +52,7 @@ import java.util.Properties;
  * connection properties storage.
  * 
  * @author Dana M. Proctor
- * @version 1.2 08/23/2017
+ * @version 1.3 08/27/2017
  */
 
 public class ConnectionProperties
@@ -190,7 +192,7 @@ public class ConnectionProperties
       StringBuffer parameters;
       Enumeration<Object> propertyKeys;
       
-      parameters = new StringBuffer("[ConnectionProperties: ");
+      parameters = new StringBuffer("[ConnectionProperties: \n Parameters: ");
       
       parameters.append("[" + ConnectionProperties.DRIVER + " = " + driver + "]");
       parameters.append("[" + ConnectionProperties.PROTOCOL + " = " + protocol + "]");
@@ -201,16 +203,18 @@ public class ConnectionProperties
       parameters.append("[" + ConnectionProperties.USER + " = " + user + "]");
       parameters.append("[" + ConnectionProperties.SSH + " = " + ssh + "]");
       
+      parameters.append("\n Properties: ");
+      
       propertyKeys = connectionProperties.keys();
       
       while (propertyKeys.hasMoreElements())
       {
          String key = (String) propertyKeys.nextElement();
          
-         if (!key.equals(ConnectionProperties.USER) && !key.equals(ConnectionProperties.PASSWORD))
+         if (!key.equals("user") && !key.equals("password"))
             parameters.append("[" + key + " = " + connectionProperties.getProperty(key) + "]");
       }
-      
+      parameters.append("]");
       return parameters.toString();
    }
 }
