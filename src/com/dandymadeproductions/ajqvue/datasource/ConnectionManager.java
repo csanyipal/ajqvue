@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Version 1.1 08/27/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,11 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production ConnectionManager Class.
+//         1.1 Method getConnection() Change to Have connectProperties
+//             Collected From connectionProperties. Removal of Setting
+//             User, Password, & SSH to connectProperties, Since Done
+//             Now in LoginFrame.accessCheck(). Generalized SQLite
+//             Memory Conditional Check in get/closeConnection() Methods. 
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -64,7 +69,7 @@ import com.sun.rowset.WebRowSetImpl;
  * various databases support.   
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 08/27/2017
  */
 
 public class ConnectionManager
@@ -119,22 +124,10 @@ public class ConnectionManager
       String db, subProtocol;
       
       // Setup.
-      connectProperties = new Properties();
-      
       connectionURLString = connectionProperties.getConnectionURLString();
       db = connectionProperties.getProperty(ConnectionProperties.DB);
       subProtocol = connectionProperties.getProperty(ConnectionProperties.SUBPROTOCOL);
-      
-      connectProperties.setProperty("user", connectionProperties.getProperty(ConnectionProperties.USER));
-      connectProperties.setProperty("password", connectionProperties.getPassword());
-      
-      // Handle SSL
-      if (subProtocol.indexOf(HSQL) != -1 || subProtocol.equals(MYSQL)
-          || subProtocol.equals(POSTGRESQL))
-      {
-         if (connectionProperties.getProperty(ConnectionProperties.SSH).equals("true"))
-            connectProperties.setProperty("useSSL", "1");
-      }
+      connectProperties = connectionProperties.getConnectionProperties();
             
       // Select and try to return an appropriate connection
       // type.
@@ -151,7 +144,7 @@ public class ConnectionManager
          
          // HSQL, SQLite, Derby, & H2 Memory Connections
          if ((memoryConnection != null)
-              && (subProtocol.equals(SQLITE) && db.toLowerCase(Locale.ENGLISH).equals(":memory:"))
+              && (subProtocol.equals(SQLITE) && db.toLowerCase(Locale.ENGLISH).indexOf(":memory:") != -1)
                   || (subProtocol.indexOf(HSQL) != -1 && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1)
                   || (subProtocol.equals(DERBY) && db.toLowerCase(Locale.ENGLISH).indexOf("memory:") != -1)
                   || (subProtocol.equals(H2) && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1))
@@ -191,7 +184,7 @@ public class ConnectionManager
          
          // Close connection as needed.
          if ((memoryConnection != null)
-              && (subProtocol.equals(SQLITE) && db.toLowerCase(Locale.ENGLISH).equals(":memory:"))
+              && (subProtocol.equals(SQLITE) && db.toLowerCase(Locale.ENGLISH).indexOf(":memory:") != -1)
                   || (subProtocol.indexOf(HSQL) != -1 && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1)
                   || (subProtocol.equals(DERBY) && db.toLowerCase(Locale.ENGLISH).indexOf("memory:") != -1)
                   || (subProtocol.equals(H2) && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1))
