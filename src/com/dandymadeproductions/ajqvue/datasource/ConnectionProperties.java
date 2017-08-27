@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.3 08/27/2017
+// Version 1.4 08/27/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,7 @@
 //             connectionProperties to toString() Output.
 //         1.3 Method toString() Clarified Output Distinction Between
 //             Input Parameters & Optional Properties.
+//         1.4 Added Class Instances STD_PROPERTY_CHAR & STD_PROPERTY_DELIMITER
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -52,7 +53,7 @@ import java.util.Properties;
  * connection properties storage.
  * 
  * @author Dana M. Proctor
- * @version 1.3 08/27/2017
+ * @version 1.4 08/27/2017
  */
 
 public class ConnectionProperties
@@ -80,6 +81,9 @@ public class ConnectionProperties
    public static final String USER = "User";
    public static final String PASSWORD = "Password";
    public static final String SSH = "SSH";
+   
+   public static final String STD_PROPERTY_CHAR = "?";
+   public static final String STD_PROPERTY_DELIMITER = "&";
    
    //==============================================================
    // ConnectionProperties Constructor
