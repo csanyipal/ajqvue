@@ -13,7 +13,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.5 08/25/2017
+// Version 1.6 08/28/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -48,6 +48,9 @@
 //                        Properties Then Stored in connectionProperties
 //                        New Method setProperties(). Added debug Output
 //                        for connectionProperties.
+//         1.6 08/28/2017 Method createConnectionProperties() Use of
+//                        ConnectionProperties Instances STD_PROPERTY_CHAR
+//                        & STD_PROPERTY_DELIMITER.
 //
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -111,7 +114,7 @@ import com.dandymadeproductions.ajqvue.gui.XMLTranslator;
  *         object when finished.
  * 
  * @author Dana M. Proctor
- * @version 1.5 08/25/2017
+ * @version 1.6 08/28/2017
  */
 
 public class DataSourcesDialog extends JDialog implements ActionListener, PropertyChangeListener
@@ -605,12 +608,19 @@ public class DataSourcesDialog extends JDialog implements ActionListener, Proper
          ssh = "false";
 
       // Parse db parameter for additional properties.
-      if (db.indexOf("?") != -1)
+      
+      if (db.indexOf(ConnectionProperties.STD_PROPERTY_CHAR) != -1)
       {
-         String[] splitDB = db.split("\\?");
+         String[] splitDB;
+         
+         if (ConnectionProperties.STD_PROPERTY_CHAR.equals("?"))
+            splitDB = db.split("\\" + ConnectionProperties.STD_PROPERTY_CHAR);
+         else
+            splitDB = db.split(ConnectionProperties.STD_PROPERTY_CHAR);
+         
          db = splitDB[0];
          
-         String[] dbProperty = splitDB[1].split("&");
+         String[] dbProperty = splitDB[1].split(ConnectionProperties.STD_PROPERTY_DELIMITER);
          
          for (int i=0; i < dbProperty.length; i++)
          {
