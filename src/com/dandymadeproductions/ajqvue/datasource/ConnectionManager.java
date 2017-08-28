@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 08/27/2017
+// Version 1.2 08/28/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,7 +35,9 @@
 //             Collected From connectionProperties. Removal of Setting
 //             User, Password, & SSH to connectProperties, Since Done
 //             Now in LoginFrame.accessCheck(). Generalized SQLite
-//             Memory Conditional Check in get/closeConnection() Methods. 
+//             Memory Conditional Check in get/closeConnection() Methods.
+//         1.2 Method createConnectionURLString() Removed Unnecessary
+//             Comments.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -69,7 +71,7 @@ import com.sun.rowset.WebRowSetImpl;
  * various databases support.   
  * 
  * @author Dana M. Proctor
- * @version 1.1 08/27/2017
+ * @version 1.2 08/28/2017
  */
 
 public class ConnectionManager
@@ -488,11 +490,6 @@ public class ConnectionManager
       // MySQL, MariaDB, PostgreSQL, HSQL, & Derby
       else
       {
-         // The % character is interpreted as the start of a special escaped sequence,
-         // two digit hexadeciaml value. So replace passwordString characters with that
-         // character with that characters hexadecimal value as sequence, %37. Java
-         // API URLDecoder.
-         
          if (subProtocol.indexOf(ConnectionManager.DERBY) != -1 &&
                driver.indexOf("EmbeddedDriver") != -1)
             connectionURLString += subProtocol + ":" + db;
