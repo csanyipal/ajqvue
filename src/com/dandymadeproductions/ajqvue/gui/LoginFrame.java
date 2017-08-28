@@ -12,7 +12,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.3 08/24/2017
+// Version 1.4 08/28/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,8 @@
 //             Included Proper Parsing db Input for Additional Connection
 //             Properties Then Stored in connectionProperties New Method
 //             setProperties(). Added debug Output for connectionProperties.
+//         1.4 Method accessCheck() Use of ConnectionProperties Instances
+//             STD_PROPERTY_CHAR & STD_PROPERTY_DELIMITER.
 //
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -105,7 +107,7 @@ import com.dandymadeproductions.ajqvue.utilities.NormalizeString;
  * to a database. 
  * 
  * @author Dana M. Proctor
- * @version 1.3 08/24/2017
+ * @version 1.4 08/28/2017
  */
 
 public class LoginFrame extends JFrame implements ActionListener
@@ -941,14 +943,20 @@ public class LoginFrame extends JFrame implements ActionListener
          
          // Parse db parameter for additional properties.
          
-         if (db.indexOf("?") != -1)
+         if (db.indexOf(ConnectionProperties.STD_PROPERTY_CHAR) != -1)
          {
-            String[] splitDB = db.split("\\?");
+            String[] splitDB;
+            
+            if (ConnectionProperties.STD_PROPERTY_CHAR.equals("?"))
+               splitDB = db.split("\\" + ConnectionProperties.STD_PROPERTY_CHAR);
+            else
+               splitDB = db.split(ConnectionProperties.STD_PROPERTY_CHAR);
+            
             db = splitDB[0];
             
-            String[] dbProperty = splitDB[1].split("&");
+            String[] dbProperty = splitDB[1].split(ConnectionProperties.STD_PROPERTY_DELIMITER);
             
-            for (int i=0; i < dbProperty.length; i++)
+            for (int i = 0; i < dbProperty.length; i++)
             {
                if (dbProperty[i].indexOf("=") != -1)
                {
