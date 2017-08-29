@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 02/11/2017
+// Version 1.2 08/29/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,9 +30,13 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/17/2016 Initial ConnectionInstance Class.
-//         1.1 02/11/2017 Made Default Derby, H2, SQLite, & HSQL2 Memory Connection Instances
-//                        public Along With PROTOCOL. Changed Class Instance HOST to LOCALHOST
-//                        & Also Made public.
+//         1.1 02/11/2017 Made Default Derby, H2, SQLite, & HSQL2 Memory Connection
+//                        Instances public Along With PROTOCOL. Changed Class Instance
+//                        HOST to LOCALHOST & Also Made public.
+//         1.2 08/29/2017 Method createDefaultMemoryConnection() Use of connectProperties.
+//                        Methods initConnection() & getConnection() Derived connectProperties
+//                        From connectionProperties.getConnectionProperties(), Comment,
+//                        debug Output, & Formatting Changes.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -67,7 +71,7 @@ import com.sun.rowset.WebRowSetImpl;
  * connections to a distinct set of databases.
  * 
  * @author Dana M. Proctor
- * @version 1.1 02/11/2017
+ * @version 1.2 08/29/2017
  */
 
 public class ConnectionInstance
@@ -169,15 +173,20 @@ public class ConnectionInstance
    
    //==============================================================
    // Class method to store a default memory setup connection
-   // properties for use with a Derby, H2 or default HSQL2 database.
+   // properties for use with a Derby, H2, SQLite or default HSQL2
+   // database.
    //==============================================================
    
    private void createDefaultMemoryConnectionProperties(String dataSourceType)
    {
       // Method Instances.
+      Properties connectProperties;
+      
       String driver, subProtocol, port, db;
       
+      // Setup
       connectionProperties = new ConnectionProperties();
+      connectProperties = new Properties();
       
       if (dataSourceType.equals(DERBY))
       {
@@ -208,6 +217,11 @@ public class ConnectionInstance
          db = HSQL2_MEMORY_DB;
       }
       
+      connectProperties.setProperty("user", USER);
+      connectProperties.setProperty("password", PASSWORD);
+      
+      // Store parameters.
+      connectionProperties.setProperties(connectProperties);
       connectionProperties.setProperty(ConnectionProperties.DRIVER, driver);
       connectionProperties.setProperty(ConnectionProperties.PROTOCOL, PROTOCOL);
       connectionProperties.setProperty(ConnectionProperties.SUBPROTOCOL, subProtocol);
@@ -242,6 +256,7 @@ public class ConnectionInstance
       try
       {
          Class.forName(connectionProperties.getProperty(ConnectionProperties.DRIVER));
+         
          if (debug)
             System.out.println("ConnectionInstance initConnection() Driver Loaded");
       }
@@ -270,15 +285,13 @@ public class ConnectionInstance
       try
       {
          connectionURLString = connectionProperties.getConnectionURLString();
+         connectProperties = connectionProperties.getConnectionProperties();
          
          if (debug)
+         {
             System.out.println("ConnectionInstance initConnection() " + connectionURLString);
-         
-         connectProperties = new Properties();
-         connectProperties.setProperty("user",
-                                       connectionProperties.getProperty(ConnectionProperties.USER));
-         connectProperties.setProperty("password",
-                                       connectionProperties.getPassword());
+            // System.out.println(" (CI) Connection Properties: " + connectProperties.toString());
+         }
          
          dbConnection = DriverManager.getConnection(connectionURLString, connectProperties);
 
@@ -293,13 +306,10 @@ public class ConnectionInstance
          subProtocol = connectionProperties.getProperty(ConnectionProperties.SUBPROTOCOL);
          db = connectionProperties.getProperty(ConnectionProperties.DB);
          
-         if ((subProtocol.equals(SQLITE) && db.toLowerCase(Locale.ENGLISH).equals(":memory:"))
-              || (subProtocol.indexOf(HSQL) != -1
-                  && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1)    
-              || (subProtocol.equals(DERBY)
-                  && db.toLowerCase(Locale.ENGLISH).indexOf("memory:") != -1)
-              || (subProtocol.equals(H2)
-                  && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1))
+         if ((subProtocol.equals(SQLITE) && db.toLowerCase(Locale.ENGLISH).indexOf(":memory:") != -1)
+              || (subProtocol.indexOf(HSQL) != -1 && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1)    
+              || (subProtocol.equals(DERBY) && db.toLowerCase(Locale.ENGLISH).indexOf("memory:") != -1)
+              || (subProtocol.equals(H2) && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1))
          {
             setMemoryConnection(DriverManager.getConnection(connectionURLString, connectProperties));
          }
@@ -332,24 +342,10 @@ public class ConnectionInstance
          return null;
       
       // Setup.
-      connectProperties = new Properties();
-      
       connectionURLString = connectionProperties.getConnectionURLString();
       db = connectionProperties.getProperty(ConnectionProperties.DB);
       subProtocol = connectionProperties.getProperty(ConnectionProperties.SUBPROTOCOL);
-      
-      connectProperties.setProperty("user",
-                                    connectionProperties.getProperty(ConnectionProperties.USER));
-      connectProperties.setProperty("password",
-                                    connectionProperties.getPassword());
-      
-      // Handle SSL
-      if (subProtocol.indexOf(HSQL) != -1 || subProtocol.equals(MYSQL)
-          || subProtocol.equals(POSTGRESQL))
-      {
-           connectProperties.setProperty("useSSL",
-              connectionProperties.getProperty(ConnectionProperties.SSH));  
-      }
+      connectProperties = connectionProperties.getConnectionProperties();
             
       // Select and try to return an appropriate connection
       // type.
@@ -357,15 +353,17 @@ public class ConnectionInstance
       try
       {
          if (debug)
+         {
             System.out.println(description + " (CI) Connection Created");
+            // System.out.println(" (CI) Connection Properties: " + connectProperties.toString());
+         }
          
          // Create the appropriate connection as needed.
          
          // HSQL, SQLite, Derby, & H2 Memory Connections
          if ((memoryConnection != null)
-              && (subProtocol.equals(SQLITE) && db.toLowerCase(Locale.ENGLISH).equals(":memory:"))
-                  || (subProtocol.indexOf(HSQL) != -1
-                      && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1)
+              && (subProtocol.equals(SQLITE) && db.toLowerCase(Locale.ENGLISH).indexOf(":memory:") != -1)
+                  || (subProtocol.indexOf(HSQL) != -1 && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1)
                   || (subProtocol.equals(DERBY) && db.toLowerCase(Locale.ENGLISH).indexOf("memory:") != -1)
                   || (subProtocol.equals(H2) && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1))
             return memoryConnection;
@@ -404,7 +402,7 @@ public class ConnectionInstance
          
          // Close connection as needed.
          if ((memoryConnection != null)
-              && (subProtocol.equals(SQLITE) && db.toLowerCase(Locale.ENGLISH).equals(":memory:"))
+              && (subProtocol.equals(SQLITE) && db.toLowerCase(Locale.ENGLISH).indexOf(":memory:") != -1)
                   || (subProtocol.indexOf(HSQL) != -1 && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1)
                   || (subProtocol.equals(DERBY) && db.toLowerCase(Locale.ENGLISH).indexOf("memory:") != -1)
                   || (subProtocol.equals(H2) && db.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1))
