@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 08/28/2017
+// Version 1.3 09/01/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -38,6 +38,7 @@
 //             Memory Conditional Check in get/closeConnection() Methods.
 //         1.2 Method createConnectionURLString() Removed Unnecessary
 //             Comments.
+//         1.3 Synchronized Methods get/closeConnection().
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -71,7 +72,7 @@ import com.sun.rowset.WebRowSetImpl;
  * various databases support.   
  * 
  * @author Dana M. Proctor
- * @version 1.2 08/28/2017
+ * @version 1.3 09/01/2017
  */
 
 public class ConnectionManager
@@ -118,7 +119,7 @@ public class ConnectionManager
    // accessing this method for a null return, no connection made.
    //==============================================================
 
-   public static Connection getConnection(String description)
+   public static synchronized Connection getConnection(String description)
    {
       // Method Instances.
       Properties connectProperties;
@@ -170,7 +171,7 @@ public class ConnectionManager
    // host, db, user and password.
    //==============================================================
 
-   public static void closeConnection(Connection dbConnection, String description)
+   public static synchronized void closeConnection(Connection dbConnection, String description)
    {
       // Method Instances.
       String db, subProtocol;
@@ -351,7 +352,7 @@ public class ConnectionManager
    // errors that occured during a connection to the database.
    //==============================================================
 
-   public static void displaySQLErrors(SQLException e, String classCaller)
+   public static synchronized void displaySQLErrors(SQLException e, String classCaller)
    {
       String sqlExceptionString;
       
