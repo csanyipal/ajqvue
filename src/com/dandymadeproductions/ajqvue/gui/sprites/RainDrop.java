@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 09/02/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production RainDrop Class.
+//         1.1 Method updatePosition() Corrected position.x Assignment
+//             Which Had Been Always 0, Integer Fraction Multiply.
 //        
 //-----------------------------------------------------------------
 //               danap@dandymadeproductions.com
@@ -50,7 +52,7 @@ import java.awt.Rectangle;
  * panel winter.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 09/02/2017
  */
 
 public class RainDrop extends Sprite
@@ -115,7 +117,7 @@ public class RainDrop extends Sprite
          }
          else if (position.x < 0 && nextPosition.x < 0)
          {
-            position.x = (2 / 3) * bounds.width;
+            position.x = (int) ((2.0 / 3.0) * bounds.width);
             tempNextPosition.x = -nextPosition.x;
          }
 
