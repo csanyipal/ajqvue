@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Version 1.1 09/02/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production CSVDataImportThread Class.
+//         1.1 Method importCSVFile() Additional Check for columnClass Not
+//             Null in Conditional for Date, Datetime, & Timestamp.
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -69,7 +71,7 @@ import com.dandymadeproductions.ajqvue.utilities.SQLQuery;
  * address the ability to cancel the import.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 09/02/2017
  */
 
 public class CSVDataImportThread implements Runnable
@@ -435,7 +437,7 @@ public class CSVDataImportThread implements Runnable
                      else if ((columnType != null)
                               && (columnType.equals("DATE") || columnType.equals("DATETIME")
                                     || (columnType.indexOf("TIMESTAMP") != -1)
-                                        && columnClass.indexOf("Array") == -1))
+                                        && (columnClass != null && columnClass.indexOf("Array") == -1)))
                      {
                         if (columnType.equals("DATE"))
                         {
