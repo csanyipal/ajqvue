@@ -384,7 +384,7 @@ public abstract class Plugin_Module implements PluginModuleInterface
 				instance. That new instance is a type TableRecordCountPanel and extends
 				the JPanel object from the Java API. The tableRecordCountPanel instance is
 				created in the initPlugin() method and takes an argument of the database's
-				tables in the form of a Vector. Here is the illustration of a module using
+				tables in the form of a ArrayList. Here is the illustration of a module using
 				the Ajqvue public API to access the table names from Ajqvue's ConnectionManager
 				class.
 			</p>
@@ -941,8 +941,9 @@ class TableRecordCountPanel extends JPanel implements ActionListener
 				must implement at least the initPlugin() method from the Plugin Module Interface.
 				A basic extended Plugin_Module class was given in code <b>Listing 2</b>. that is a
 				basic plugin example and was outlined via two classes, PluginModule and
-				TableRecordCountPanel. This example plugin basic complete instance of interaction
-				with Ajqvue's public API such has getting a connection and calling on a TableTabPanel.
+				TableRecordCountPanel. This example Plugin Basics is a complete instance of an
+				interaction with Ajqvue's public API such has getting a connection and calling
+				on a TableTabPanel.
 			</p>
 
 			<hr>
