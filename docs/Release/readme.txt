@@ -1,6 +1,6 @@
-Ajqvue Version 1.11
+Ajqvue Version 1.15
 
-Copyright 2016
+Copyright 2016-2017
 by Dana Proctor
 http://dandymadeproductions.com
 
@@ -68,17 +68,17 @@ Features:
 Requirements:
 
     Microsoft® Windows 7, Vista ?, XP, 2000, 98, NT, ME, MAC?, Linux, & X-Window Environment.
-    Java Runtime Environment, JRE 1.7 or Newer.
-    Apache Derby 10.10.2.0 - 10.11.1.1.
-    H2 1.3.173 - 1.4.190.
-    HSQL 2.2.5 - 2.3.3. NOTE, 1.8.x No Longer Supported.
+    Java Runtime Environment, JRE 1.8 or Newer.
+    Apache Derby 10.10.2.0 - 10.13.1.1.
+    H2 1.3.173 - 1.4.196.
+    HSQL 2.2.5 - 2.4.0. NOTE, 1.8.x No Longer Supported.
     MSAccess MS Access 97 - 2003, ODBC-JDBC Bridge, Control Panel Data Sources.
     Microsoft SQL Server 8? - 11.00.2100, JDBC 4.0.
-    MySQL 5.0.7 - 5.1.61, JDBC 5.0.7 - 5.1.30.
-    MariaDB 5.5.32, JDBC 1.1.6 - 1.3.2.
+    MySQL 5.0.7 - 5.1.61, JDBC 5.0.7 - 5.1.42.
+    MariaDB 5.5.32 - 10.0.26, JDBC 1.1.6 - 2.0.1.
     Oracle 10g - 11g JDBC 14.
-    PostgreSQL 8.2.5 - 8.4.4, 9.0.1 - 9.5.4, JDBC3 8.2-506 - 8.4-702, 9.3, 9.4.
-    Xerial SQLite JDBC 3.6.20 - 3.8.11.2. Note, SQLite need not be installed on the system.
+    PostgreSQL 8.2.5 - 8.4.4, 9.0.1 - 9.6.3, JDBC4 8.2-506 - 8.4-702, 9.3, 9.4, 42.1.4.
+    Xerial SQLite JDBC 3.6.20 - 3.19.3. Note, SQLite need not be installed on the system.
 
 Installation Notes:
 
@@ -188,3 +188,5 @@ Production (2016-09-17):
 Version 1.0  Code Review and Cleanup. Libraries and TableFieldProfiler Plugin
              Updated. Bug Fixes for Query Bucket Feature.
         1.11 Minor Release to Mainly Highlight Updated QueryBuilder Plugin.
+        1.15 Maintanence With Some Minor Fixes. Review/Testing Current Revisions
+             of Supported Databases.
