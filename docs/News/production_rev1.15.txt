@@ -1,9 +1,10 @@
 Ajqvue Version 1.15 Released
 
 The Ajqvue project is pleased to release v1.15 to the public. The
-release is mainly a maintanence one with some minor fixes. The release
+release is mainly a maintenance one with some minor fixes. The release
 also marks the complete review of all the supported databases at
-there current revisions where practical.
+there current revisions where practical. The plugin JavaFX Charts
+has also been replaced with a Data Charts plugin based on JFreeChart.
 
 Dana M. Proctor
 Ajqvue Project Manager
