@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.4 07/01/2017
+// Version 1.6 10/22/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -38,6 +38,9 @@
 //         1.3 Added Class Method generateHeaders().
 //         1.4 Removed Class Method generateHeaders(), Moved to Correlated SQLDump
 //             Class With Other Common Methods to IO SQL Dumps.
+//         1.5 Method processFileChooserSelection() Pull Out Code to Create the File
+//             Overwrite Dialog and Placed in New Method processFileOverwriteDialog().
+//         1.6 Method processFileChooserSelection() Minor Comment & Code Cleanup.
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -112,7 +115,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 1.4 07/01/2017
+ * @version 1.6 10/22/2017
  */
 
 public class Utils extends Ajqvue
@@ -1306,29 +1309,15 @@ public class Utils extends Ajqvue
    public static int processFileChooserSelection(JFrame parent, JFileChooser fileChooser)
    {
       // Method Instances.
-      AResourceBundle resourceBundle;
       String fileName, fileSeparator;
-      String iconsDirectory;
-      String resource, resourceYes, resourceNo;
       
-      InputDialog importWarningDialog;
       File desiredFileName;
       int resultsOfFileChooser;
-      ImageIcon deleteFileIcon;
       boolean operationCanceled;
 
       // Setting up some of the method instances.
       
-      resourceBundle = Ajqvue.getResourceBundle();
-      
-      fileSeparator = System.getProperty("file.separator");
-      if (fileSeparator == null || fileSeparator.equals(""))
-         fileSeparator = "/";
-
-      iconsDirectory = "images" + fileSeparator + "icons" + fileSeparator;
-      deleteFileIcon = resourceBundle.getResourceImage(iconsDirectory + "deleteFileIcon.gif");
-
-      importWarningDialog = null;
+      fileSeparator = getFileSeparator();
       operationCanceled = false;
       resultsOfFileChooser = JFileChooser.CANCEL_OPTION;
 
@@ -1353,27 +1342,8 @@ public class Utils extends Ajqvue
 
                if (desiredFileName.exists())
                {
-                  JLabel message;
-                  
-                  resource = resourceBundle.getResourceString("Utils.message.FileExistsOverWrite",
-                                                              "File Exists, Over Write?");
-                  message = new JLabel(resource, JLabel.CENTER);
-                  Object[] content = {message};
-
-                  resource = resourceBundle.getResourceString("Utils.dialogtitle.SaveWarning",
-                                                              "Save Warning");
-                  resourceYes = resourceBundle.getResourceString("Utils.dialogbutton.Yes", "Yes");
-                  resourceNo = resourceBundle.getResourceString("Utils.dialogbutton.No", "No");
-                  
-                  importWarningDialog = new InputDialog(null, resource, resourceYes, resourceNo, content,
-                                                        deleteFileIcon);
-                  importWarningDialog.pack();
-                  importWarningDialog.center();
-                  importWarningDialog.setResizable(false);
-                  importWarningDialog.setVisible(true);
-
                   // If yes overwrite.
-                  if (importWarningDialog.isActionResult())
+                  if (processFileOverwriteDialog())
                   {
                      operationCanceled = true;
                      resultsOfFileChooser = JFileChooser.APPROVE_OPTION;
@@ -1383,7 +1353,6 @@ public class Utils extends Ajqvue
                   {
                      operationCanceled = false;
                      resultsOfFileChooser = JFileChooser.CANCEL_OPTION;
-                     importWarningDialog.dispose();
                   }
                }
                else
@@ -1405,10 +1374,65 @@ public class Utils extends Ajqvue
          }
       }
       
-      if (importWarningDialog != null)
-         importWarningDialog.dispose();
-      
       return resultsOfFileChooser;
+   }
+   
+   //==============================================================
+   // Method for providing a mechanism to process confirming
+   // overwriting an existing file.
+   //==============================================================
+   
+   public static boolean processFileOverwriteDialog()
+   {
+      AResourceBundle resourceBundle;
+      String fileSeparator;
+      String iconsDirectory;
+      String resource, resourceYes, resourceNo;
+      
+      InputDialog importWarningDialog;
+      ImageIcon deleteFileIcon;
+      
+      JLabel message;
+      boolean overWrite;
+      
+      // Setting up some of the method instances.
+      
+      resourceBundle = Ajqvue.getResourceBundle();
+      overWrite = false;
+      
+      fileSeparator = getFileSeparator();
+      if (fileSeparator == null || fileSeparator.equals(""))
+         fileSeparator = "/";
+
+      iconsDirectory = "images" + fileSeparator + "icons" + fileSeparator;
+      deleteFileIcon = resourceBundle.getResourceImage(iconsDirectory + "deleteFileIcon.gif");
+      
+      resource = resourceBundle.getResourceString("Utils.message.FileExistsOverWrite",
+                                                  "File Exists, Over Write?");
+      message = new JLabel(resource, JLabel.CENTER);
+      Object[] content = {message};
+
+      resource = resourceBundle.getResourceString("Utils.dialogtitle.SaveWarning",
+                                                  "Save Warning");
+      resourceYes = resourceBundle.getResourceString("Utils.dialogbutton.Yes", "Yes");
+      resourceNo = resourceBundle.getResourceString("Utils.dialogbutton.No", "No");
+      
+      importWarningDialog = new InputDialog(null, resource, resourceYes, resourceNo, content,
+                                            deleteFileIcon);
+      importWarningDialog.pack();
+      importWarningDialog.center();
+      importWarningDialog.setResizable(false);
+      importWarningDialog.setVisible(true);
+
+      // If yes overwrite.
+      if (importWarningDialog.isActionResult())
+         overWrite = true;
+      // No.
+      else
+         overWrite = false;
+      
+      importWarningDialog.dispose();
+      return overWrite;
    }
    
    //==============================================================
