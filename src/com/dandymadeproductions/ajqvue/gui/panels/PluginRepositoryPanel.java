@@ -11,7 +11,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 02/09/2016
+// Version 1.3 11/14/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,7 @@
 //         1.1 Method loadPluginTableData() Replace Standard plugin.getXXX()
 //             Getters Relplaced With getControlledXXX() Methods.
 //         1.2 Added Class Method getRepositoryOptions().
+//         1.3 Constructor Introduced the Use of the TableSorter With pluginListTable.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -61,6 +62,7 @@ import com.dandymadeproductions.ajqvue.plugin.Plugin;
 import com.dandymadeproductions.ajqvue.plugin.PluginRepository;
 import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
 import com.dandymadeproductions.ajqvue.utilities.TableModel;
+import com.dandymadeproductions.ajqvue.utilities.TableSorter;
 
 /**
  *    The PluginRepositoryPanel class provides a panel that allows
@@ -69,7 +71,7 @@ import com.dandymadeproductions.ajqvue.utilities.TableModel;
  * the panel to display and allow selecting of plugins.
  * 
  * @author Dana M. Proctor
- * @version 1.2 02/09/2017
+ * @version 1.3 11/14/2017
  */
 
 public class PluginRepositoryPanel extends JPanel
@@ -133,9 +135,11 @@ public class PluginRepositoryPanel extends JPanel
       loadPluginTableData();
       tableModel = new TableModel(tableHeadings, pluginsTableData);
 
-      pluginListTable = new JTable(tableModel);
+      TableSorter tableSorter = new TableSorter(tableModel);
+      pluginListTable = new JTable(tableSorter);
       pluginListTable.getTableHeader().setFont(new Font(getFont().getName(), Font.BOLD,
                                                      getFont().getSize()));
+      tableSorter.setTableHeader(pluginListTable.getTableHeader());
       tableColumn = pluginListTable.getColumnModel().getColumn(TABICON_COLUMN);
       tableColumn.setPreferredWidth(resourceTabIcon.length() - 10);
       pluginListTable.getSelectionModel().addListSelectionListener(listSelectionListener);
