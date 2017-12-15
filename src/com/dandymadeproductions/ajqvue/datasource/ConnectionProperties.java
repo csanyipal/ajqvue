@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.4 08/27/2017
+// Version 1.5 12/15/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,7 +36,11 @@
 //             connectionProperties to toString() Output.
 //         1.3 Method toString() Clarified Output Distinction Between
 //             Input Parameters & Optional Properties.
-//         1.4 Added Class Instances STD_PROPERTY_CHAR & STD_PROPERTY_DELIMITER
+//         1.4 Added Class Instances STD_PROPERTY_CHAR & STD_PROPERTY_DELIMITER.
+//         1.5 Changed Class Instance connectionProperties to connectProperties
+//             to Clarify These Are Additional Parameters Passed With the
+//             Database String. Method toString() Corrected to Only Output
+//             Properties, connectProperties if Not Just user & password.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -53,14 +57,14 @@ import java.util.Properties;
  * connection properties storage.
  * 
  * @author Dana M. Proctor
- * @version 1.4 08/27/2017
+ * @version 1.5 12/15/2017
  */
 
 public class ConnectionProperties
 {
    // Class Instances.
    private String connectionURLString;
-   private Properties connectionProperties;
+   private Properties connectProperties;
    
    private String driver;
    private String protocol;
@@ -99,7 +103,7 @@ public class ConnectionProperties
       // HSQL Standard: db;prop1=x;prop1=y
       // HSQL Non-Standard: db;prop1=w;prop2=x?prop3=y&prop4=z
       
-      connectionProperties = new Properties();
+      connectProperties = new Properties();
    }
    
    //==============================================================
@@ -114,7 +118,7 @@ public class ConnectionProperties
    
    protected Properties getConnectionProperties()
    {
-      return connectionProperties;
+      return connectProperties;
    }
    
    public String getProperty(String property)
@@ -156,7 +160,7 @@ public class ConnectionProperties
    
    public void setProperties(Properties properties)
    {
-      connectionProperties = properties;
+      connectProperties = properties;
    }
    
    public void setProperty(String property, String value)
@@ -205,20 +209,26 @@ public class ConnectionProperties
       parameters.append("[" + ConnectionProperties.PORT + " = " + port + "]");
       parameters.append("[" + ConnectionProperties.DB + " = " + db + "]");
       parameters.append("[" + ConnectionProperties.USER + " = " + user + "]");
-      parameters.append("[" + ConnectionProperties.SSH + " = " + ssh + "]");
+      parameters.append("[" + ConnectionProperties.SSH + " = " + ssh + "]]");
+       
+      // Additional parameters in database string. These will
+      // be addition to the user and password.
       
-      parameters.append("\n Properties: ");
-      
-      propertyKeys = connectionProperties.keys();
-      
-      while (propertyKeys.hasMoreElements())
+      if (connectProperties.size() > 2)
       {
-         String key = (String) propertyKeys.nextElement();
+         parameters.append("\n Properties: [");
+         propertyKeys = connectProperties.keys();
          
-         if (!key.equals("user") && !key.equals("password"))
-            parameters.append("[" + key + " = " + connectionProperties.getProperty(key) + "]");
+         while (propertyKeys.hasMoreElements())
+         {
+            String key = (String) propertyKeys.nextElement();
+            
+            if (!key.equals("user") && !key.equals("password"))
+               parameters.append("[" + key + " = " + connectProperties.getProperty(key) + "]");
+         }
+         parameters.append("]"); 
       }
-      parameters.append("]");
+      
       return parameters.toString();
    }
 }
