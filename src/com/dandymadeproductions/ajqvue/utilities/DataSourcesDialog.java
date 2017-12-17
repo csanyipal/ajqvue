@@ -13,7 +13,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.6 08/28/2017
+// Version 1.7 12/17/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -51,6 +51,8 @@
 //         1.6 08/28/2017 Method createConnectionProperties() Use of
 //                        ConnectionProperties Instances STD_PROPERTY_CHAR
 //                        & STD_PROPERTY_DELIMITER.
+//         1.7 12/17/2017 Method createConnectionProperties() Debug Output Used
+//                        ConnectionProperties toString().
 //
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -114,7 +116,7 @@ import com.dandymadeproductions.ajqvue.gui.XMLTranslator;
  *         object when finished.
  * 
  * @author Dana M. Proctor
- * @version 1.6 08/28/2017
+ * @version 1.7 12/17/2017
  */
 
 public class DataSourcesDialog extends JDialog implements ActionListener, PropertyChangeListener
@@ -572,6 +574,7 @@ public class DataSourcesDialog extends JDialog implements ActionListener, Proper
       // Obtaining the password & clearing.
 
       StringBuffer tempBuffer = new StringBuffer();
+      
       for (int i = 0; i < passwordCharacters.length; i++)
       {
          tempBuffer.append(passwordCharacters[i]);
@@ -648,12 +651,8 @@ public class DataSourcesDialog extends JDialog implements ActionListener, Proper
       connectionURLString = ConnectionManager.createConnectionURLString(connectionProperties);
 
       if (Ajqvue.getDebug())
-      {
-         System.out.println("DataSourceDialog createConnectionProperties() Connection URL: "
-                            + connectionURLString);
-         System.out.println("DataSourceDialog createConnectionProperties() Connection Properties: "
-                            + connectProperties.toString());
-      }
+         System.out.println("DataSourceDialog createConnectionProperties()\n"
+                            + connectionProperties.toString());
 
       connectionProperties.setConnectionURLString(connectionURLString);
 
