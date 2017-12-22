@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Version 1.1 12/22/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production SQLQuery Class.
+//         1.1 Method getRowCount() Corrected closeConnection() String
+//             Description.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -55,7 +57,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
  * the characteristics of a SQL query.   
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 12/22/2017
  */
 
 public class SQLQuery
@@ -403,7 +405,7 @@ public class SQLQuery
       
       rowCount = getRowCount(dbConnection, ConnectionManager.getDataSourceType());
       
-      ConnectionManager.closeConnection(dbConnection, "SQLQuery executeSQL()");
+      ConnectionManager.closeConnection(dbConnection, "SQLQuery getRowCount()");
       
       return rowCount;
    }
