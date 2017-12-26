@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 09/18/2016
+// Version 1.2 12/26/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,11 @@
 //=================================================================
 // Version 1.0 09/17/2016 Production DDLGenerator Class.
 //         1.1 09/18/2016 Corrected Import of Ajqvue Class.
+//         1.2 12/26/2017 Replaced Static Class Instance IDENTIFIER_QUOTE_STRING
+//                        With Same Argument in getDDL() Removed getDDL() Argument
+//                        schemaName, Replaced With catalogSeparator &
+//                        identifierQuoteString. Used Utils.getSchemaTableName()
+//                        in Same.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -57,7 +62,7 @@ import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
  * a given database query to an alternate database table. 
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/18/2016
+ * @version 1.2 12/26/2017
  */
 
 public class DDLGenerator
@@ -78,14 +83,13 @@ public class DDLGenerator
    private ArrayList<String> indexList;
    
    public static final String DEFAULT_DATASINK_TYPE = ConnectionManager.HSQL2;
-   private static final char IDENTIFIER_QUOTE_STRING = '\"';
    public static final int INDEXCOUNT = 1;
    
    //==============================================================
    // SQLQuery Constructors
    //
-   // Use the first three for Ajqvue login database source or
-   // specify in fourth.
+   // Use the first six for Ajqvue login database source or
+   // specify in seventh.
    //==============================================================
 
    public DDLGenerator(String sqlString)
@@ -139,7 +143,7 @@ public class DDLGenerator
    // use default login database or given connection database.
    //==============================================================
    
-   public String getDDL(String schemaName, String tableName)
+   public String getDDL(String tableName, String catalogSeparator, String identifierQuoteString)
    {
       // Method Instances
       Connection dbConnection;
@@ -149,13 +153,14 @@ public class DDLGenerator
       dbConnection = ConnectionManager.getConnection("DDLGenerator getDDL()");
       tempBuffer = new StringBuffer();
       
-      tempBuffer.append(getDDL(dbConnection, schemaName, tableName));
+      tempBuffer.append(getDDL(dbConnection, tableName, catalogSeparator, identifierQuoteString));
       
       ConnectionManager.closeConnection(dbConnection, "DDLGenerator getDDL()");
       return tempBuffer.toString();
    }
    
-   public String getDDL(Connection dbConnection, String schemaName, String tableName)
+   public String getDDL(Connection dbConnection, String tableName, String catalogSeparator,
+                        String identifierQuoteString)
    {
       // Method Instances
       String schemaTableName; 
@@ -169,11 +174,7 @@ public class DDLGenerator
       autoIncrementCount = 0;
       
       // Create given table name.
-      if (schemaName.equals(""))
-         schemaTableName = IDENTIFIER_QUOTE_STRING + tableName + IDENTIFIER_QUOTE_STRING;
-      else
-         schemaTableName = IDENTIFIER_QUOTE_STRING + schemaName + IDENTIFIER_QUOTE_STRING
-                           + "." + IDENTIFIER_QUOTE_STRING + tableName + IDENTIFIER_QUOTE_STRING;
+      schemaTableName = Utils.getSchemaTableName(tableName, catalogSeparator, identifierQuoteString);
          
       tableDefinition.append("CREATE TABLE " + schemaTableName + " (\n    ");
       
@@ -215,7 +216,7 @@ public class DDLGenerator
          // =============
          // Column name.
 
-         tableDefinition.append(IDENTIFIER_QUOTE_STRING + columnName + IDENTIFIER_QUOTE_STRING + " ");
+         tableDefinition.append(identifierQuoteString + columnName + identifierQuoteString + " ");
          
          // =============
          // Field Type
@@ -253,14 +254,14 @@ public class DDLGenerator
       if (!indexList.isEmpty())
       {
          tableDefinition.append("CREATE INDEX "
-                                + IDENTIFIER_QUOTE_STRING + indexList.get(0) + IDENTIFIER_QUOTE_STRING
+                                + identifierQuoteString + indexList.get(0) + identifierQuoteString
                                 + " ON " + schemaTableName + "(");
          Iterator<String> indexListIterator = indexList.iterator();
          
          while (indexListIterator.hasNext())
          {
-            tableDefinition.append(IDENTIFIER_QUOTE_STRING + indexListIterator.next()
-                                   + IDENTIFIER_QUOTE_STRING + ", ");
+            tableDefinition.append(identifierQuoteString + indexListIterator.next()
+                                   + identifierQuoteString + ", ");
          }
          tableDefinition.delete(tableDefinition.length() - 2, tableDefinition.length());
          tableDefinition.append(");\n");
