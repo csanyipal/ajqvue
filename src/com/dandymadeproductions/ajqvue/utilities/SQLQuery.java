@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 12/22/2017
+// Version 1.2 12/29/2017
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,8 @@
 // Version 1.0 Production SQLQuery Class.
 //         1.1 Method getRowCount() Corrected closeConnection() String
 //             Description.
+//         1.2 Added Methods executeSQL() & getRowCount() With Argument
+//             ConnectionInstance.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -50,6 +52,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import com.dandymadeproductions.ajqvue.datasource.ConnectionInstance;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 
 /**
@@ -57,7 +60,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
  * the characteristics of a SQL query.   
  * 
  * @author Dana M. Proctor
- * @version 1.1 12/22/2017
+ * @version 1.2 12/29/2017
  */
 
 public class SQLQuery
@@ -137,6 +140,26 @@ public class SQLQuery
       }
       
       ConnectionManager.closeConnection(dbConnection, "SQLQuery executeSQL()");
+      return validQuery;
+   }
+   
+   public int executeSQL(ConnectionInstance connectionInstance)
+   {
+      // Method Instances
+      
+      // Setting up a connection.
+      Connection dbConnection = connectionInstance.getConnection("SQLQuery executeSQL()");
+      
+      try
+      {
+         executeSQL(dbConnection);
+      }
+      catch (SQLException e)
+      {
+         ConnectionManager.displaySQLErrors(e, "SQLQuery executeSQL()");
+      }
+      
+      connectionInstance.closeConnection(dbConnection, "SQLQuery executeSQL()");
       return validQuery;
    }
    
@@ -406,6 +429,21 @@ public class SQLQuery
       rowCount = getRowCount(dbConnection, ConnectionManager.getDataSourceType());
       
       ConnectionManager.closeConnection(dbConnection, "SQLQuery getRowCount()");
+      
+      return rowCount;
+   }
+   
+   public int getRowCount(ConnectionInstance connectionInstance)
+   {
+      // Method Instances
+      int rowCount;
+      
+      // Setting up a connection.
+      Connection dbConnection = connectionInstance.getConnection("SQLQuery getRowCount()");
+      
+      rowCount = getRowCount(dbConnection, connectionInstance.getDataSourceType());
+      
+      connectionInstance.closeConnection(dbConnection, "SQLQuery getRowCount()");
       
       return rowCount;
    }
