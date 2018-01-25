@@ -7,8 +7,8 @@
 //                   << PluginFrame.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.6 02/08/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.7 01/25/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -43,6 +43,8 @@
 //         1.5 Method loadPlugin() Added Argument options, Along With Passing Same to Class
 //             PluginLoader Constructor.
 //         1.6 Constructor Corrected Resource PluginManagement Description.
+//         1.7 Class Method mouseClicked() Action, Remove Plugin, Collected pluginModule
+//             Directly Then shutdown() Before Removing.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -131,7 +133,7 @@ import com.dandymadeproductions.ajqvue.plugin.FTP_PluginRepository;
  * remove, and install new plugins to the application.
  * 
  * @author Dana M. Proctor
- * @version 1.6 02/08/2017
+ * @version 1.7 01/25/2018
  */
 
 //=================================================================
@@ -728,17 +730,18 @@ public class PluginFrame extends JFrame implements ActionListener, ChangeListene
          // Remove Plugin Action
          if (tableColumn == REMOVE_COLUMN)
          {
-            final String pathFileName = Main_Frame.getPlugins().get(tableRow).getPath_FileName();
+            final Plugin_Module pluginModule = Main_Frame.getPlugins().get(tableRow);
             
             Thread removePluginConfigurationModuleThread = new Thread(new Runnable()
             {
                public void run()
                {
-                  removePluginConfigurationModule(pathFileName);
+                  removePluginConfigurationModule(pluginModule.getPath_FileName());
                }
             }, "PluginFrame.removePluginConfigurationModuleThread");
             removePluginConfigurationModuleThread.start();
             
+            pluginModule.shutdown();
             Main_Frame.removeTab(tableRow);
             generateLoadedPluginsList(Main_Frame.getPlugins());
             loadedPluginsTableModel.setValues(loadedPluginTableData);
