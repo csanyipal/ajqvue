@@ -8,8 +8,8 @@
 //                 << ConnectionManager.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.3 09/01/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.4 04/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -39,6 +39,9 @@
 //         1.2 Method createConnectionURLString() Removed Unnecessary
 //             Comments.
 //         1.3 Synchronized Methods get/closeConnection().
+//         1.4 Method shutdownDatabase() Removed Commented Conditional
+//             Condition for HSQL Memory Database. Added Comment to Properly
+//             State That HSQL Memory Databases Should Use shutdown Property.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -72,7 +75,7 @@ import com.sun.rowset.WebRowSetImpl;
  * various databases support.   
  * 
  * @author Dana M. Proctor
- * @version 1.3 09/01/2017
+ * @version 1.4 04/04/2018
  */
 
 public class ConnectionManager
@@ -303,9 +306,11 @@ public class ConnectionManager
          
          if (subProtocol.indexOf(HSQL) != -1)
          {
-            // Only Apply this to file databases.
+            // Only Apply this to file databases, a memory database
+            // should be handled automatically with the shutdown property
+            // set to true on creation.
+            
             if (databaseShutdownString.toLowerCase(Locale.ENGLISH).indexOf("file:") != -1)
-                // || databaseShutdownString.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1)
             {
                if (Ajqvue.getDebug())
                   System.out.println(description + " (CM) Shutting Down HSQL File/Memory Database");
