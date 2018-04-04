@@ -7,8 +7,8 @@
 //               << ConnectionInstance.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 08/29/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.3 04/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,11 @@
 //                        Methods initConnection() & getConnection() Derived connectProperties
 //                        From connectionProperties.getConnectionProperties(), Comment,
 //                        debug Output, & Formatting Changes.
+//         1.3 04/04/2018 Method createDefaultMemoryConnection() HSQL Database Added Property
+//                        shutdown=true to Insure HSQL Memory Database Closed On Connection
+//                        Close. Method shutdownDatabase() Removed Commented Conditional
+//                        Condition for HSQL Memory Database. Added Comment to Properly
+//                        State That HSQL Memory Databases Should Use shutdown Property.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -71,7 +76,7 @@ import com.sun.rowset.WebRowSetImpl;
  * connections to a distinct set of databases.
  * 
  * @author Dana M. Proctor
- * @version 1.2 08/29/2017
+ * @version 1.3 04/04/2018
  */
 
 public class ConnectionInstance
@@ -215,6 +220,7 @@ public class ConnectionInstance
          subProtocol = HSQL2_SUBPROTOCOL;
          port = HSQL2_PORT;
          db = HSQL2_MEMORY_DB;
+         connectProperties.setProperty("shutdown", "true");
       }
       
       connectProperties.setProperty("user", USER);
@@ -418,7 +424,8 @@ public class ConnectionInstance
    
    //==============================================================
    // Class method that provides the ability to attempt to shutdown
-   // database activity appropriately.
+   // database activity appropriately. Use this method to close
+   // a memory database.
    //==============================================================
 
    public void shutdown(String description)
@@ -442,7 +449,7 @@ public class ConnectionInstance
             if (debug)
                System.out.println(description + " (CI) Memory Connection Closed");
             
-            memoryConnection.close();  
+            memoryConnection.close();
          }
       }
       catch (SQLException e)
@@ -518,9 +525,11 @@ public class ConnectionInstance
          
          if (subProtocol.indexOf(HSQL) != -1)
          {
-            // Only Apply this to file databases.
+            // Only Apply this to file databases, a memory database
+            // is handle automatically with the shutdown property
+            // set to true on creation.
+            
             if (databaseShutdownString.toLowerCase(Locale.ENGLISH).indexOf("file:") != -1)
-                // || databaseShutdownString.toLowerCase(Locale.ENGLISH).indexOf("mem:") != -1)
             {
                if (debug)
                   System.out.println(description + " (CI) Shutting Down HSQL File/Memory Database");
