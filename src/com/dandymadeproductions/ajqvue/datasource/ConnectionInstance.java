@@ -8,7 +8,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 04/04/2018
+// Version 1.4 04/05/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -42,6 +42,10 @@
 //                        Close. Method shutdownDatabase() Removed Commented Conditional
 //                        Condition for HSQL Memory Database. Added Comment to Properly
 //                        State That HSQL Memory Databases Should Use shutdown Property.
+//         1.4 04/05/2018 Method shutdownDatabase() Uncommented Instance driver & Used to
+//                        Combine Two Separate Conditionals to One if/else for All Derby
+//                        Embedded Database Shutdowns. Fixed Error Documented in Comments.
+//                        Corrected Comment in debug.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -76,7 +80,7 @@ import com.sun.rowset.WebRowSetImpl;
  * connections to a distinct set of databases.
  * 
  * @author Dana M. Proctor
- * @version 1.3 04/04/2018
+ * @version 1.4 04/05/2018
  */
 
 public class ConnectionInstance
@@ -468,13 +472,13 @@ public class ConnectionInstance
       // Method Instances.
       Connection dbConnection;
       String connectionURLString;
-      // String driver;
+      String driver;
       String subProtocol;
       String databaseShutdownString;
       
       // Setup.
       connectionURLString = connectionProperties.getConnectionURLString();
-      // driver = connectionProperties.getProperty(ConnectionProperties.DRIVER);
+      driver = connectionProperties.getProperty(ConnectionProperties.DRIVER);
       subProtocol = connectionProperties.getProperty(ConnectionProperties.SUBPROTOCOL);
       
       if (connectionURLString.indexOf(";") != -1)
@@ -488,40 +492,30 @@ public class ConnectionInstance
       {
          // Try to shutdown Derby & HSQL database properly.
          
-         /*
-         Derby:
-         
-         Unable to get a drop or shutdown to function without the
-         following error message. Even Derby examples give same error.
-         
-         SQLException: invalid database address: jdbc:derby:~~
-         SQLState: null
-         VendorError: 0
-         
          if (subProtocol.equals(DERBY))
-         {
-            // Drop Memory Databases
-            if (databaseShutdownString.toLowerCase(Locale.ENGLISH).indexOf("memory:") != -1)
-            {
-               if (debug)
-                  System.out.println(description + " (CI) Dropping Derby Memory Database");
-               
-               dbConnection = DriverManager.getConnection(databaseShutdownString + ";drop=true");
-               dbConnection.close();
-            }
-            
+         {  
             // Shutdown Embedded Only
             if (driver.indexOf("EmbeddedDriver") != -1)
             {
-               if (debug)
-                  System.out.println(description + " (CI) Shutting Down Derby Embedded Database");
-               
-               dbConnection = DriverManager.getConnection("jdbc:derby:;shutdown=true");
-               dbConnection.close();
+               if (databaseShutdownString.toLowerCase(Locale.ENGLISH).indexOf("memory:") != -1)
+               {
+                  if (debug)
+                     System.out.println(description + " (CI) Dropping Derby Memory Database");
+                  
+                  dbConnection = DriverManager.getConnection(databaseShutdownString + ";drop=true");
+                  dbConnection.close();
+               }
+               else
+               {
+                  if (debug)
+                     System.out.println(description + " (CI) Shutting Down Derby Embedded Database");
+                  
+                  dbConnection = DriverManager.getConnection("jdbc:derby:;shutdown=true");
+                  dbConnection.close();
+               }  
             }
             return;
          }
-         */
          
          if (subProtocol.indexOf(HSQL) != -1)
          {
@@ -532,7 +526,7 @@ public class ConnectionInstance
             if (databaseShutdownString.toLowerCase(Locale.ENGLISH).indexOf("file:") != -1)
             {
                if (debug)
-                  System.out.println(description + " (CI) Shutting Down HSQL File/Memory Database");
+                  System.out.println(description + " (CI) Shutting Down HSQL File Database");
                
                dbConnection = DriverManager.getConnection(databaseShutdownString + ";shutdown=true");
                dbConnection.close();
