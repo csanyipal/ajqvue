@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 04/04/2018
+// Version 1.5 04/07/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -42,6 +42,9 @@
 //         1.4 Method shutdownDatabase() Removed Commented Conditional
 //             Condition for HSQL Memory Database. Added Comment to Properly
 //             State That HSQL Memory Databases Should Use shutdown Property.
+//         1.5 Method createConnectionURLString() Moved All Aspects of Creating
+//             connectionURLString for Derby to Within Its Own Conditional.
+//             Fixed Handling for Same File Databases.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -75,7 +78,7 @@ import com.sun.rowset.WebRowSetImpl;
  * various databases support.   
  * 
  * @author Dana M. Proctor
- * @version 1.4 04/04/2018
+ * @version 1.5 04/07/2018
  */
 
 public class ConnectionManager
@@ -455,17 +458,37 @@ public class ConnectionManager
       {
          connectionURLString += "hsqldb:" + db;
       }
-      // Derby Memory
-      else if (subProtocol.indexOf(ConnectionManager.DERBY) != -1 &&
-               db.indexOf("memory:") != -1)
+      // Derby File, Jar, Server
+      else if (subProtocol.indexOf(ConnectionManager.DERBY) != -1)
       {
-         if (db.toLowerCase(Locale.ENGLISH).indexOf(";create=true") == -1)
-            db += ";create=true";
-         
+         // Jar, File, Memory
          if (driver.indexOf("EmbeddedDriver") != -1)
-            connectionURLString += subProtocol + ":" + db;
+         {
+            // Jar
+            if (db.toLowerCase(Locale.ENGLISH).indexOf("jar:") != -1)
+               connectionURLString += subProtocol + ":" + db;
+            // File & Memory
+            else
+            {
+               if (db.toLowerCase(Locale.ENGLISH).indexOf(";create=true") == -1)
+                  db += ";create=true";
+               
+               connectionURLString += subProtocol + ":" + db;
+            }
+         }
+         // Server Memory, Server
          else
-            connectionURLString += subProtocol + "://" + host + ":" + port + "/" + db;
+         {
+            if (db.indexOf("memory:") != -1)
+            {
+               if (db.toLowerCase(Locale.ENGLISH).indexOf(";create=true") == -1)
+                  db += ";create=true";
+               
+               connectionURLString += subProtocol + "://" + host + ":" + port + "/" + db;
+            }
+            else
+               connectionURLString += subProtocol + "://" + host + ":" + port + "/" + db;         
+         }
       }
       // MS Access
       else if (subProtocol.equals(ConnectionManager.MSACCESS))
@@ -493,14 +516,10 @@ public class ConnectionManager
             connectionURLString += subProtocol + ":" + db;
             
       }
-      // MySQL, MariaDB, PostgreSQL, HSQL, & Derby
+      // MySQL, MariaDB, PostgreSQL, & HSQL
       else
       {
-         if (subProtocol.indexOf(ConnectionManager.DERBY) != -1 &&
-               driver.indexOf("EmbeddedDriver") != -1)
-            connectionURLString += subProtocol + ":" + db;
-         else
-            connectionURLString += subProtocol + "://" + host + ":" + port + "/" + db;
+         connectionURLString += subProtocol + "://" + host + ":" + port + "/" + db;
       }
       return connectionURLString;
    }
