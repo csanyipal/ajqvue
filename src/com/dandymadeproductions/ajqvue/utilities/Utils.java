@@ -8,8 +8,8 @@
 //                        << Utils.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.6 10/22/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.7 05/03/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -41,6 +41,7 @@
 //         1.5 Method processFileChooserSelection() Pull Out Code to Create the File
 //             Overwrite Dialog and Placed in New Method processFileOverwriteDialog().
 //         1.6 Method processFileChooserSelection() Minor Comment & Code Cleanup.
+//         1.7 Method isText() Added to Conditional BPCHAR.
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -115,7 +116,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 1.6 10/22/2017
+ * @version 1.7 05/03/2018
  */
 
 public class Utils extends Ajqvue
@@ -1143,7 +1144,8 @@ public class Utils extends Ajqvue
       columnType = columnType.toUpperCase(Locale.ENGLISH);
       
       if ((columnClass.indexOf("string") != -1
-           && !columnType.equals("CHAR") && !columnType.equals("NCHAR") && columnSize > varcharLimit)
+           && !columnType.equals("CHAR") && !columnType.equals("NCHAR")
+           && !columnType.equalsIgnoreCase("BPCHAR") && columnSize > varcharLimit)
           || (columnClass.indexOf("string") != -1 && columnType.equals("LONG"))
           || columnType.equals("TEXT") || columnType.indexOf("CLOB") != -1
           || columnType.equals("XML"))
