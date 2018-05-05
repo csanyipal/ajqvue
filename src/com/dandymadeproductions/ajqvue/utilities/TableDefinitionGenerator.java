@@ -8,8 +8,8 @@
 //              << TableDefinitionGenerator.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.5 08/25/2017
+// Copyright (C) 2016-201 Dana M. Proctor
+// Version 1.6 05/05/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,8 @@
 //         1.4 Constructor Clarified Removal of Semicolon for databaseName.
 //         1.5 Reverted v1.4, Multiple Databases Tag Properties on Connection
 //             URL, databaseName.
+//         1.6 Method createHSQLTableDefinition() Modified Handling of Binary
+//             Types to Assign Size, Either Binary, Default, or 1.
 //             
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -71,7 +73,7 @@ import com.dandymadeproductions.ajqvue.structures.DataExportProperties;
  * structures that output via the SQL data export feature.
  * 
  * @author Dana Proctor
- * @version 1.5 08/25/2017
+ * @version 1.6 05/05/2017
  */
 
 public class TableDefinitionGenerator
@@ -824,19 +826,22 @@ public class TableDefinitionGenerator
             {
                if (columnType.equals("BINARY"))
                {
-                  int size;
+                  boolean parseError;
                   
                   try
                   {
-                     size = Integer.parseInt(columnSize);
+                     parseError = false;
+                     Integer.parseInt(columnSize);
                   }
                   catch (NumberFormatException nfe)
                   {
-                     size = 0;
+                     parseError = true;
                   }
                   
-                  if (size <= 0)
+                  if (parseError)
                      tableDefinition.append("BINARY");
+                  else if (Integer.parseInt(columnSize) == 0)
+                     tableDefinition.append("BINARY(1)");
                   else
                      tableDefinition.append("BINARY(" + columnSize + ")");
                }
