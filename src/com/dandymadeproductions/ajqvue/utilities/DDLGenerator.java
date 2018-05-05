@@ -9,8 +9,8 @@
 //                    << DDLGenerator.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 12/26/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.3 05/05/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -38,6 +38,8 @@
 //                        schemaName, Replaced With catalogSeparator &
 //                        identifierQuoteString. Used Utils.getSchemaTableName()
 //                        in Same.
+//         1.3 05/05/2018 Method createHSQL_DDL() Insured Binary Assigned Size
+//                        1 or columnSize is Zero.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -62,7 +64,7 @@ import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
  * a given database query to an alternate database table. 
  * 
  * @author Dana M. Proctor
- * @version 1.2 12/26/2017
+ * @version 1.3 05/05/2018
  */
 
 public class DDLGenerator
@@ -499,8 +501,15 @@ public class DDLGenerator
       else if (columnType.indexOf("BINARY") != -1 &&
                dataSinkType.equals(ConnectionManager.HSQL2))
       {
+         // User Guide specifies Binary is reserved for UUID.
+         
          if (columnType.equals("BINARY"))
-            tableDefinition.append("BINARY(" + columnSize + ")");
+         {
+            if (columnSize == 0)
+               tableDefinition.append("BINARY(1)");
+            else
+               tableDefinition.append("BINARY(" + columnSize + ")");
+         }
          else
          {
             if (columnSize >= 16777216)
