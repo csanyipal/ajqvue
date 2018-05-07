@@ -8,8 +8,8 @@
 //                     << TypesInfoCache.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 05/07/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,7 +30,8 @@
 // in the present version number. Author information should
 // also be included with the original copyright author.
 //=================================================================
-// Version 1.0 Production TypesInfoCache Class.
+// Version 1.0 09/17/2016 Production TypesInfoCache Class.
+//         1.1 05/07/2018 Changed SQLITE_TEXT Conversion for Derby to DERBY_CLOB.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -46,7 +47,7 @@ import java.util.Map;
  * data types information for the various support databases.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 05/07/2018
  */
 
 public class TypesInfoCache
@@ -252,7 +253,12 @@ public class TypesInfoCache
        {TypeID.SQLITE_INTEGER, TypeID.H2_INTEGER, TypeID.HSQL_INTEGER, TypeID.DERBY_INTEGER, TypeID.SQLITE_INTEGER},
        {TypeID.SQLITE_REAL, TypeID.H2_REAL, TypeID.HSQL_REAL, TypeID.DERBY_REAL, TypeID.SQLITE_REAL},
        {TypeID.SQLITE_NUMERIC, TypeID.H2_DECIMAL, TypeID.HSQL_NUMERIC, TypeID.DERBY_DECIMAL, TypeID.SQLITE_NUMERIC},
-       {TypeID.SQLITE_TEXT, TypeID.H2_VARCHAR, TypeID.HSQL_LONGVARCHAR, TypeID.DERBY_LONG_VARCHAR, TypeID.SQLITE_TEXT},
+       
+       // SQLite JDBC returns TEXT to be VARCHAR SQL type. To Insure Derby is able to support
+       // a larger size, changed from DERBY_LONG_VARCHAR to DERBY_CLOB.
+       
+       {TypeID.SQLITE_TEXT, TypeID.H2_VARCHAR, TypeID.HSQL_LONGVARCHAR, TypeID.DERBY_CLOB, TypeID.SQLITE_TEXT},
+       
        {TypeID.SQLITE_BLOB, TypeID.H2_BLOB, TypeID.HSQL_BLOB, TypeID.DERBY_BLOB, TypeID.SQLITE_BLOB},
        {TypeID.SQLITE_NONE, TypeID.H2_BLOB, TypeID.HSQL_BLOB, TypeID.DERBY_BLOB, TypeID.SQLITE_NONE}};
    
