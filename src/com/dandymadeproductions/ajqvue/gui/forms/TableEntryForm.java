@@ -8,8 +8,8 @@
 //                  << TableEntryForm.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 07/21/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.3 05/10/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,9 @@
 //                        Larger Then 255 to be Included With Browse
 //                        Button. Proper Detection Therefore in addUpdate
 //                        TableEntry(), isTextField, & setFormField().
+//         1.3 05/10/2018 Method addUpdateTableEntry() Changed Handling of HSQL
+//                        BIT Fields to Processed the Same as BIT VARYING Fields.
+//                        Therefore Used Value Usage to be B'x' Format.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -109,7 +112,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 1.2 07/21/2017
+ * @version 1.3 05/10/2018
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -1109,11 +1112,11 @@ public class TableEntryForm extends JFrame implements ActionListener
                      sqlValuesString += "'" + getFormField(columnName) + "', ";
                   }
 
-                  // PostgreSQL Bit & HSQL2 Bit Varying fields.
+                  // PostgreSQL Bit & HSQL2 BIT, Bit Varying fields.
                   else if ((columnType.indexOf("BIT") != -1
                             && dataSourceType.equals(ConnectionManager.POSTGRESQL)
                             && columnType.indexOf("_") == -1)
-                           || (columnType.equals("BIT VARYING")
+                           || (columnType.equals("BIT") || (columnType.equals("BIT VARYING"))
                                && dataSourceType.equals(ConnectionManager.HSQL2)))
                   {
                      sqlValuesString += "B'" + getFormField(columnName) + "', ";
@@ -1344,11 +1347,11 @@ public class TableEntryForm extends JFrame implements ActionListener
                                                + "', ");
                   }
 
-                  // PostgreSQL Bit & HSQL2 Bit Varying fields.
+                  // PostgreSQL Bit & HSQL2 BIT, Bit Varying fields.
                   else if ((columnType.indexOf("BIT") != -1
                             && dataSourceType.equals(ConnectionManager.POSTGRESQL)
                             && columnType.indexOf("_") == -1)
-                            || (columnType.equals("BIT VARYING")
+                            || (columnType.equalsIgnoreCase("BIT") || (columnType.equals("BIT VARYING"))
                                   && dataSourceType.equals(ConnectionManager.HSQL2)))
                   {
                      sqlStatementString.append(identifierQuoteString + columnNamesHashMap.get(columnName)
@@ -2031,7 +2034,8 @@ public class TableEntryForm extends JFrame implements ActionListener
             else if (columnType.indexOf("BIT") != -1 && columnType.indexOf("_") == -1)
             {
                if ((dataSourceType.equals(ConnectionManager.POSTGRESQL)) ||
-                   (dataSourceType.equals(ConnectionManager.HSQL2) && columnType.equals("BIT VARYING")))
+                   (dataSourceType.equals(ConnectionManager.HSQL2)
+                    && (columnType.equals("BIT VARYING") || columnType.equals("BIT"))))
                {
                   // Do Nothing. Already set since undefined type.
                }
