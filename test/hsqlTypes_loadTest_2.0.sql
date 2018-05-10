@@ -14,6 +14,10 @@
 --                    table statement.
 --         07/23/2011 Added Clob, Blob, Bit Varying, Time With Time
 --                    Zone, Timestamp With Time Zone, & Interval.
+--         05/10/2018 Added Test Table bit2_types. Test Table bit_types,
+--                    Insert Changed to Use B'x' Value Format. Test
+--                    Table bitvarying_types Added Additional Insert
+--                    Value.
 --      
 -- danap@dandymadeproductions.com
 -- =============================================================
@@ -42,6 +46,7 @@ DROP TABLE IF EXISTS blob_types;
 
 DROP TABLE IF EXISTS boolean_types;
 DROP TABLE IF EXISTS bit_types;
+DROP TABLE IF EXISTS bit2_types;
 DROP TABLE IF EXISTS bitvarying_types;
 
 -- integer types
@@ -143,6 +148,13 @@ CREATE TABLE bit_types (
 --  Table id and creation data entries.
     data_type_id IDENTITY PRIMARY KEY,
     bit_type BIT DEFAULT NULL
+);
+
+CREATE TABLE bit2_types (
+
+--  Table id and creation data entries.
+    data_type_id IDENTITY PRIMARY KEY,
+    bit2_type BIT(2) DEFAULT NULL
 );
 
 CREATE TABLE bitvarying_types (
@@ -308,12 +320,19 @@ INSERT INTO boolean_types (boolean_type)
 	VALUES (1);
 
 INSERT INTO bit_types (bit_type)
-	VALUES (0);
+	VALUES (B'0');
 INSERT INTO bit_types (bit_type)
-    VAlUES (1);
+    VAlUES (B'1');
+    
+INSERT INTO bit2_types (bit2_type)
+	VALUES (B'10');
+INSERT INTO bit2_types (bit2_type)
+    VAlUES (B'11');
     
 INSERT INTO bitvarying_types (bitvarying_type)
     VAlUES (B'10001');
+INSERT INTO bitvarying_types (bitvarying_type)
+    VAlUES (B'00001');
 
 INSERT INTO tinyInt_types (tinyInt_type)
 	VALUES (-128);
