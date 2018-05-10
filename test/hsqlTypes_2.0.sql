@@ -11,6 +11,7 @@
 --                    Bit Varying, Timestamps, & Interval.
 --         04/22/2012 Added View Table myView.
 --         06/29/2016 Modified VARBINARY Size to 200000, for Testing.
+--         05/10/2018 Added bit2_type.
 --      
 -- danap@dandymadeproductions.com
 -- =============================================================
@@ -52,6 +53,7 @@ CREATE TABLE hsqltypes (
 
     boolean_type BOOLEAN DEFAULT NULL,
     bit_type BIT DEFAULT NULL,
+    bit2_type BIT(2) DEFAULT NULL,
     bitvarying_type BIT VARYING(5) DEFAULT NULL,
     
 --  Date and time fields.
