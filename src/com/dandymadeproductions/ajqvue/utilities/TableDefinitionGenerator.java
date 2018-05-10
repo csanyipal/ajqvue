@@ -8,8 +8,8 @@
 //              << TableDefinitionGenerator.java >>
 //
 //=================================================================
-// Copyright (C) 2016-201 Dana M. Proctor
-// Version 1.6 05/05/2018
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.7 05/10/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -42,6 +42,8 @@
 //             URL, databaseName.
 //         1.6 Method createHSQLTableDefinition() Modified Handling of Binary
 //             Types to Assign Size, Either Binary, Default, or 1.
+//         1.7 Method createHSQLTableDefinition() Added, Corrected, BIT Field
+//             Definition to Include columnSize.
 //             
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -73,7 +75,7 @@ import com.dandymadeproductions.ajqvue.structures.DataExportProperties;
  * structures that output via the SQL data export feature.
  * 
  * @author Dana Proctor
- * @version 1.6 05/05/2017
+ * @version 1.7 05/10/2017
  */
 
 public class TableDefinitionGenerator
@@ -922,6 +924,12 @@ public class TableDefinitionGenerator
                   tableDefinition.append(intervalFieldsHashMap.get(columnName));
                else
                   tableDefinition.append(columnType);
+            }
+            // Bit
+            else if (columnType.equals("BIT")
+                     && columnSize != null)
+            {
+               tableDefinition.append(columnType + "(" + columnSize + ")");
             }
             // Bit Varying
             else if (columnType.equals("BIT VARYING")
