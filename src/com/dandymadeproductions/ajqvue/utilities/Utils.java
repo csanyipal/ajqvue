@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.7 05/03/2018
+// Version 1.8 05/11/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -42,6 +42,7 @@
 //             Overwrite Dialog and Placed in New Method processFileOverwriteDialog().
 //         1.6 Method processFileChooserSelection() Minor Comment & Code Cleanup.
 //         1.7 Method isText() Added to Conditional BPCHAR.
+//         1.8 Added Class Method convertBitsToHSQL_Bits().
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -116,7 +117,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 1.7 05/03/2018
+ * @version 1.8 05/11/2018
  */
 
 public class Utils extends Ajqvue
@@ -430,6 +431,83 @@ public class Utils extends Ajqvue
          return "";
       else
          return passwordString.toString();
+   }
+   
+   //==============================================================
+   // Class Method to convert a string bit fields to HSQL BIT,
+   // byte, format.
+   //==============================================================
+
+   public static byte[] convertBitsToHSQL_Bits(String bitString)
+   {
+      // Method Instances
+      StringBuilder currentBitString;
+      
+      byte[] convertedBytes;
+      int int_value;
+      
+      // Check for sometime of valid
+      // binary bit string.
+      
+      if (bitString.isEmpty())
+         return new byte[0];
+      
+      try
+      {
+         Integer.parseInt(bitString, 2);
+      }
+      catch (NumberFormatException e)
+      {
+         return new byte[0];
+      }
+      
+      // Obtain the converted bytes array size and begin
+      // assigning.
+      
+      convertedBytes = new byte[(bitString.length() / 8) + 1];
+      
+      for (int i = 0; i < convertedBytes.length; i++)
+      {
+         // Parse input bit string into bytes.
+         if (bitString.length() / ((i + 1) * 8) > 0)
+            currentBitString = new StringBuilder(bitString.substring(i * 8, (i * 8) + 8));
+         else
+            currentBitString = new StringBuilder(bitString.substring(i * 8, bitString.length()));
+         
+         // Padd to 8 bits.
+         if (currentBitString.length() < 8)
+         {
+            do
+            {
+               currentBitString.append("0");
+            }
+            while (currentBitString.length() < 8);
+         }
+         
+         // Determine processing, positive numbers
+         // need no more beside the padding. Negative
+         // numbers require 2s complement + 1.
+         
+         if (currentBitString.charAt(0) == '0')
+            convertedBytes[i] = Byte.valueOf(currentBitString.toString(), 2);
+         else
+         {
+            int j = 0;
+            do
+            {
+               if (currentBitString.charAt(j) == '0')
+                  currentBitString.setCharAt(j, '1');
+               else
+                  currentBitString.setCharAt(j, '0');
+               j++;
+            }
+            while (j < 8);
+            
+            int_value = (Integer.parseInt(currentBitString.toString(), 2) + 1) * -1;
+            convertedBytes[i] = (Byte.parseByte(String.valueOf(int_value), 10));  
+         }
+      }
+      return convertedBytes;
    }
    
    //==============================================================
