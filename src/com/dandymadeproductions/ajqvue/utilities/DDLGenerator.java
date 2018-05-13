@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 05/05/2018
+// Version 1.4 05/13/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,10 @@
 //                        in Same.
 //         1.3 05/05/2018 Method createHSQL_DDL() Insured Binary Assigned Size
 //                        1 or columnSize is Zero.
+//         1.4 05/13/2018 Method createDerby_DDL() Changed Scale for Derby When Precision
+//                        Definitions Beyound Max, 31, Value. Reduced to Reasonable
+//                        Size Instead of Same. Allows Larger Precision to be Displayed,
+//                        Stored. HSQL Numeric Conversion.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -64,7 +68,7 @@ import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
  * a given database query to an alternate database table. 
  * 
  * @author Dana M. Proctor
- * @version 1.3 05/05/2018
+ * @version 1.4 05/13/2018
  */
 
 public class DDLGenerator
@@ -433,8 +437,11 @@ public class DDLGenerator
             {
                columnPrecision = 31;
                
+               // Derby requires a reasonalble trade of where columnPrecesion
+               // is the max value and precsion is higher, so pick a lower scale.
+               
                if (columnScale > columnPrecision)
-                  tableDefinition.append(columnType + "(" + columnPrecision + ",31)");
+                  tableDefinition.append(columnType + "(" + columnPrecision + ",16)");
                else
                      tableDefinition.append(columnType + "(" + columnPrecision  + "," + columnScale + ")");
             }
