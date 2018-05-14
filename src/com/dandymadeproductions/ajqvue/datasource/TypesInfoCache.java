@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.1 05/07/2018
+// Version 1.2 05/14/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,11 @@
 //=================================================================
 // Version 1.0 09/17/2016 Production TypesInfoCache Class.
 //         1.1 05/07/2018 Changed SQLITE_TEXT Conversion for Derby to DERBY_CLOB.
+//         1.2 05/14/2018 HSQL_BIT Type Changed H2, Derby, & SQLite Types to Varchar,
+//                        & Text to Indicate HSQL Bit Can Have Multiple Bits, Bit(x).
+//                        HSQL_BIT_VARYING Changed Derby Type to Varchar. Since is
+//                        Multi-Bit String, Not Binary, Hex. DERBY_CHAR_FOR_BIT_DATA
+//                        Changed HSQL to Binary, to Match SQL Type Binary.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -47,7 +52,7 @@ import java.util.Map;
  * data types information for the various support databases.
  * 
  * @author Dana M. Proctor
- * @version 1.1 05/07/2018
+ * @version 1.2 05/14/2018
  */
 
 public class TypesInfoCache
@@ -117,8 +122,8 @@ public class TypesInfoCache
        {TypeID.HSQL_DECIMAL, TypeID.H2_DECIMAL, TypeID.HSQL_DECIMAL, TypeID.DERBY_DECIMAL, TypeID.SQLITE_NUMERIC},
        {TypeID.HSQL_NUMERIC, TypeID.H2_DECIMAL, TypeID.HSQL_NUMERIC, TypeID.DERBY_DECIMAL, TypeID.SQLITE_NUMERIC},
        {TypeID.HSQL_BOOLEAN, TypeID.H2_BOOLEAN, TypeID.HSQL_BOOLEAN, TypeID.DERBY_BOOLEAN, TypeID.SQLITE_NUMERIC},
-       {TypeID.HSQL_BIT, TypeID.H2_BOOLEAN, TypeID.HSQL_BIT, TypeID.DERBY_BOOLEAN, TypeID.SQLITE_NUMERIC},
-       {TypeID.HSQL_BIT_VARYING, TypeID.H2_VARCHAR, TypeID.HSQL_BIT_VARYING, TypeID.DERBY_CHAR_FOR_BIT_DATA, TypeID.SQLITE_TEXT},
+       {TypeID.HSQL_BIT, TypeID.H2_VARCHAR, TypeID.HSQL_BIT, TypeID.DERBY_VARCHAR, TypeID.SQLITE_TEXT},
+       {TypeID.HSQL_BIT_VARYING, TypeID.H2_VARCHAR, TypeID.HSQL_BIT_VARYING, TypeID.DERBY_VARCHAR, TypeID.SQLITE_TEXT},
        {TypeID.HSQL_DATE, TypeID.H2_DATE, TypeID.HSQL_DATE, TypeID.DERBY_DATE, TypeID.SQLITE_TEXT},
        {TypeID.HSQL_TIME, TypeID.H2_TIME, TypeID.HSQL_TIME, TypeID.DERBY_TIME, TypeID.SQLITE_TEXT},
        {TypeID.HSQL_TIME_WITH_TIME_ZONE, TypeID.H2_TIME, TypeID.HSQL_TIME_WITH_TIME_ZONE, TypeID.DERBY_TIME, TypeID.SQLITE_TEXT},
@@ -135,7 +140,7 @@ public class TypesInfoCache
    private static final int[][] DERBY_TYPES = {
        {TypeID.DERBY_IDENTITY, TypeID.H2_IDENTITY, TypeID.HSQL_IDENTITY, TypeID.DERBY_BIGINT, TypeID.SQLITE_INTEGER},
        {TypeID.DERBY_CHAR, TypeID.H2_CHAR, TypeID.HSQL_CHARACTER, TypeID.DERBY_CHAR, TypeID.SQLITE_TEXT},
-       {TypeID.DERBY_CHAR_FOR_BIT_DATA, TypeID.H2_BINARY, TypeID.HSQL_VARBINARY, TypeID.DERBY_CHAR_FOR_BIT_DATA, TypeID.SQLITE_BLOB},
+       {TypeID.DERBY_CHAR_FOR_BIT_DATA, TypeID.H2_BINARY, TypeID.HSQL_BINARY, TypeID.DERBY_CHAR_FOR_BIT_DATA, TypeID.SQLITE_BLOB},
        {TypeID.DERBY_VARCHAR, TypeID.H2_VARCHAR, TypeID.HSQL_VARCHAR, TypeID.DERBY_VARCHAR, TypeID.SQLITE_TEXT},
        {TypeID.DERBY_VARCHAR_FOR_BIT_DATA, TypeID.H2_BINARY, TypeID.HSQL_VARBINARY, TypeID.DERBY_VARCHAR_FOR_BIT_DATA, TypeID.SQLITE_BLOB},
        {TypeID.DERBY_BLOB, TypeID.H2_BLOB, TypeID.HSQL_BLOB, TypeID.DERBY_BLOB, TypeID.SQLITE_BLOB},
