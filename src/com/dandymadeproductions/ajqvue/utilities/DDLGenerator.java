@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 05/13/2018
+// Version 1.5 05/14/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -44,6 +44,8 @@
 //                        Definitions Beyound Max, 31, Value. Reduced to Reasonable
 //                        Size Instead of Same. Allows Larger Precision to be Displayed,
 //                        Stored. HSQL Numeric Conversion.
+//         1.5 05/14/2018 Method createDerby_DDL() Changed CHAR/VARCHAR BIT FOR DATA
+//                        Size to Use columnPrecision.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -68,7 +70,7 @@ import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
  * a given database query to an alternate database table. 
  * 
  * @author Dana M. Proctor
- * @version 1.4 05/13/2018
+ * @version 1.5 05/14/2018
  */
 
 public class DDLGenerator
@@ -384,10 +386,10 @@ public class DDLGenerator
                if (columnType.indexOf("LONG") != -1)
                   tableDefinition.append("LONG VARCHAR FOR BIT DATA");
                else
-                  tableDefinition.append("VARCHAR(" + columnSize + ") FOR BIT DATA");
+                  tableDefinition.append("VARCHAR(" + columnPrecision + ") FOR BIT DATA");
             }
             else
-               tableDefinition.append("CHAR(" + columnSize + ") FOR BIT DATA");
+               tableDefinition.append("CHAR(" + columnPrecision + ") FOR BIT DATA");
          }
          else
          {
