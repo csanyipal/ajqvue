@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 05/14/2018
+// Version 1.6 05/15/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -46,6 +46,9 @@
 //                        Stored. HSQL Numeric Conversion.
 //         1.5 05/14/2018 Method createDerby_DDL() Changed CHAR/VARCHAR BIT FOR DATA
 //                        Size to Use columnPrecision.
+//         1.6 05/15/2018 Method createH2_DDL() & createHSQL_DDL() Changed Binary &
+//                        VarBinary Types for Derby dataSourceType to Use columnPrecision
+//                        for Size.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -61,6 +64,7 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import com.dandymadeproductions.ajqvue.Ajqvue;
+import com.dandymadeproductions.ajqvue.datasource.ConnectionInstance;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
 
@@ -70,12 +74,13 @@ import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
  * a given database query to an alternate database table. 
  * 
  * @author Dana M. Proctor
- * @version 1.5 05/14/2018
+ * @version 1.6 05/15/2018
  */
 
 public class DDLGenerator
 {
    // Class Instances.
+   private String dataSourceType;
    private String dataSinkType;
    private int indexCount, autoIncrementCount;
    
@@ -133,6 +138,7 @@ public class DDLGenerator
    public DDLGenerator(SQLQuery sqlQuery, String dataSourceType, String dataSinkType, int indexCount)
    {
       this.sqlQuery = sqlQuery;
+      this.dataSourceType = dataSourceType;
       this.dataSinkType = dataSinkType;
       this.indexCount = indexCount;
       
@@ -343,7 +349,12 @@ public class DDLGenerator
          if (columnSize <= 0)
             tableDefinition.append(columnType);
          else
-            tableDefinition.append(columnType + "(" + columnSize + ")");
+         {
+            if (dataSourceType.equals(ConnectionInstance.DERBY) && columnType.equals("BINARY"))
+               tableDefinition.append(columnType + "(" + columnPrecision + ")");
+            else
+               tableDefinition.append(columnType + "(" + columnSize + ")");
+         }
       }
       // Clob Types
       else if (columnType.equals("CLOB"))
@@ -517,14 +528,24 @@ public class DDLGenerator
             if (columnSize == 0)
                tableDefinition.append("BINARY(1)");
             else
-               tableDefinition.append("BINARY(" + columnSize + ")");
+            {
+               if (dataSourceType.equals(ConnectionInstance.DERBY))
+                  tableDefinition.append("BINARY(" + columnPrecision + ")");
+               else
+                  tableDefinition.append("BINARY(" + columnSize + ")");
+            }
          }
          else
          {
             if (columnSize >= 16777216)
                tableDefinition.append("LONGVARBINARY");
             else
-               tableDefinition.append("VARBINARY(" + columnSize + ")");     
+            {
+               if (dataSourceType.equals(ConnectionInstance.DERBY))
+                  tableDefinition.append("VARBINARY(" + columnPrecision + ")");
+               else
+                  tableDefinition.append("VARBINARY(" + columnSize + ")");
+            }
          }
       }
       // Blob Types
