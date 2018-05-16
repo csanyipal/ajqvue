@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.2 05/14/2018
+// Version 1.3 05/16/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@
 //                        HSQL_BIT_VARYING Changed Derby Type to Varchar. Since is
 //                        Multi-Bit String, Not Binary, Hex. DERBY_CHAR_FOR_BIT_DATA
 //                        Changed HSQL to Binary, to Match SQL Type Binary.
+//         1.3 05/16/2018 H2_ARRAY Changed SQLITE_NONE to SQLITE_TEXT. 
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -52,7 +53,7 @@ import java.util.Map;
  * data types information for the various support databases.
  * 
  * @author Dana M. Proctor
- * @version 1.2 05/14/2018
+ * @version 1.3 05/16/2018
  */
 
 public class TypesInfoCache
@@ -99,7 +100,7 @@ public class TypesInfoCache
        {TypeID.H2_DATE, TypeID.H2_DATE, TypeID.HSQL_DATE, TypeID.DERBY_DATE, TypeID.SQLITE_TEXT},
        {TypeID.H2_TIME, TypeID.H2_TIME, TypeID.HSQL_TIME, TypeID.DERBY_TIME, TypeID.SQLITE_TEXT},
        {TypeID.H2_TIMESTAMP, TypeID.H2_TIMESTAMP, TypeID.HSQL_TIMESTAMP, TypeID.DERBY_TIMESTAMP, TypeID.SQLITE_TEXT},
-       {TypeID.H2_ARRAY, TypeID.H2_ARRAY, TypeID.HSQL_LONGVARCHAR, TypeID.DERBY_LONG_VARCHAR, TypeID.SQLITE_NONE}};
+       {TypeID.H2_ARRAY, TypeID.H2_ARRAY, TypeID.HSQL_LONGVARCHAR, TypeID.DERBY_LONG_VARCHAR, TypeID.SQLITE_TEXT}};
     
    // HSQL2
    private static final int[][] HSQL_TYPES = {
