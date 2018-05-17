@@ -1,0 +1,15 @@
+index	Name	Class	Type	Type Name	Scale	Precision	Size
+1	data_type_id	java.lang.Integer	4	COUNTER	0	10	11
+2	binary_type	[B	-2	BINARY	0	255	510
+3	longbinary_type	[B	-4	LONGBINARY	0	1073741823	2147483646
+4	varchar_type	java.lang.String	12	VARCHAR	0	50	50
+5	longText_type	java.lang.String	-1	LONGCHAR	0	2147483647	1073741824
+6	bit_type	java.lang.Boolean	-7	BIT	0	1	1
+7	byte_type	java.lang.Byte	-6	BYTE	0	3	3
+8	short_type	java.lang.Short	5	SMALLINT	0	5	6
+9	long_type	java.lang.Integer	4	INTEGER	0	10	11
+10	single_type	java.lang.Float	7	REAL	0	7	13
+11	double_type	java.lang.Double	8	DOUBLE	0	15	22
+12	currency_type	java.math.BigDecimal	2	CURRENCY	4	19	21
+13	guid_type	java.lang.String	1111	GUID	0	36	36
+14	dateTime_type	java.sql.Timestamp	93	DATETIME	0	19	19

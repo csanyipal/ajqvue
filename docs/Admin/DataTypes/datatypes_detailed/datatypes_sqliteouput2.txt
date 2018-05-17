@@ -1,0 +1,6 @@
+index	Name		Class			Type	Type Name	Scale	Precision	Size
+1	data_type_id	java.lang.Object	4	INTEGER		0	0	2147483647
+2	int_type	java.lang.Object	4	INTEGER		0	0	2147483647
+3	real_type	java.lang.Object	7	REAL		0	0	2147483647
+4	text_type	java.lang.Object	12	TEXT		0	0	2147483647
+5	blob_type	java.lang.Object	2004	BLOB		0	0	2147483647

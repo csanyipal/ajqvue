@@ -1,0 +1,34 @@
+index	Name	Class	Type	Type Name	Scale	Precision	Size
+0	data_type_id	java.lang.Long	4	INT UNSIGNED	0	10	10
+1	char_type	java.lang.String	1	CHAR	0	30	30
+2	varchar_type	java.lang.String	12	VARCHAR	0	30	30
+3	tinyBlob_type	[B	-3	TINYBLOB	0	255	255
+4	blob_type	[B	-4	BLOB	0	65535	65535
+5	mediumBlob_type	[B	-4	MEDIUMBLOB	0	16777215	16777215
+6	longBlob_type	[B	-4	LONGBLOB	0	2147483647	2147483647
+7	tinyText_type	java.lang.String	-1	VARCHAR	0	255	255
+8	text_type	java.lang.String	-1	VARCHAR	0	65535	65535
+9	mediumText_type	java.lang.String	-1	VARCHAR	0	16777215	16777215
+10	longText_type	java.lang.String	-1	VARCHAR	0	2147483647	2147483647
+11	enum_type	java.lang.String	1	CHAR	0	4	4
+12	set_type	java.lang.String	1	CHAR	0	5	5
+13	boolean_type	java.lang.Boolean	-7	TINYINT	0	1	1
+14	bit5_type	[B	-3	BIT	0	5	5
+15	tinyInt_type	java.lang.Integer	-6	TINYINT	0	4	4
+16	smallInt_type	java.lang.Integer	5	SMALLINT UNSIGNED	0	5	5
+17	mediumInt_type	java.lang.Integer	4	MEDIUMINT	0	9	9
+18	int_type	java.lang.Integer	4	INT	0	11	11
+19	bigInt_type	java.lang.Long	-5	BIGINT	0	20	20
+20	float_type	java.lang.Float	7	FLOAT	31	12	12
+21	double_type	java.lang.Double	8	DOUBLE	31	22	22
+22	decimal_type	java.math.BigDecimal	3	DECIMAL	2	16	18
+23	date_type	java.sql.Date	91	DATE	0	10	10
+24	time_type	java.sql.Time	92	TIME	0	8	8
+25	dateTime_type	java.sql.Timestamp	93	DATETIME	0	19	19
+26	timeStamp_2	java.sql.Timestamp	93	TIMESTAMP	0	19	19
+27	timeStamp_4	java.sql.Timestamp	93	TIMESTAMP	0	19	19
+28	timeStamp_6	java.sql.Timestamp	93	TIMESTAMP	0	19	19
+29	timeStamp_8	java.sql.Timestamp	93	TIMESTAMP	0	19	19
+30      timeStamp_type  java.sql.Timestamp TIMESTAMP 19
+31	year_2	java.sql.Date	91	YEAR	0	2	2
+32	year_4	java.sql.Date	91	YEAR	0	4	4

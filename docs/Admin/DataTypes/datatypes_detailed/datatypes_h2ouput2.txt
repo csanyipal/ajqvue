@@ -1,0 +1,20 @@
+index	Name	Class	Type	Type Name	Scale	Precision	Size
+1	data_type_id	java.lang.Long	-5	BIGINT	0	19	20
+2	char_type	java.lang.String	1	CHAR	0	30	30
+3	varchar_type	java.lang.String	12	VARCHAR	0	30	30
+4	varchar_type_ignorecase	java.lang.String	12	VARCHAR_IGNORECASE	0	30	30
+5	blob_type	java.sql.Blob	2004	BLOB	0	1048576	1048576
+6	clob_type	java.sql.Clob	2005	CLOB	0	1048576	1048576
+7	uuid_type	[B	-2	UUID	0	2147483647	2147483647
+8	boolean_type	java.lang.Boolean	16	BOOLEAN	0	1	5
+9	tinyInt_type	java.lang.Byte	-6	TINYINT	0	3	4
+10	smallInt_type	java.lang.Short	5	SMALLINT	0	5	6
+11	int_type	java.lang.Integer	4	INTEGER	0	10	11
+12	bigInt_type	java.lang.Long	-5	BIGINT	0	19	20
+13	real_type	java.lang.Float	7	REAL	0	7	15
+14	double_type	java.lang.Double	8	DOUBLE	0	17	24
+15	decimal_type	java.math.BigDecimal	3	DECIMAL	2	16	16
+16	date_type	java.sql.Date	91	DATE	0	8	10
+17	time_type	java.sql.Time	92	TIME	0	6	8
+18	timeStamp_type	java.sql.Timestamp	93	TIMESTAMP	10	23	23
+19	array_type	java.sql.Array	2003	ARRAY	0	0	0

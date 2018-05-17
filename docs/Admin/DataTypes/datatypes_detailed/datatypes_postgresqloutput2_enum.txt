@@ -1,0 +1,29 @@
+DROP TYPE IF EXISTS mood;
+CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');
+
+DROP TABLE IF EXISTS enum_types;
+CREATE TABLE enum_types (
+
+--  Table id and creation data entries.
+	data_type_id serial NOT NULL,
+	
+--  ENUM fields.
+
+	enum_type mood DEFAULT 'ok',
+	
+  	PRIMARY KEY  (data_type_id)
+);
+
+index	Name		Class			Type	Type Name	Scale	Precision	Size
+1	data_type_id	java.lang.Integer	4	serial		0	10		11
+2	enum_type	java.lang.Object	12	mood		0	2147483647	2147483647
+
+
+INSERT INTO "enum_types" VALUES (3, 'sad'::"mood")
+INSERT INTO "enum_types" VALUES (4, CAST ('sad' AS "mood"))
+
+MyJSQLView uses the PreparedStatement to set the ? to an appropriate
+cast for the type, "mood".
+
+INSERT INTO "public"."enum_types" ("data_type_id", "enum_type") VALUES (nextval('"public"."enum_types_data_type_id_seq"'), ?::"mood")
+UPDATE "public"."enum_types" SET "data_type_id"=?, "enum_type"=?::"mood" WHERE "data_type_id"='1'
