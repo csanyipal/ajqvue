@@ -1,4 +1,41 @@
 ------------------------------
+PostgreSQL 10.4, JDBC 42.2.2
+
+1 data_type_id Data Type Id java.lang.Integer serial 11
+2 smallint_type Smallint Type java.lang.Integer int2 6
+3 int_type Int Type java.lang.Integer int4 11
+4 bigint_type Bigint Type java.lang.Long int8 20
+5 decimal_type Decimal Type java.math.BigDecimal numeric 18
+6 numeric_type Numeric Type java.math.BigDecimal numeric 12
+7 real_type Real Type java.lang.Float float4 15
+8 doubleprecision_type Doubleprecision Type java.lang.Double float8 25
+9 serial_type Serial Type java.lang.Integer serial 11
+10 bigserial_type Bigserial Type java.lang.Long bigserial 20
+11 varchar_type Varchar Type java.lang.String varchar 30
+12 char_type Char Type java.lang.String bpchar 30
+13 text_type Text Type java.lang.String text 2147483647
+14 bytea_type Bytea Type [B bytea 2147483647
+15 date_type Date Type java.sql.Date date 13
+16 time_type Time Type java.sql.Time time 15
+17 timetz_type Timetz Type java.sql.Time timetz 21
+18 timestamp_type Timestamp Type java.sql.Timestamp timestamp 29
+19 timestamptz_type Timestamptz Type java.sql.Timestamp timestamptz 35
+20 interval_type Interval Type org.postgresql.util.PGInterval interval 49
+21 boolean_type Boolean Type java.lang.Boolean bool 1
+22 point_type Point Type org.postgresql.geometric.PGpoint point 2147483647
+23 linesegment_type Linesegment Type org.postgresql.geometric.PGlseg lseg 2147483647
+24 box_type Box Type org.postgresql.geometric.PGbox box 2147483647
+25 path_type Path Type org.postgresql.geometric.PGpath path 2147483647
+26 polygon_type Polygon Type org.postgresql.geometric.PGpolygon polygon 2147483647
+27 circle_type Circle Type org.postgresql.geometric.PGcircle circle 2147483647
+28 cidr_type Cidr Type java.lang.Object cidr 2147483647
+29 inet_type Inet Type java.lang.Object inet 2147483647
+30 macaddr_type Macaddr Type java.lang.Object macaddr 2147483647
+31 bit2_type Bit2 Type java.lang.Boolean bit 2
+32 bitvarying5_type Bitvarying5 Type java.lang.Object varbit 5
+33 enum_type Enum Type java.lang.Object mood 2147483647
+
+------------------------------
 PostgreSQL 9.6.3, JDBC 42.1.3
 
 1 data_type_id Data Type Id java.lang.Integer serial 11
