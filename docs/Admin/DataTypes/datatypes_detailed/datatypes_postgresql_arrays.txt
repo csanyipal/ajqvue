@@ -1,5 +1,5 @@
 -----------------------
-PostgreSQL PostgreSQL 9.6.3 Arrays Detailed.
+PostgreSQL PostgreSQL 9.6.3 - 10.4 Arrays Detailed.
 
 index	Name	Class	Type	Type Name	Scale	Precision	Size
 1	data_type_id	java.lang.Integer	4	serial	0	10	11
