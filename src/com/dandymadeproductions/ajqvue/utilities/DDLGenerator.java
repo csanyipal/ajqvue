@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.6 05/15/2018
+// Version 1.7 05/21/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -49,6 +49,9 @@
 //         1.6 05/15/2018 Method createH2_DDL() & createHSQL_DDL() Changed Binary &
 //                        VarBinary Types for Derby dataSourceType to Use columnPrecision
 //                        for Size.
+//         1.7 05/21/2018 Method getDDL() Added Conditional to Check for Source DB of
+//                        SQLite So That a SQL Type Conversion Can be Called. Added
+//                        Method convertToSQLiteType().
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -74,7 +77,7 @@ import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
  * a given database query to an alternate database table. 
  * 
  * @author Dana M. Proctor
- * @version 1.6 05/15/2018
+ * @version 1.7 05/21/2018
  */
 
 public class DDLGenerator
@@ -216,8 +219,13 @@ public class DDLGenerator
          columnName = colNameIterator.next();
          columnClass = sqlQuery.getColumnClassHashMap().get(columnName);
          
+         // Map directly from definition.
          if (dataSinkType.equals(ConnectionManager.SQLITE) && useSQLiteCast)
             columnType = sqlQuery.getColumnTypeNameHashMap().get(columnName);
+         
+         else if (dataSourceType.equals(ConnectionManager.SQLITE))
+            columnType = infoCache.getType(convertToSQLiteType(
+               sqlQuery.getColumnTypeNameHashMap().get(columnName)));
          else
             columnType = infoCache.getType(sqlQuery.getColumnTypeNameHashMap().get(columnName));
          
@@ -281,6 +289,62 @@ public class DDLGenerator
          tableDefinition.append(");\n");
       }
       return tableDefinition.toString();
+   }
+   
+   //==============================================================
+   // Class method to try and convert a defined SQL type to one of
+   // the defined SQLites types if possible.
+   //
+   // This is required because SQLite allows table definitions to
+   // be stored directly in essentially with field type of anything,
+   // "WhattZZa". It does not care because if the type does not fall
+   // into a SQL type or one of its own, it just becomes NONE.
+   //
+   // SQLite Documentation - 2.2 Affinity Name Examples.
+   //==============================================================
+   
+   private String convertToSQLiteType(String columnType)
+   {
+      if (columnType.indexOf("CHAR") != -1
+          || columnType.indexOf("CLOB") != -1)
+      {
+         return "TEXT";
+      }   
+      else if (columnType.indexOf("BYTEA") != -1)
+      {
+         return "BLOB";
+      }
+      else if (columnType.indexOf("NUMERIC") != -1
+            || columnType.indexOf("DECIMAL") != -1
+            || columnType.indexOf("BOOLEAN") != -1
+            || columnType.indexOf("DATE") != -1
+            || columnType.indexOf("DATETIME") != -1
+            || columnType.indexOf("TIMESTAMP") != -1
+            || columnType.indexOf("YEAR") != -1)
+      {
+         return "NUMERIC";
+      }
+      else if (columnType.indexOf("INT") != -1
+          || columnType.indexOf("TINYINT") != -1
+          || columnType.indexOf("SMALLINT") != -1
+          || columnType.indexOf("MEDIUMINT") != -1
+          || columnType.indexOf("BIGINT") != -1
+          || columnType.indexOf("INT2") != -1
+          || columnType.indexOf("INT4") != -1
+          || columnType.indexOf("INT8") != -1
+          || columnType.indexOf("SERIAL") != -1
+          )
+      {
+         return "INTEGER";
+      }
+      else if (columnType.indexOf("REAL") != -1
+               || columnType.indexOf("DOUBLE") != -1
+               || columnType.indexOf("FLOAT") != -1)
+      {
+         return "REAL";
+      }  
+      else
+         return columnType;
    }
    
    //==============================================================
