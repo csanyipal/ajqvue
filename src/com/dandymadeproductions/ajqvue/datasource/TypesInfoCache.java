@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 05/16/2018
+// Version 1.4 05/25/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,7 +37,9 @@
 //                        HSQL_BIT_VARYING Changed Derby Type to Varchar. Since is
 //                        Multi-Bit String, Not Binary, Hex. DERBY_CHAR_FOR_BIT_DATA
 //                        Changed HSQL to Binary, to Match SQL Type Binary.
-//         1.3 05/16/2018 H2_ARRAY Changed SQLITE_NONE to SQLITE_TEXT. 
+//         1.3 05/16/2018 H2_ARRAY Changed SQLITE_NONE to SQLITE_TEXT.
+//         1.4 05/25/2018 Method getType() Added Argument sourceSQLType, & Used As
+//                        an Alternative to Try & Derive Return for UNSPECIFIED.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -45,6 +47,8 @@
 
 package com.dandymadeproductions.ajqvue.datasource;
 
+import java.lang.reflect.Field;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +57,7 @@ import java.util.Map;
  * data types information for the various support databases.
  * 
  * @author Dana M. Proctor
- * @version 1.3 05/16/2018
+ * @version 1.4 05/25/2018
  */
 
 public class TypesInfoCache
@@ -395,9 +399,9 @@ public class TypesInfoCache
    // related to the given source data type.
    //==============================================================
    
-   public String getType(String sourceTypeName)
+   public String getType(int sourceSQLType, String sourceTypeName)
    {
-      // System.out.println("TypesInfoCache getType() " + sourceTypeName);
+      // System.out.println("TypesInfoCache getType() " + sourceSQLType + " : " + sourceTypeName);
       
       // Deal with PostgreSQL Array Types
       if (dataSourceType.equals(ConnectionManager.POSTGRESQL) && sourceTypeName.startsWith("_"))
@@ -412,7 +416,26 @@ public class TypesInfoCache
          if (dataSinkType.equals(ConnectionManager.SQLITE))
             return TypeID.toString(TypeID.SQLITE_NONE);
          else
-            return TypeID.toString(TypeID._UNSPECIFIED);
+         {
+            Field[] fields = Types.class.getFields();
+            String sqlTypeName = "";
+            
+            try
+            {
+               for (int i = 0; i < fields.length; i++)
+                  if (fields[i].getInt(null) == sourceSQLType)
+                     sqlTypeName = fields[i].getName();
+            }
+            catch (IllegalAccessException e)
+            {
+               // never happens
+            }
+            
+            if (sqlTypeName.isEmpty())
+               return TypeID.toString(TypeID._UNSPECIFIED);
+            else
+               return sqlTypeName;
+         }
       }
    } 
    
