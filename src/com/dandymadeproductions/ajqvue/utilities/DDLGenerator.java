@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.7 05/21/2018
+// Version 1.8 05/25/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -52,6 +52,9 @@
 //         1.7 05/21/2018 Method getDDL() Added Conditional to Check for Source DB of
 //                        SQLite So That a SQL Type Conversion Can be Called. Added
 //                        Method convertToSQLiteType().
+//         1.8 05/25/2018 Code Formatting Changes for Class Instances. Main Method getDDL()
+//                        Call to infoCache.getType() Added Column SQL Type From SQLQuery
+//                        columnSQLTypeHashMap as Argument.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -77,7 +80,7 @@ import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
  * a given database query to an alternate database table. 
  * 
  * @author Dana M. Proctor
- * @version 1.7 05/21/2018
+ * @version 1.8 05/25/2018
  */
 
 public class DDLGenerator
@@ -91,8 +94,14 @@ public class DDLGenerator
    private TypesInfoCache infoCache;
    private boolean useSQLiteCast;
    
-   private String columnName, columnClass, columnType;
-   private int columnPrecision, columnScale, columnSize, columnIsNullable;
+   private String columnName;
+   private String columnClass;
+   private String columnType;
+   
+   private int columnPrecision;
+   private int columnScale;
+   private int columnSize;
+   private int columnIsNullable;
    private boolean columnIsAutoIncrement;
    
    private StringBuffer tableDefinition;
@@ -224,10 +233,12 @@ public class DDLGenerator
             columnType = sqlQuery.getColumnTypeNameHashMap().get(columnName);
          
          else if (dataSourceType.equals(ConnectionManager.SQLITE))
-            columnType = infoCache.getType(convertToSQLiteType(
-               sqlQuery.getColumnTypeNameHashMap().get(columnName)));
+            columnType = infoCache.getType(sqlQuery.getColumnSQLTypeHashMap().get(columnName),
+                                           convertToSQLiteType(
+                                              sqlQuery.getColumnTypeNameHashMap().get(columnName)));
          else
-            columnType = infoCache.getType(sqlQuery.getColumnTypeNameHashMap().get(columnName));
+            columnType = infoCache.getType(sqlQuery.getColumnSQLTypeHashMap().get(columnName),
+                                           sqlQuery.getColumnTypeNameHashMap().get(columnName));
          
          columnPrecision = ((sqlQuery.getColumnPrecisionHashMap().get(columnName)).intValue());
          columnScale = (sqlQuery.getColumnScaleHashMap().get(columnName)).intValue();
