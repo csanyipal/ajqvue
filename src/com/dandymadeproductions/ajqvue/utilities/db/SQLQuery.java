@@ -8,8 +8,8 @@
 //                     << SQLQuery.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 12/29/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.3 05/29/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,12 +35,13 @@
 //             Description.
 //         1.2 Added Methods executeSQL() & getRowCount() With Argument
 //             ConnectionInstance.
+//         1.3 Moved to utilities.db Package.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
 //=================================================================
 
-package com.dandymadeproductions.ajqvue.utilities;
+package com.dandymadeproductions.ajqvue.utilities.db;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -60,7 +61,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
  * the characteristics of a SQL query.   
  * 
  * @author Dana M. Proctor
- * @version 1.2 12/29/2017
+ * @version 1.3 05/29/2018
  */
 
 public class SQLQuery
