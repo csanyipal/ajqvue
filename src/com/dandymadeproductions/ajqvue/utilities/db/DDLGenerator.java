@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.8 05/25/2018
+// Version 1.9 05/29/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -55,12 +55,13 @@
 //         1.8 05/25/2018 Code Formatting Changes for Class Instances. Main Method getDDL()
 //                        Call to infoCache.getType() Added Column SQL Type From SQLQuery
 //                        columnSQLTypeHashMap as Argument.
+//         1.9 05/29/2018 Moved to utilities.db Package. Updated Import for Utils.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
 //=================================================================
 
-package com.dandymadeproductions.ajqvue.utilities;
+package com.dandymadeproductions.ajqvue.utilities.db;
 
 import java.sql.Connection;
 import java.sql.ResultSetMetaData;
@@ -73,6 +74,7 @@ import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionInstance;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
+import com.dandymadeproductions.ajqvue.utilities.Utils;
 
 /**
  *    The DDLGenerator class provides the basis for creating a condensed
@@ -80,7 +82,7 @@ import com.dandymadeproductions.ajqvue.datasource.TypesInfoCache;
  * a given database query to an alternate database table. 
  * 
  * @author Dana M. Proctor
- * @version 1.8 05/25/2018
+ * @version 1.9 05/29/2018
  */
 
 public class DDLGenerator

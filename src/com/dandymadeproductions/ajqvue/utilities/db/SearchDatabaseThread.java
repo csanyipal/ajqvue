@@ -8,8 +8,8 @@
 //                << SearchDatabaseThread.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 05/29/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,12 +31,13 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production SearchDatabase Class.
+//         1.1 Moved to utilities.db Package. Updated Import for Utils.
 //         
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
 //=================================================================
 
-package com.dandymadeproductions.ajqvue.utilities;
+package com.dandymadeproductions.ajqvue.utilities.db;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -51,13 +52,14 @@ import javax.swing.JProgressBar;
 
 import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
+import com.dandymadeproductions.ajqvue.utilities.Utils;
 
 /**
  *    The SearchDatabaseThread class provides a thread to search
  * through all the database tables for a given input string.
  * 
  * @author Dana Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 05/29/2018
  */
 
 public class SearchDatabaseThread implements Runnable
