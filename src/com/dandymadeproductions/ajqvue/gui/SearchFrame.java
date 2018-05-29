@@ -8,8 +8,8 @@
 //                  << SearchFrame.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 06/24/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.2 05/29/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 //=================================================================
 // Version 1.0 Production SearchFrame Class.
 //         1.1 Minor Code Formatting, Syntax Changes.
+//         1.2 Changed/Updated Import for SearchDatabaseThread Class.
 //                            
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -69,7 +70,7 @@ import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel;
 import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
 import com.dandymadeproductions.ajqvue.utilities.TableModel;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
-import com.dandymadeproductions.ajqvue.utilities.SearchDatabaseThread;
+import com.dandymadeproductions.ajqvue.utilities.db.SearchDatabaseThread;
 import com.dandymadeproductions.ajqvue.utilities.SearchResultTableCellRenderer;
 
 //=================================================================
@@ -82,7 +83,7 @@ import com.dandymadeproductions.ajqvue.utilities.SearchResultTableCellRenderer;
  * a connection established in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.1 06/24/2017
+ * @version 1.2 05/29/2018
  */
 
 class SearchFrame extends JFrame implements ActionListener, KeyListener, MouseListener
