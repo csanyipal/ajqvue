@@ -9,8 +9,8 @@
 //            << SQLDatabaseSchemeDumpThread.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 06/29/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.3 05/29/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -38,6 +38,7 @@
 //             Removed Class Instance version & Same as Argument From Constructor.
 //             Removed dbConnection Argument to generateHeaders(). Removed Class
 //             Methods generateHeaders() & genCommentSep(). Organized Imports.
+//         1.3 Changed/Updated Import for TableDefinitionGenerator Class.
 //                         
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -51,7 +52,7 @@ import java.util.Iterator;
 
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
-import com.dandymadeproductions.ajqvue.utilities.TableDefinitionGenerator;
+import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
 
 /**
  *    The SQLDatabaseSchemeDumpThread class provides a thread to safely
@@ -60,7 +61,7 @@ import com.dandymadeproductions.ajqvue.utilities.TableDefinitionGenerator;
  * to prematurely terminate the dump.
  * 
  * @author Dana Proctor
- * @version 1.2 06/29/2017
+ * @version 1.3 05/29/2018
  */
 
 public class SQLDatabaseSchemeDumpThread extends SQLDump implements Runnable
