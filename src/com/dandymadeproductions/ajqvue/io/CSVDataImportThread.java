@@ -10,8 +10,8 @@
 //                 << CSVDataImportThread.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 09/02/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.2 05/29/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@
 // Version 1.0 Production CSVDataImportThread Class.
 //         1.1 Method importCSVFile() Additional Check for columnClass Not
 //             Null in Conditional for Date, Datetime, & Timestamp.
+//         1.2 Changed/Updated Import for SQLQuery Class.
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -62,7 +63,7 @@ import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
 import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel;
 import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
-import com.dandymadeproductions.ajqvue.utilities.SQLQuery;
+import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
 
 /**
  *    The CSVDataImportThread class provide the means to import a
@@ -71,7 +72,7 @@ import com.dandymadeproductions.ajqvue.utilities.SQLQuery;
  * address the ability to cancel the import.
  * 
  * @author Dana M. Proctor
- * @version 1.1 09/02/2017
+ * @version 1.2 09/29/2018
  */
 
 public class CSVDataImportThread implements Runnable
