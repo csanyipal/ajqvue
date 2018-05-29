@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.7 05/10/2018
+// Version 1.8 05/29/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -44,12 +44,13 @@
 //             Types to Assign Size, Either Binary, Default, or 1.
 //         1.7 Method createHSQLTableDefinition() Added, Corrected, BIT Field
 //             Definition to Include columnSize.
+//         1.8 Moved to utilities.db Package.
 //             
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
 //=================================================================
 
-package com.dandymadeproductions.ajqvue.utilities;
+package com.dandymadeproductions.ajqvue.utilities.db;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -75,7 +76,7 @@ import com.dandymadeproductions.ajqvue.structures.DataExportProperties;
  * structures that output via the SQL data export feature.
  * 
  * @author Dana Proctor
- * @version 1.7 05/10/2017
+ * @version 1.8 05/29/2018
  */
 
 public class TableDefinitionGenerator
