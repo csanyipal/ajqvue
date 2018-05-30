@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.2 05/29/2018
+// Version 1.3 05/30/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,9 @@
 //             Class Methods generateHeaders(), genCommentSep(), addEscapes(),
 //             & dumpChunkOfData(). Organized Imports.
 //         1.2 Changed/Updated Import for TableDefinitionGenerator Class.
+//         1.3 Change in Methods insertReplace/explicitStatementData() for
+//             Additional Condition Check for Utils.isNumerics() for Not
+//             Using Quotes With Numbers.
 //             
 //-----------------------------------------------------------------
 //                poisonerbg@users.sourceforge.net
@@ -67,6 +70,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
 import com.dandymadeproductions.ajqvue.structures.DataExportProperties;
 import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
+import com.dandymadeproductions.ajqvue.utilities.Utils;
 import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
 
 /**
@@ -76,7 +80,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
  * the dump.
  * 
  * @author Borislav Gizdov a.k.a. PoisoneR, Dana Proctor
- * @version 1.2 05/29/2018
+ * @version 1.3 05/30/2018
  */
 
 public class SQLDataDumpThread extends SQLDump implements Runnable
@@ -544,7 +548,9 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
          if (columnClass.indexOf("Integer") != -1 || columnClass.indexOf("Long") != -1
              || columnClass.indexOf("Float") != -1 || columnClass.indexOf("Double") != -1
              || (columnClass.indexOf("Byte") != -1 && columnType.indexOf("CHAR") == -1)
-             || columnClass.indexOf("BigDecimal") != -1 || columnClass.indexOf("Short") != -1)
+             || columnClass.indexOf("BigDecimal") != -1 || columnClass.indexOf("Short") != -1
+             || (dataSourceType.equalsIgnoreCase(ConnectionManager.SQLITE)
+                 && Utils.isNumeric(columnClass, columnType)))
          {
             numericIndexes.add(Integer.valueOf(columnsCount + 1));
          }
@@ -895,9 +901,11 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
                                   !sqlDataExportOptions.getTimeStamp())
                                  dumpData = dumpData + "TO_TIMESTAMP_TZ('" + contentString
                                             + "', 'YYYY-MM-DD HH24:MI:SS TZH:TZM'), ";
+                              
                               // Don't Quote Numeric Values.
                               else if (numericIndexes.contains(Integer.valueOf(i))) 
                                  dumpData = dumpData + contentString + ", ";
+                              
                               else 
                                  dumpData = dumpData + "'" + addEscapes(contentString) + "', ";
                            }
@@ -1418,11 +1426,18 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
                                   dataSourceType.equals(ConnectionManager.ORACLE))
                                  dumpData = dumpData + "TO_TIMESTAMP_TZ('" + contentString
                                             + "', 'YYYY-MM-DD HH24:MI:SS TZH:TZM'), ";
+                              
+                              // Don't quote numbers.
                               else if (columnClass.indexOf("Integer") != -1 || columnClass.indexOf("Long") != -1
                                        || columnClass.indexOf("Float") != -1 || columnClass.indexOf("Double") != -1
                                        || (columnClass.indexOf("Byte") != -1 && columnType.indexOf("CHAR") == -1)
-                                       || columnClass.indexOf("BigDecimal") != -1 || columnClass.indexOf("Short") != -1)
+                                       || columnClass.indexOf("BigDecimal") != -1 || columnClass.indexOf("Short") != -1
+                                       || (dataSourceType.equalsIgnoreCase(ConnectionManager.SQLITE)
+                                           && Utils.isNumeric(columnClass, columnType)))
+                              {
                                  dumpData = dumpData + contentString + ", ";
+                              }
+                              
                               else
                                  dumpData = dumpData + "'" + addEscapes(contentString + "") + "', ";
                            }
