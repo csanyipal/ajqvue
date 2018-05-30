@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.8 05/11/2018
+// Version 1.9 05/30/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -43,6 +43,7 @@
 //         1.6 Method processFileChooserSelection() Minor Comment & Code Cleanup.
 //         1.7 Method isText() Added to Conditional BPCHAR.
 //         1.8 Added Class Method convertBitsToHSQL_Bits().
+//         1.9 Added Class Method isNumeric().
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -117,7 +118,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 1.8 05/11/2018
+ * @version 1.9 05/30/2018
  */
 
 public class Utils extends Ajqvue
@@ -1188,6 +1189,29 @@ public class Utils extends Ajqvue
           || (columnType.indexOf("BYTEA") != -1) || (columnType.indexOf("BINARY") != -1)
           || (columnClass.indexOf("byte") != -1 && columnType.indexOf("BIT DATA") != -1)
           || (columnType.indexOf("RAW") != -1) || (columnType.indexOf("IMAGE") != -1))
+      {
+         return true;
+      }
+      else
+         return false;
+   }
+   
+   //==============================================================
+   // Method for determing if the given meta data class and type
+   // can be defined as a number.
+   //
+   // Types: SERIAL, TINYINT, SMALLINT, MEDIUMINT, INTEGER, BIGINT,
+   //        INT, = LONG, DOUBLE, FLOAT, REAL, NUMBER, DECIMAL,
+   //        NUMERIC, MONEY, SMALLMONEY
+   //==============================================================
+   
+   public static boolean isNumeric(String columnClass, String columnType)
+   {
+      if (columnType.indexOf("INT") != -1 || columnType.indexOf("SERIAL") != -1
+            || columnType.equals("LONG") || columnType.indexOf("DOUBLE") != -1
+            || (columnType.indexOf("FLOAT") != -1 || columnType.indexOf("REAL") != -1)
+            || columnType.indexOf("DECIMAL") != -1 || columnType.indexOf("NUMBER") != -1
+            || columnType.indexOf("MONEY") != -1 || columnType.indexOf("NUMERIC") != -1)
       {
          return true;
       }
