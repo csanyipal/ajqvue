@@ -9,8 +9,8 @@
 //                 << QueryTabPanel.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 05/31/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production QueryTabPanel Class.
+//         1.1 Changed Class Method getColumnTypeHashMap() to getColumnTypeNameHashMap()
+//             to Properly Reflect the Type Name is Being Returned.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -104,7 +106,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * of the data.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 05/31/2018
  */
 
 public class QueryTabPanel extends JPanel implements ActionListener, KeyListener, Printable
@@ -2227,9 +2229,10 @@ public class QueryTabPanel extends JPanel implements ActionListener, KeyListener
 
    //==============================================================
    // Class method to allow classes to obtain the columnTypeHashMap.
+   // Note! This is derived from tableMetaData.getColumnTypeName().
    //==============================================================
 
-   public HashMap<String, String> getColumnTypeHashMap()
+   public HashMap<String, String> getColumnTypeNameHashMap()
    {
       return columnTypeHashMap;
    }
