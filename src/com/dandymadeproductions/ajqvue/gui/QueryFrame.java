@@ -8,8 +8,8 @@
 //                  << QueryFrame.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 08/14/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.2 05/31/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,8 @@
 //                        Removed Conditional Check for queryTabsPane Selected
 //                        Component != Null. Checked in setRowPreferences(). Allows
 //                        Change in Fetch Row Size Before Any Tabs Present.
+//         1.2 05/31/2018 Method exportData() Changed Instance tableColumnTypeHashMap
+//                        to tableColumnTypeNameHashMap.
 //
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -121,7 +123,7 @@ import com.dandymadeproductions.ajqvue.utilities.TableClearingThread;
  * connection established in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.1 06/14/2017
+ * @version 1.2 05/31/2018
  */
 
 public class QueryFrame extends JFrame implements ActionListener, ChangeListener
@@ -1037,7 +1039,7 @@ public class QueryFrame extends JFrame implements ActionListener, ChangeListener
       int fileChooserResult;
       
       HashMap<String, String> tableColumnNamesHashMap = new HashMap <String, String>();
-      HashMap<String, String> tableColumnTypeHashMap = new HashMap <String, String>();
+      HashMap<String, String> tableColumnTypeNameHashMap = new HashMap <String, String>();
 
       // Creating and showing a file chooser based on a default file name
       // derived from the table and date.
@@ -1084,13 +1086,13 @@ public class QueryFrame extends JFrame implements ActionListener, ChangeListener
                if (getSelectedTab() instanceof QueryTabPanel)
                {
                   tableColumnNamesHashMap = ((QueryTabPanel) getSelectedTab()).getColumnNamesHashMap();
-                  tableColumnTypeHashMap = ((QueryTabPanel) getSelectedTab()).getColumnTypeHashMap();
+                  tableColumnTypeNameHashMap = ((QueryTabPanel) getSelectedTab()).getColumnTypeNameHashMap();
                   
                }
                else
                {
                   tableColumnNamesHashMap = ((SQLTabPanel) getSelectedTab()).getColumnNamesHashMap();
-                  tableColumnTypeHashMap = ((SQLTabPanel) getSelectedTab()).getColumnTypeHashMap();
+                  tableColumnTypeNameHashMap = ((SQLTabPanel) getSelectedTab()).getColumnTypeNameHashMap();
                }
             }
 
@@ -1120,14 +1122,14 @@ public class QueryFrame extends JFrame implements ActionListener, ChangeListener
                   if (actionCommand.equals(DATAEXPORT_CSV_SUMMARY_TABLE))
                   {
                      Thread csvDataTableDumpThread = new Thread(new CSVDataTableDumpThread(summaryListTable,
-                        tableColumnNamesHashMap, tableColumnTypeHashMap, exportedTable, fileName));
+                        tableColumnNamesHashMap, tableColumnTypeNameHashMap, exportedTable, fileName));
                      
                      csvDataTableDumpThread.start();
                   }
                   else
                   {
                      Thread pdfDataTableDumpThread = new Thread(new PDFDataTableDumpThread(summaryListTable,
-                        tableColumnTypeHashMap, exportedTable, fileName));
+                        tableColumnTypeNameHashMap, exportedTable, fileName));
                      
                      pdfDataTableDumpThread.start();
                   }
