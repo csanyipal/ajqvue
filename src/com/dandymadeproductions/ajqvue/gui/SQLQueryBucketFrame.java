@@ -8,8 +8,8 @@
 //                << SQLQueryBucketFrame.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.3 08/25/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.4 05/31/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,8 @@
 //             HSQL Database Connections, Discounts Passed Properties.
 //         1.3 Reverted v1.2, Multiple Databases Tag Properties on Connection
 //             URL, databaseName.
+//         1.4 Organized Imports. Method createSQLObjectDialog() Added to
+//             dialog_sqlTextArea MouseListener for All, View Included.
 //         
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -44,7 +46,21 @@
 
 package com.dandymadeproductions.ajqvue.gui;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Paint;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -61,8 +77,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.regex.Matcher;
 import java.util.Iterator;
+import java.util.regex.Matcher;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -93,11 +109,11 @@ import javax.swing.TransferHandler;
 import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.io.WriteDataFile;
-import com.dandymadeproductions.ajqvue.utilities.InputDialog;
 import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
-import com.dandymadeproductions.ajqvue.utilities.Utils;
+import com.dandymadeproductions.ajqvue.utilities.InputDialog;
 import com.dandymadeproductions.ajqvue.utilities.SQLQueryBucketListCellRenderer;
 import com.dandymadeproductions.ajqvue.utilities.SQLQueryBucketListObject;
+import com.dandymadeproductions.ajqvue.utilities.Utils;
 
 //=================================================================
 //                     SQLQueryBucketFrame
@@ -108,7 +124,7 @@ import com.dandymadeproductions.ajqvue.utilities.SQLQueryBucketListObject;
  * storage of SQL Query statements derived from DBTablesTab.
  * 
  * @author Dana M. Proctor
- * @version 1.3 08/25/2017
+ * @version 1.4 05/31/2018
  */
 
 public class SQLQueryBucketFrame extends JFrame implements ActionListener, MouseListener
@@ -996,11 +1012,9 @@ public class SQLQueryBucketFrame extends JFrame implements ActionListener, Mouse
       if (actionCommand.equals(VIEW))
          dialog_sqlTextArea.setEditable(false);
       else
-      {
          dialog_sqlTextArea.setDragEnabled(true);
-         dialog_sqlTextArea.addMouseListener(Ajqvue.getPopupMenuListener());  
-      }
       
+      dialog_sqlTextArea.addMouseListener(Ajqvue.getPopupMenuListener());  
       dialog_sqlTextArea.setText(processingBucketListObject.getSQLStatementString().toString());
       
       JScrollPane sqlTextScrollPane = new JScrollPane(dialog_sqlTextArea);
