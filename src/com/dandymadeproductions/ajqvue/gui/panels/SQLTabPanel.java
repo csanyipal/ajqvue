@@ -8,8 +8,8 @@
 //                    << SQLTabPanel.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 07/18/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.2 06/01/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,14 @@
 //=================================================================
 // Version 1.0 09/18/2016 Production SQLTabPanel Class.
 //         1.1 08/09/2017 Updated Copyright.
+//         1.2 06/01/2018 Clarified Class Instance columnTypeHashMap Name
+//                        to columnTypeNameHashMap. Added Back columnTypeHashMap,
+//                        as <String, Integer>. Method executeSQL() Assigned
+//                        columnType for Empty ResultSet to Type.VARCHAR. Added
+//                        Commented Column Meta Data Output to Print on Ajqvue
+//                        Debug. Changed getColumnTypeHashMap() Method to be
+//                        Return of <String, Integer>. Added Class Method
+//                        getColumnTypeNameHashMap().
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -55,6 +63,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,7 +98,7 @@ import com.dandymadeproductions.ajqvue.utilities.TableSorter;
  * from the direct input of SQL commands executed on the database.  
  * 
  * @author Dana M. Proctor
- * @version 1.1 08/09/2017
+ * @version 1.2 06/01/2018
  */
 
 public class SQLTabPanel extends JPanel implements ActionListener, Printable
@@ -107,7 +116,8 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
    private ArrayList<String> tableHeadings;
    private HashMap<String, String> columnNamesHashMap;
    private HashMap<String, String> columnClassHashMap;
-   private HashMap<String, String> columnTypeHashMap;
+   private HashMap<String, Integer> columnTypeHashMap;
+   private HashMap<String, String> columnTypeNameHashMap;
    private HashMap<String, Integer> columnSizeHashMap;
    private HashMap<String, Integer> preferredColumnSizeHashMap;
    private AResourceBundle resourceBundle;
@@ -143,7 +153,8 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
       tableHeadings = new ArrayList <String>();
       columnNamesHashMap = new HashMap <String, String>();
       columnClassHashMap = new HashMap <String, String>();
-      columnTypeHashMap = new HashMap <String, String>();
+      columnTypeHashMap = new HashMap <String, Integer>();
+      columnTypeNameHashMap = new HashMap <String, String>();
       columnSizeHashMap = new HashMap <String, Integer>();
       preferredColumnSizeHashMap = new HashMap <String, Integer>();
       
@@ -311,13 +322,15 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                // Fill information instances.
                colNameString = "Result";
                columnClass = "java.lang.String";
+               columnType = Types.VARCHAR;
                columnTypeName = "VARCHAR";
                columnSize = 30;
                
                tableHeadings.add(colNameString);
                columnNamesHashMap.put(colNameString, colNameString);
                columnClassHashMap.put(colNameString, columnClass);
-               columnTypeHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
+               columnTypeHashMap.put(colNameString, columnType);
+               columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
                columnSizeHashMap.put(colNameString, Integer.valueOf(columnSize));
                preferredColumnSizeHashMap.put(colNameString,
                                               Integer.valueOf(colNameString.length() * columnSizeScaling));
@@ -339,10 +352,11 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
             
             tableMetaData = db_resultSet.getMetaData();
             
-            // System.out.println("SQLTabPanel executeSQL()\n"
-            //                    + "index" + "\t" + "Name" + "\t" + "Class" + "\t"
-            //                    + "Type" + "\t" + "Type Name" + "\t" + "Scale"
-            //                    + "\t" + "Precision" + "\t" + "Size");
+            if (Ajqvue.getDebug())
+               System.out.println("SQLTabPanel executeSQL()\n"
+                                  + "index" + "\t" + "Name" + "\t" + "Class" + "\t"
+                                  + "Type" + "\t" + "Type Name" + "\t" + "Scale"
+                                  + "\t" + "Precision" + "\t" + "Size");
             
             for (int i = 1; i < tableMetaData.getColumnCount() + 1; i++)
             {
@@ -354,10 +368,11 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                columnPrecision = tableMetaData.getPrecision(i);
                columnSize = tableMetaData.getColumnDisplaySize(i);
                
-               // System.out.println(i + "\t" + colNameString + "\t" +
-               //                    columnClass + "\t" + columnType + "\t" +
-               //                    columnTypeName + "\t" + columnScale + "\t" +
-               //                    columnPrecision + "\t" + columnSize);
+               if (Ajqvue.getDebug())
+                  System.out.println(i + "\t" + colNameString + "\t" +
+                                     columnClass + "\t" + columnType + "\t" +
+                                     columnTypeName + "\t" + columnScale + "\t" +
+                                     columnPrecision + "\t" + columnSize);
 
                // This going to be a problem so skip these columns.
                // NOT TESTED. This is still problably not going to
@@ -392,7 +407,8 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                tableHeadings.add(colNameString);
                columnNamesHashMap.put(colNameString, colNameString);
                columnClassHashMap.put(colNameString, columnClass);
-               columnTypeHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
+               columnTypeHashMap.put(colNameString, columnType);
+               columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
                columnSizeHashMap.put(colNameString, Integer.valueOf(columnSize));
                preferredColumnSizeHashMap.put(colNameString,
                                               Integer.valueOf(colNameString.length() * columnSizeScaling));   
@@ -412,12 +428,13 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                {
                   colNameString = headings.next();
                   columnClass = columnClassHashMap.get(colNameString);
-                  columnTypeName = columnTypeHashMap.get(colNameString);
+                  columnType = columnTypeHashMap.get(colNameString);
+                  columnTypeName = columnTypeNameHashMap.get(colNameString);
                   columnSize = (columnSizeHashMap.get(colNameString)).intValue();
                   preferredColumnSize = (preferredColumnSizeHashMap.get(colNameString)).intValue();
 
                   // System.out.println(i + " " + j + " " + colNameString + " " +
-                  //                    columnClass + " " + columnType + " " +
+                  //                    columnClass + " " + columnType +  " " + columnTypeName + " " +
                   //                    columnSize + " " + preferredColumnSize);
 
                   // Storing data appropriately. If you have some
@@ -772,13 +789,15 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
             // Fill information instances.
             colNameString = "Update Count";
             columnClass = "java.lang.String";
+            columnType = Types.VARCHAR;
             columnTypeName = "VARCHAR";
             columnSize = 30;
             
             tableHeadings.add(colNameString);
             columnNamesHashMap.put(colNameString, colNameString);
             columnClassHashMap.put(colNameString, columnClass);
-            columnTypeHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
+            columnTypeHashMap.put(colNameString, columnType);
+            columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
             columnSizeHashMap.put(colNameString, Integer.valueOf(columnSize));
             preferredColumnSizeHashMap.put(colNameString,
                                            Integer.valueOf(colNameString.length() * columnSizeScaling));
@@ -916,9 +935,19 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
    // Class method to allow classes to obtain the columnTypeHashMap.
    //==============================================================
 
-   public HashMap<String, String> getColumnTypeHashMap()
+   public HashMap<String, Integer> getColumnTypeHashMap()
    {
       return columnTypeHashMap;
+   }
+   
+   //==============================================================
+   // Class method to allow classes to obtain the columnTypeName
+   // HashMap.
+   //==============================================================
+
+   public HashMap<String, String> getColumnTypeNameHashMap()
+   {
+      return columnTypeNameHashMap;
    }
 
    //==============================================================
