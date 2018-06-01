@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_121"/>
-	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_131"/>
 	<classpathentry kind="lib" path="lib/commons-net-ftp-3.6.jar"/>
-	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.18.0.jar"/>
-	<classpathentry kind="lib" path="lib/itextpdf-5.5.11.jar"/>
-	<classpathentry kind="lib" path="lib/h2-1.4.196.jar"/>
+	<classpathentry kind="lib" path="lib/itextpdf-5.5.12.jar"/>
+	<classpathentry kind="lib" path="lib/h2-1.4.197.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.23.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
