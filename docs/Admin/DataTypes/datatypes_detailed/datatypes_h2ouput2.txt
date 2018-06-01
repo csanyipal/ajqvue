@@ -14,7 +14,7 @@ index	Name	Class	Type	Type Name	Scale	Precision	Size
 13	real_type	java.lang.Float	7	REAL	0	7	15
 14	double_type	java.lang.Double	8	DOUBLE	0	17	24
 15	decimal_type	java.math.BigDecimal	3	DECIMAL	2	16	16
-16	date_type	java.sql.Date	91	DATE	0	8	10
-17	time_type	java.sql.Time	92	TIME	0	6	8
-18	timeStamp_type	java.sql.Timestamp	93	TIMESTAMP	10	23	23
+16	date_type	java.sql.Date	91	DATE	0	10	10
+17	time_type	java.sql.Time	92	TIME	0	8	8
+18	timeStamp_type	java.sql.Timestamp	93	TIMESTAMP	6	26	26
 19	array_type	java.sql.Array	2003	ARRAY	0	0	0
