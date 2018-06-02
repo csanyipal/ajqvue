@@ -1,5 +1,5 @@
 -----------------------
-HSQL version: 2.4.0
+HSQL version: 2.4.0 - 2.4.1
 
 1 DATA_TYPE_ID DATA TYPE ID java.lang.Integer INTEGER 11
 2 CHAR_TYPE CHAR TYPE java.lang.String CHARACTER 30

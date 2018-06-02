@@ -1,4 +1,4 @@
-HyperSQL 2.4.0
+HyperSQL 2.4.0 - 2.4.1
 
 index	Name	Class	Type	Type Name	Scale	Precision	Size
 1	DATA_TYPE_ID	java.lang.Integer	4	INTEGER	0	32	11
