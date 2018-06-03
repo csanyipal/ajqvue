@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.9 05/30/2018
+// Version 2.0 06/03/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -44,6 +44,7 @@
 //         1.7 Method isText() Added to Conditional BPCHAR.
 //         1.8 Added Class Method convertBitsToHSQL_Bits().
 //         1.9 Added Class Method isNumeric().
+//         2.0 Class Method isNumeric() Added COUNTER, BYTE, & CURRENCY.
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -118,7 +119,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 1.9 05/30/2018
+ * @version 2.0 06/03/2018
  */
 
 public class Utils extends Ajqvue
@@ -1211,7 +1212,9 @@ public class Utils extends Ajqvue
             || columnType.equals("LONG") || columnType.indexOf("DOUBLE") != -1
             || (columnType.indexOf("FLOAT") != -1 || columnType.indexOf("REAL") != -1)
             || columnType.indexOf("DECIMAL") != -1 || columnType.indexOf("NUMBER") != -1
-            || columnType.indexOf("MONEY") != -1 || columnType.indexOf("NUMERIC") != -1)
+            || columnType.indexOf("MONEY") != -1 || columnType.indexOf("NUMERIC") != -1
+            || columnType.indexOf("COUNTER") != -1 || columnType.equals("BYTE")
+            || columnType.equals("CURRENCY"))
       {
          return true;
       }
