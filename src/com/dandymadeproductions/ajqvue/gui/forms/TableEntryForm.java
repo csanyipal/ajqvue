@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 05/10/2018
+// Version 1.4 06/03/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,13 @@
 //         1.3 05/10/2018 Method addUpdateTableEntry() Changed Handling of HSQL
 //                        BIT Fields to Processed the Same as BIT VARYING Fields.
 //                        Therefore Used Value Usage to be B'x' Format.
+//         1.4 06/03/2018 Changed Class Instance columnTypeHashMape to columnTypeName
+//                        HashMap. Formatted Instance Declarations, One per Line.
+//                        Changed All Instances in Methods columnType to columnTypeName.
+//                        Method actionPerformed(), addUpdateTableEntry(), &
+//                        setFormField() Used Utils.isBlob() & Utils.isText().
+//                        Method createFunctionSQLStatement() Used Utils.isBlob(),
+//                        Utils.isNumeric(), & Utils.isText()
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -112,7 +119,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 1.3 05/10/2018
+ * @version 1.4 06/03/2018
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -125,7 +132,7 @@ public class TableEntryForm extends JFrame implements ActionListener
    private HashMap<String, JComponent> fieldHashMap;
    private HashMap<String, String> columnNamesHashMap;
    private HashMap<String, String> columnClassHashMap;
-   private HashMap<String, String> columnTypeHashMap;
+   private HashMap<String, String> columnTypeNameHashMap;
    private HashMap<String, Integer> columnSizeHashMap;
    private HashMap<String, String> columnEnumHashMap;
    private HashMap<JButton, Object> blobBytesHashMap;
@@ -168,7 +175,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                             ArrayList<String> formFields, TableViewForm tableViewForm,
                             HashMap<String, String> columnNamesHashMap,
                             HashMap<String, String> columnClassHashMap,
-                            HashMap<String, String> columnTypeHashMap,
+                            HashMap<String, String> columnTypeNameHashMap,
                             HashMap<String, Integer> columnSizeHashMap,
                             HashMap<String, String> columnEnumHashMap,
                             HashMap<String, String> columnSetHashMap)
@@ -182,7 +189,7 @@ public class TableEntryForm extends JFrame implements ActionListener
       this.tableViewForm = tableViewForm;
       this.columnNamesHashMap = columnNamesHashMap;
       this.columnClassHashMap = columnClassHashMap;
-      this.columnTypeHashMap = columnTypeHashMap;
+      this.columnTypeNameHashMap = columnTypeNameHashMap;
       this.columnSizeHashMap = columnSizeHashMap;
       this.columnEnumHashMap = columnEnumHashMap;
 
@@ -196,7 +203,9 @@ public class TableEntryForm extends JFrame implements ActionListener
       ImageIcon functionIcon, calendarIcon, setIcon;
       validEntry = false;
       String resource;
-      String columnName, columnClass, columnType;
+      String columnName;
+      String columnClass;
+      String columnTypeName;
       Object currentField;
 
       fieldHashMap = new HashMap <String, JComponent>();
@@ -263,16 +272,16 @@ public class TableEntryForm extends JFrame implements ActionListener
 
       while (columnNamesIterator.hasNext())
       {
-         columnName = (String) columnNamesIterator.next();
-         columnClass = (String) columnClassHashMap.get(columnName);
-         columnType = (String) columnTypeHashMap.get(columnName);
+         columnName = columnNamesIterator.next();
+         columnClass = columnClassHashMap.get(columnName);
+         columnTypeName = columnTypeNameHashMap.get(columnName);
          // System.out.println(columnNamesHashMap.get(columnName) + " " +
          //                    columnClassHashMap.get(columnName) + " " +
-         //                    columnTypeHashMap.get(columnName) + " " +
+         //                    columnTypeNameHashMap.get(columnName) + " " +
          //                    columnSizeHashMap.get(columnName));
 
          // BFile types not supported.
-         if (columnType.equals("BFILE") && !addItem)
+         if (columnTypeName.equals("BFILE") && !addItem)
             continue;
 
          // =================================
@@ -333,7 +342,7 @@ public class TableEntryForm extends JFrame implements ActionListener
          }
 
          // TINYINT, SMALLINT, MEDIUMINT, INT, & BIGINT Type Fields
-         else if ((columnClass.indexOf("Byte") != -1 && columnType.indexOf("BIT DATA") == -1)
+         else if ((columnClass.indexOf("Byte") != -1 && columnTypeName.indexOf("BIT DATA") == -1)
                   || columnClass.indexOf("Short") != -1
                   || columnClass.indexOf("Integer") != -1 || columnClass.indexOf("Long") != -1)
          {
@@ -358,11 +367,11 @@ public class TableEntryForm extends JFrame implements ActionListener
          }
 
          // BLOB, BYTEA, BINARY, RAW, CLOB, IMAGE, & BIT DATA Type Fields
-         else if ((columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1)
-                  || (columnClass.indexOf("BLOB") != -1 && columnType.indexOf("BLOB") != -1)
-                  || (columnType.indexOf("BYTEA") != -1) || (columnType.indexOf("BINARY") != -1)
-                  || (columnType.indexOf("RAW") != -1) || (columnType.indexOf("CLOB") != -1)
-                  || (columnType.indexOf("IMAGE") != -1) || (columnType.indexOf("BIT DATA") != -1))
+         else if ((columnClass.indexOf("String") == -1 && columnTypeName.indexOf("BLOB") != -1)
+                  || (columnClass.indexOf("BLOB") != -1 && columnTypeName.indexOf("BLOB") != -1)
+                  || (columnTypeName.indexOf("BYTEA") != -1) || (columnTypeName.indexOf("BINARY") != -1)
+                  || (columnTypeName.indexOf("RAW") != -1) || (columnTypeName.indexOf("CLOB") != -1)
+                  || (columnTypeName.indexOf("IMAGE") != -1) || (columnTypeName.indexOf("BIT DATA") != -1))
          {
             // Place the remove checkbox for eliminating
             // existing data as desired during edit.
@@ -388,11 +397,11 @@ public class TableEntryForm extends JFrame implements ActionListener
          }
 
          // TEXT Type Fields
-         else if ((columnClass.indexOf("String") != -1 && !columnType.equals("CHAR")
+         else if ((columnClass.indexOf("String") != -1 && !columnTypeName.equals("CHAR")
                    && ((Integer) columnSizeHashMap.get(columnName)).intValue() > 255)
-                  || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT")
+                  || (columnClass.indexOf("Object") != -1 && columnTypeName.equals("TEXT")
                       && ((Integer) columnSizeHashMap.get(columnName)).intValue() > 255) 
-                  || (columnClass.indexOf("String") != -1 && columnType.equals("LONG")))
+                  || (columnClass.indexOf("String") != -1 && columnTypeName.equals("LONG")))
          {
             // Place the remove checkbox for eliminating
             // existing text data as desired during edit.
@@ -418,7 +427,7 @@ public class TableEntryForm extends JFrame implements ActionListener
 
          // ARRAY Type Fields
          else if ((columnClass.indexOf("Array") != -1 || columnClass.indexOf("Object") != -1)
-                  && columnType.indexOf("_") != -1)
+                  && columnTypeName.indexOf("_") != -1)
          {
             // Place the remove checkbox for eliminating
             // existing text data as desired during edit.
@@ -443,9 +452,9 @@ public class TableEntryForm extends JFrame implements ActionListener
          }
 
          // TIMESTAMP Type Fields.
-         else if (columnType.equals("TIMESTAMP") || columnType.equals("TIMESTAMPTZ")
-                  || columnType.equals("TIMESTAMPLTZ") || columnType.equals("TIMESTAMP WITH TIME ZONE")
-                  || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+         else if (columnTypeName.equals("TIMESTAMP") || columnTypeName.equals("TIMESTAMPTZ")
+                  || columnTypeName.equals("TIMESTAMPLTZ") || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                  || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
          {
             currentField = new JTextField();
             if (addItem)
@@ -459,7 +468,7 @@ public class TableEntryForm extends JFrame implements ActionListener
          // TINYTEXT, & All Other Type Fields
          else
          {
-            if (columnType.indexOf("DATE") != -1 && !columnType.equals("DATETIMEOFFSET"))
+            if (columnTypeName.indexOf("DATE") != -1 && !columnTypeName.equals("DATETIMEOFFSET"))
             {
                currentField = new JButton(calendarIcon);
                ((JButton) currentField).setBounds(x + 345, y, 20, 20);
@@ -470,7 +479,7 @@ public class TableEntryForm extends JFrame implements ActionListener
 
             currentField = new JTextField();
             ((JTextField) currentField).setText("");
-            if (columnType.indexOf("DATE") != -1)
+            if (columnTypeName.indexOf("DATE") != -1)
                ((JTextField) currentField).setBounds(x + 145, y, 195, 20);
             else
                ((JTextField) currentField).setBounds(x + 145, y, 220, 20);
@@ -592,15 +601,7 @@ public class TableEntryForm extends JFrame implements ActionListener
             String columnName = functionButtonHashMap.get((JButton) formSource);
 
             // 2.76 Blob Function Warning.
-            if (((columnClassHashMap.get(columnName)).indexOf("String") == -1 && (columnTypeHashMap
-                  .get(columnName)).indexOf("BLOB") != -1)
-                || ((columnClassHashMap.get(columnName)).indexOf("BLOB") != -1 && (columnTypeHashMap
-                      .get(columnName)).indexOf("BLOB") != -1)
-                || ((columnTypeHashMap.get(columnName)).indexOf("BYTEA") != -1)
-                || ((columnTypeHashMap.get(columnName)).indexOf("BINARY") != -1)
-                || ((columnTypeHashMap.get(columnName)).indexOf("RAW") != -1)
-                || ((columnTypeHashMap.get(columnName)).indexOf("IMAGE") != -1)
-                || ((columnTypeHashMap.get(columnName)).indexOf("BIT DATA") != -1))
+            if (Utils.isBlob(columnClassHashMap.get(columnName), columnTypeNameHashMap.get(columnName)))
             {
                String message;
 
@@ -670,10 +671,10 @@ public class TableEntryForm extends JFrame implements ActionListener
          {
             // Collect the info needed to pass to the DateFieldCalendar class.
             Object columnName = calendarButtonHashMap.get((JButton) formSource);
-            String columnType = columnTypeHashMap.get(columnName);
+            String columnTypeName = columnTypeNameHashMap.get(columnName);
 
             // Date selection frame.
-            dateCalendar = new DateFieldCalendar(this, columnName, columnType);
+            dateCalendar = new DateFieldCalendar(this, columnName, columnTypeName);
             dateCalendar.setResizable(false);
             dateCalendar.pack();
             dateCalendar.center();
@@ -940,19 +941,27 @@ public class TableEntryForm extends JFrame implements ActionListener
    private void addUpdateTableEntry()
    {
       // Method Instances
-      String schemaName, tableName;
-      String columnName, columnClass, columnType;
-      StringBuffer sqlStatementString;
-      String sqlFieldNamesString, sqlValuesString;
       Statement sqlStatement;
       PreparedStatement prepared_sqlStatement;
       Iterator<String> keyIterator, columnNamesIterator;
+      
+      String schemaName;
+      String tableName;
+      String columnName;
+      String columnClass;
+      String columnTypeName;
+      StringBuffer sqlStatementString;
+      String sqlFieldNamesString;
+      String sqlValuesString;
 
-      String currentKey_ColumnName, currentDB_ColumnName;
+      String currentKey_ColumnName;
+      String currentDB_ColumnName;
       Object currentContentData;
       String dateString, timeString;
       String message;
-      boolean isTextField, isBlobField, isArrayField;
+      boolean isTextField;
+      boolean isBlobField;
+      boolean isArrayField;
       int columnSize;
       int keyColumn = 0;
 
@@ -997,22 +1006,12 @@ public class TableEntryForm extends JFrame implements ActionListener
 
                columnName = columnNamesIterator.next();
                columnClass = columnClassHashMap.get(columnName);
-               columnType = columnTypeHashMap.get(columnName);
+               columnTypeName = columnTypeNameHashMap.get(columnName);
                columnSize = (columnSizeHashMap.get(columnName)).intValue();
-               isTextField = (columnClass.indexOf("String") != -1 && !columnType.equals("CHAR")
-                              && columnSize > 255)
-                             || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT")
-                                 && columnSize > 255)
-                             || (columnClass.indexOf("String") != -1 && columnType.equals("LONG"))
-                             || (columnClass.indexOf("String") != -1 && columnType.equals("XML"))
-                             || (columnType.indexOf("CLOB") != -1);
-               isBlobField = (columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1)
-                             || (columnClass.indexOf("BLOB") != -1 && columnType.indexOf("BLOB") != -1)
-                             || columnType.indexOf("BYTEA") != -1 || columnType.indexOf("BINARY") != -1
-                             || columnType.indexOf("RAW") != -1 || columnType.indexOf("IMAGE") != -1
-                             || (columnClass.indexOf("byte[]") != -1 && columnType.indexOf("BIT DATA") != -1);
+               isTextField = Utils.isText(columnClass, columnTypeName, true, columnSize);
+               isBlobField = Utils.isBlob(columnClass, columnTypeName);
                isArrayField = (columnClass.indexOf("Array") != -1 || columnClass.indexOf("Object") != -1)
-                               && columnType.indexOf("_") != -1;
+                               && columnTypeName.indexOf("_") != -1;
 
                // Composing intial SQL prepareStatement with special
                // consideration
@@ -1091,7 +1090,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                   }
 
                   // TimeStamp fields.
-                  else if (columnType.indexOf("TIMESTAMP") != -1)
+                  else if (columnTypeName.indexOf("TIMESTAMP") != -1)
                   {
                      if (dataSourceType.equals(ConnectionManager.ORACLE))
                         sqlValuesString += "SYSTIMESTAMP, ";
@@ -1107,38 +1106,38 @@ public class TableEntryForm extends JFrame implements ActionListener
                   // by java types.
 
                   // PostgreSQL Interval fields.
-                  else if (columnType.equals("INTERVAL"))
+                  else if (columnTypeName.equals("INTERVAL"))
                   {
                      sqlValuesString += "'" + getFormField(columnName) + "', ";
                   }
 
                   // PostgreSQL Bit & HSQL2 BIT, Bit Varying fields.
-                  else if ((columnType.indexOf("BIT") != -1
+                  else if ((columnTypeName.indexOf("BIT") != -1
                             && dataSourceType.equals(ConnectionManager.POSTGRESQL)
-                            && columnType.indexOf("_") == -1)
-                           || (columnType.equals("BIT") || (columnType.equals("BIT VARYING"))
+                            && columnTypeName.indexOf("_") == -1)
+                           || (columnTypeName.equals("BIT") || (columnTypeName.equals("BIT VARYING"))
                                && dataSourceType.equals(ConnectionManager.HSQL2)))
                   {
                      sqlValuesString += "B'" + getFormField(columnName) + "', ";
                   }
 
                   // PostgreSQL Geometric fields.
-                  else if (columnType.equals("POINT") || columnType.equals("LSEG")
-                           || columnType.equals("BOX") || columnType.equals("PATH")
-                           || columnType.equals("POLYGON") || columnType.equals("CIRCLE"))
+                  else if (columnTypeName.equals("POINT") || columnTypeName.equals("LSEG")
+                           || columnTypeName.equals("BOX") || columnTypeName.equals("PATH")
+                           || columnTypeName.equals("POLYGON") || columnTypeName.equals("CIRCLE"))
                   {
                      sqlValuesString += "'" + getFormField(columnName) + "', ";
                   }
 
                   // PostgreSQL Network Address fields.
-                  else if (columnType.equals("CIDR") || columnType.equals("INET")
-                           || columnType.equals("MACADDR"))
+                  else if (columnTypeName.equals("CIDR") || columnTypeName.equals("INET")
+                           || columnTypeName.equals("MACADDR"))
                   {
                      sqlValuesString += "'" + getFormField(columnName) + "', ";
                   }
 
                   // Oracle BFILE fields.
-                  else if (columnType.equals("BFILE"))
+                  else if (columnTypeName.equals("BFILE"))
                   {
                      String directoryName, fileName;
                      int commaIndex;
@@ -1154,7 +1153,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                      else
                      {
                         JOptionPane.showMessageDialog(null, resourceInvalidInput + " " + columnName
-                                                            + ", " + resourceType + ": " + columnType,
+                                                            + ", " + resourceType + ": " + columnTypeName,
                                                             resourceAlert, JOptionPane.ERROR_MESSAGE);
                         validEntry = false;
                         setVisible(true);
@@ -1215,7 +1214,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                         if (dataSourceType.equals(ConnectionManager.POSTGRESQL)
                             && columnClass.indexOf("Object") != -1)
                            sqlValuesString += "?::" + identifierQuoteString
-                                              + columnTypeHashMap.get(columnName)
+                                              + columnTypeNameHashMap.get(columnName)
                                               + identifierQuoteString + ", ";
                         else
                            sqlValuesString += "?, ";
@@ -1254,20 +1253,12 @@ public class TableEntryForm extends JFrame implements ActionListener
 
                columnName = columnNamesIterator.next();
                columnClass = columnClassHashMap.get(columnName);
-               columnType = columnTypeHashMap.get(columnName);
+               columnTypeName = columnTypeNameHashMap.get(columnName);
                columnSize = (columnSizeHashMap.get(columnName)).intValue();
-               isTextField = (columnClass.indexOf("String") != -1 && !columnType.equals("CHAR") && columnSize > 255)
-                             || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT") && columnSize > 255)
-                             || (columnClass.indexOf("String") != -1 && columnType.equals("LONG"))
-                             || (columnClass.indexOf("String") != -1 && columnType.equals("XML"))
-                             || (columnType.indexOf("CLOB") != -1);
-               isBlobField = (columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1)
-                             || (columnClass.indexOf("BLOB") != -1 && columnType.indexOf("BLOB") != -1)
-                             || columnType.indexOf("BYTEA") != -1 || columnType.indexOf("BINARY") != -1
-                             || columnType.indexOf("RAW") != -1 || columnType.indexOf("IMAGE") != -1
-                             || (columnClass.indexOf("byte[]") != -1 && columnType.indexOf("BIT DATA") != -1);
+               isTextField = Utils.isText(columnClass, columnTypeName, true, columnSize);
+               isBlobField = Utils.isBlob(columnClass, columnTypeName);
                isArrayField = (columnClass.indexOf("Array") != -1 || columnClass.indexOf("Object") != -1)
-                              && columnType.indexOf("_") != -1;
+                              && columnTypeName.indexOf("_") != -1;
 
                // Empty entry field.
 
@@ -1340,7 +1331,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                   // by java types.
 
                   // PostgreSQL Interval fields.
-                  else if (columnType.equals("INTERVAL"))
+                  else if (columnTypeName.equals("INTERVAL"))
                   {
                      sqlStatementString.append(identifierQuoteString + columnNamesHashMap.get(columnName)
                                                + identifierQuoteString + "='" + getFormField(columnName)
@@ -1348,10 +1339,10 @@ public class TableEntryForm extends JFrame implements ActionListener
                   }
 
                   // PostgreSQL Bit & HSQL2 BIT, Bit Varying fields.
-                  else if ((columnType.indexOf("BIT") != -1
+                  else if ((columnTypeName.indexOf("BIT") != -1
                             && dataSourceType.equals(ConnectionManager.POSTGRESQL)
-                            && columnType.indexOf("_") == -1)
-                            || (columnType.equalsIgnoreCase("BIT") || (columnType.equals("BIT VARYING"))
+                            && columnTypeName.indexOf("_") == -1)
+                            || (columnTypeName.equalsIgnoreCase("BIT") || (columnTypeName.equals("BIT VARYING"))
                                   && dataSourceType.equals(ConnectionManager.HSQL2)))
                   {
                      sqlStatementString.append(identifierQuoteString + columnNamesHashMap.get(columnName)
@@ -1360,9 +1351,9 @@ public class TableEntryForm extends JFrame implements ActionListener
                   }
 
                   // PostgreSQL Geometric fields.
-                  else if (columnType.equals("POINT") || columnType.equals("LSEG")
-                           || columnType.equals("BOX") || columnType.equals("PATH")
-                           || columnType.equals("POLYGON") || columnType.equals("CIRCLE"))
+                  else if (columnTypeName.equals("POINT") || columnTypeName.equals("LSEG")
+                           || columnTypeName.equals("BOX") || columnTypeName.equals("PATH")
+                           || columnTypeName.equals("POLYGON") || columnTypeName.equals("CIRCLE"))
                   {
                      sqlStatementString.append(identifierQuoteString + columnNamesHashMap.get(columnName)
                                                + identifierQuoteString + "='" + getFormField(columnName)
@@ -1370,8 +1361,8 @@ public class TableEntryForm extends JFrame implements ActionListener
                   }
 
                   // PostgreSQL Network Address fields.
-                  else if (columnType.equals("CIDR") || columnType.equals("INET")
-                           || columnType.equals("MACADDR"))
+                  else if (columnTypeName.equals("CIDR") || columnTypeName.equals("INET")
+                           || columnTypeName.equals("MACADDR"))
                   {
                      sqlStatementString.append(identifierQuoteString + columnNamesHashMap.get(columnName)
                                                + identifierQuoteString + "='" + getFormField(columnName)
@@ -1379,7 +1370,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                   }
 
                   // Oracle BFILE fields.
-                  else if (columnType.equals("BFILE"))
+                  else if (columnTypeName.equals("BFILE"))
                   {
                      // Do nothing not supported.
                   }
@@ -1448,7 +1439,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                             && columnClass.indexOf("Object") != -1)
                             sqlStatementString.append(identifierQuoteString + columnNamesHashMap.get(columnName)
                                                       + identifierQuoteString +"=?::" + identifierQuoteString
-                                                      + columnTypeHashMap.get(columnName)
+                                                      + columnTypeNameHashMap.get(columnName)
                                                       + identifierQuoteString + ", ");
                         else
                            sqlStatementString.append(identifierQuoteString + columnNamesHashMap.get(columnName)
@@ -1510,10 +1501,10 @@ public class TableEntryForm extends JFrame implements ActionListener
                      if (columnClass.indexOf("String") != -1)
                         currentContentData = ((String) currentContentData).replaceAll("'", "''");
 
-                     columnType = columnTypeHashMap.get(selectedTableTabPanel
+                     columnTypeName = columnTypeNameHashMap.get(selectedTableTabPanel
                            .parseColumnNameField(currentKey_ColumnName));
                      
-                     if (columnType.indexOf("DATE") != -1)
+                     if (columnTypeName.indexOf("DATE") != -1)
                      {
                         if (dataSourceType.equals(ConnectionManager.ORACLE))
                         {
@@ -1612,21 +1603,14 @@ public class TableEntryForm extends JFrame implements ActionListener
 
             columnName = columnNamesIterator.next();
             columnClass = columnClassHashMap.get(columnName);
-            columnType = columnTypeHashMap.get(columnName);
+            columnTypeName = columnTypeNameHashMap.get(columnName);
             columnSize = (columnSizeHashMap.get(columnName)).intValue();
-            isTextField = (columnClass.indexOf("String") != -1 && !columnType.equals("CHAR") && columnSize > 255)
-                          || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT") && columnSize > 255)
-                          || (columnClass.indexOf("String") != -1 && columnType.equals("LONG"))
-                          || (columnType.indexOf("CLOB") != -1);
-            isBlobField = (columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1)
-                          || (columnClass.indexOf("BLOB") != -1 && columnType.indexOf("BLOB") != -1)
-                          || columnType.indexOf("BYTEA") != -1 || columnType.indexOf("BINARY") != -1
-                          || columnType.indexOf("RAW") != -1 || columnType.indexOf("IMAGE") != -1
-                          || (columnClass.indexOf("byte[]") != -1 && columnType.indexOf("BIT DATA") != -1);
+            isTextField = Utils.isText(columnClass, columnTypeName, true, columnSize);
+            isBlobField = Utils.isBlob(columnClass, columnTypeName);
             isArrayField = (columnClass.indexOf("Array") != -1 || columnClass.indexOf("Object") != -1)
-                           && columnType.indexOf("_") != -1;
+                           && columnTypeName.indexOf("_") != -1;
             // System.out.println(i + " " + columnName + " " + columnClass + " "
-            //                    + columnType);
+            //                    + columnTypeName);
 
             // Validating input and setting content to fields
 
@@ -1686,7 +1670,7 @@ public class TableEntryForm extends JFrame implements ActionListener
             }
 
             // Numeric Type Fields
-            else if ((columnClass.indexOf("Byte") != -1 && columnType.indexOf("CHAR") == -1)
+            else if ((columnClass.indexOf("Byte") != -1 && columnTypeName.indexOf("CHAR") == -1)
                      || columnClass.indexOf("Short") != -1
                      || columnClass.indexOf("Integer") != -1 || columnClass.indexOf("Long") != -1
                      || columnClass.indexOf("Float") != -1 || columnClass.indexOf("Double") != -1
@@ -1695,7 +1679,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                try
                {
                   String value = (getFormField(columnName)).trim();
-                  // System.out.println(columnType + " " + value);
+                  // System.out.println(columnTypeName + " " + value);
 
                   // Byte
                   if (columnClass.indexOf("Byte") != -1)
@@ -1743,7 +1727,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                catch (NumberFormatException e)
                {
                   JOptionPane.showMessageDialog(null, resourceInvalidInput + " " + columnName + ", "
-                                                      + resourceType + ": " + columnType, resourceAlert,
+                                                      + resourceType + ": " + columnTypeName, resourceAlert,
                                                       JOptionPane.ERROR_MESSAGE);
                   validEntry = false;
                   setVisible(true);
@@ -1765,7 +1749,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                try
                {
                   // Date
-                  if (columnType.equals("DATE"))
+                  if (columnTypeName.equals("DATE"))
                   {
                      java.sql.Date dateValue;
 
@@ -1779,8 +1763,8 @@ public class TableEntryForm extends JFrame implements ActionListener
                      prepared_sqlStatement.setDate(i++, dateValue);
                   }
                   // Time
-                  else if (columnType.equals("TIME") || columnType.equals("TIMETZ")
-                           || columnType.equals("TIME WITH TIME ZONE"))
+                  else if (columnTypeName.equals("TIME") || columnTypeName.equals("TIMETZ")
+                           || columnTypeName.equals("TIME WITH TIME ZONE"))
                   {
                      java.sql.Time timeValue;
 
@@ -1789,7 +1773,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                         timeValue = Time.valueOf("error");
 
                      // HSQL2
-                     if (columnType.equals("TIME WITH TIME ZONE"))
+                     if (columnTypeName.equals("TIME WITH TIME ZONE"))
                         prepared_sqlStatement.setString(i++, dateTimeFormString);
                      else
                      {
@@ -1798,7 +1782,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                      }
                   }
                   // DateTime
-                  else if (columnType.indexOf("DATETIME") != -1)
+                  else if (columnTypeName.indexOf("DATETIME") != -1)
                   {
                      java.sql.Timestamp dateTimeValue;
                      dateString = "";
@@ -1813,7 +1797,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                         DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
                      timeString = getFormField(columnName).substring(dateTimeFormString.indexOf(" "));
                      
-                     if (columnType.equals("DATETIMEOFFSET"))
+                     if (columnTypeName.equals("DATETIMEOFFSET"))
                         prepared_sqlStatement.setString(i++, dateString + timeString);
                      else
                      {
@@ -1822,12 +1806,12 @@ public class TableEntryForm extends JFrame implements ActionListener
                      }
                   }
                   // Timestamp
-                  else if (columnType.equals("TIMESTAMP") || columnType.equals("TIMESTAMP WITH TIME ZONE")
-                           || columnType.equals("TIMESTAMPTZ") || columnType.equals("TIMESTAMPLTZ")
-                           || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+                  else if (columnTypeName.equals("TIMESTAMP") || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                           || columnTypeName.equals("TIMESTAMPTZ") || columnTypeName.equals("TIMESTAMPLTZ")
+                           || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                   {
-                     if (columnType.equals("TIMESTAMPLTZ")
-                         || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+                     if (columnTypeName.equals("TIMESTAMPLTZ")
+                         || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                         Utils.setLocalTimeZone(sqlStatement);
 
                      if (addItem)
@@ -1844,7 +1828,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                         try
                         {
                            // Create a Timestamp Format.
-                           if (columnType.equals("TIMESTAMP"))
+                           if (columnTypeName.equals("TIMESTAMP"))
                            {
                               // Old MySQL Database Requirement, 4.x.
                               if (dataSourceType.equals(ConnectionManager.MYSQL)
@@ -1879,8 +1863,8 @@ public class TableEntryForm extends JFrame implements ActionListener
                            }
                            else
                            {
-                              if (columnType.equals("TIMESTAMPLTZ")
-                                  || columnType.equals("TIMESTAMP WITH LOCAL TIMEZONE"))
+                              if (columnTypeName.equals("TIMESTAMPLTZ")
+                                  || columnTypeName.equals("TIMESTAMP WITH LOCAL TIMEZONE"))
                                  timeStampFormat = new SimpleDateFormat(
                                     DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
                                     + " HH:mm:ss Z");
@@ -1891,7 +1875,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                            }
 
                            // Parse the TimeStamp Format.
-                           if (columnType.equals("TIMESTAMPLTZ"))
+                           if (columnTypeName.equals("TIMESTAMPLTZ"))
                            {
                               dateString = dateTimeFormString;
                               dateString = dateString.substring(0, dateString.lastIndexOf(':'))
@@ -1925,7 +1909,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                      "Invalid Date/Time Input for Field");
                   
                   JOptionPane.showMessageDialog(null, message + " " + columnName
-                                                      + ", " + resourceType + ": " + columnType,
+                                                      + ", " + resourceType + ": " + columnTypeName,
                                                       resourceAlert, JOptionPane.ERROR_MESSAGE);
                   validEntry = false;
                   setVisible(true);
@@ -1939,7 +1923,7 @@ public class TableEntryForm extends JFrame implements ActionListener
             }
 
             // Interval Type Fields
-            else if (columnType.equals("INTERVAL"))
+            else if (columnTypeName.equals("INTERVAL"))
             {
                // Do Nothing, Already set since undefined type.
             }
@@ -2000,15 +1984,15 @@ public class TableEntryForm extends JFrame implements ActionListener
             }
 
             // PostgreSQL Geometric fields.
-            else if (columnType.equals("POINT") || columnType.equals("LSEG") || columnType.equals("BOX")
-                     || columnType.equals("PATH") || columnType.equals("POLYGON")
-                     || columnType.equals("CIRCLE"))
+            else if (columnTypeName.equals("POINT") || columnTypeName.equals("LSEG") || columnTypeName.equals("BOX")
+                     || columnTypeName.equals("PATH") || columnTypeName.equals("POLYGON")
+                     || columnTypeName.equals("CIRCLE"))
             {
                // Do Nothing. Already set since undefined type.
             }
 
             // Network Type Fields
-            else if (columnType.equals("CIDR") || columnType.equals("INET") || columnType.equals("MACADDR"))
+            else if (columnTypeName.equals("CIDR") || columnTypeName.equals("INET") || columnTypeName.equals("MACADDR"))
             {
                // Do Nothing, Already set since undefined type.
             }
@@ -2031,11 +2015,11 @@ public class TableEntryForm extends JFrame implements ActionListener
             }
 
             // Bit Type Fields
-            else if (columnType.indexOf("BIT") != -1 && columnType.indexOf("_") == -1)
+            else if (columnTypeName.indexOf("BIT") != -1 && columnTypeName.indexOf("_") == -1)
             {
                if ((dataSourceType.equals(ConnectionManager.POSTGRESQL)) ||
                    (dataSourceType.equals(ConnectionManager.HSQL2)
-                    && (columnType.equals("BIT VARYING") || columnType.equals("BIT"))))
+                    && (columnTypeName.equals("BIT VARYING") || columnTypeName.equals("BIT"))))
                {
                   // Do Nothing. Already set since undefined type.
                }
@@ -2100,7 +2084,7 @@ public class TableEntryForm extends JFrame implements ActionListener
             }
 
             // BFILE Type Fields
-            else if (columnType.equals("BFILE"))
+            else if (columnTypeName.equals("BFILE"))
             {
                // Do Nothing, Already set as locator, filename.
             }
@@ -2316,23 +2300,20 @@ public class TableEntryForm extends JFrame implements ActionListener
    {
       // Class Method Instances
       StringBuffer sqlStatementString;
-      String columnType, columnClass;
+      String columnTypeName;
+      String columnClass;
+      int columnSize;
       String valueDelimiter;
       
       // Setup to accomodate the non-quoting of number
       // type fields. HSQLDB2 & MS_Access Issue.
       
-      columnType = columnTypeHashMap.get(columnName);
+      columnTypeName = columnTypeNameHashMap.get(columnName);
       columnClass = columnClassHashMap.get(columnName);
+      columnSize = columnSizeHashMap.get(columnName);
       
-      if (columnType.indexOf("NUM") != -1 || columnType.indexOf("INT") != -1
-            || columnType.indexOf("FLOAT") != -1 || columnType.indexOf("DOUBLE") != -1
-            || columnType.equals("REAL") || columnType.equals("DECIMAL")
-            || columnType.indexOf("COUNTER") != -1 || columnType.equals("BYTE")
-            || columnType.equals("CURRENCY"))
-      {
+      if (Utils.isNumeric(columnClass, columnTypeName))
          valueDelimiter = "";
-      }
       else
          valueDelimiter = "'";
          
@@ -2344,11 +2325,7 @@ public class TableEntryForm extends JFrame implements ActionListener
       // Get correct form data, TEXT, Blob, or Normal entry.
       // Take into account a possible no argument for the function.
 
-      if ((columnClass.indexOf("String") != -1
-           && !columnType.equals("CHAR")
-           && ((columnSizeHashMap.get(columnName)).intValue() > 255))
-          || (columnClass.indexOf("String") != -1 && columnType.equals("LONG"))
-          || (columnType.indexOf("CLOB") != -1))
+      if (Utils.isText(columnClass, columnTypeName, true, columnSize))
       {
          if (getFormFieldText(columnName) == null || getFormFieldText(columnName).length() == 0)
             sqlStatementString.append("(), ");
@@ -2360,14 +2337,7 @@ public class TableEntryForm extends JFrame implements ActionListener
       // string of characters, but what operation would be performed? The
       // current 1.4 API kept here just returns a pointer to the object. Broken.
       
-      else if (((columnClassHashMap.get(columnName)).indexOf("String") == -1 && (columnTypeHashMap
-            .get(columnName)).indexOf("BLOB") != -1)
-               || ((columnClassHashMap.get(columnName)).indexOf("BLOB") != -1 && (columnTypeHashMap
-                     .get(columnName)).indexOf("BLOB") != -1)
-               || ((columnTypeHashMap.get(columnName)).indexOf("BYTEA") != -1)
-               || ((columnTypeHashMap.get(columnName)).indexOf("BINARY") != -1)
-               || ((columnTypeHashMap.get(columnName)).indexOf("RAW") != -1)
-               || ((columnTypeHashMap.get(columnName)).indexOf("IMAGE") != -1))
+      else if (Utils.isBlob(columnClass, columnTypeName))
       {
          if (getFormField(columnName) == null || getFormFieldBlob(columnName).length == 0)
             sqlStatementString.append("(), ");
@@ -2475,39 +2445,33 @@ public class TableEntryForm extends JFrame implements ActionListener
    public void setFormField(Object columnName, Object content)
    {
       // Method Instances.
-      String columnClass, columnType;
+      String columnClass;
+      String columnTypeName;
+      int columnSize;
 
       if (fieldHashMap.get(columnName) != null)
       {
          columnClass = columnClassHashMap.get(columnName);
-         columnType = columnTypeHashMap.get(columnName);
+         columnTypeName = columnTypeNameHashMap.get(columnName);
+         columnSize = columnSizeHashMap.get(columnName);
 
          // Blob/Bytea Button
-         if ((columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1)
-             || (columnClass.indexOf("BLOB") != -1 && columnType.indexOf("BLOB") != -1)
-             || (columnType.indexOf("BYTEA") != -1) || (columnType.indexOf("BINARY") != -1)
-             || (columnType.indexOf("RAW") != -1) || (columnType.indexOf("CLOB") != -1)
-             || (columnType.indexOf("IMAGE") != -1) || (columnType.indexOf("BIT DATA") != -1))
+         if (Utils.isBlob(columnClass, columnTypeName))
             ((JButton) fieldHashMap.get(columnName)).setText((String) content);
 
          // Text Button
-         else if ((columnClass.indexOf("String") != -1 && !columnType.equals("CHAR")
-                   && (columnSizeHashMap.get(columnName)).intValue() > 255)
-                  || (columnClass.indexOf("String") != -1 && columnType.equals("LONG"))
-                  || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT")
-                      && (columnSizeHashMap.get(columnName)).intValue() > 255)
-                  || (columnType.indexOf("XML") != -1))
+         else if (Utils.isText(columnClass, columnTypeName, true, columnSize))
             ((JButton) fieldHashMap.get(columnName)).setText((String) content);
 
          // Array Button
          else if ((columnClass.indexOf("Array") != -1 || columnClass.indexOf("Object") != -1)
-                  && columnType.indexOf("_") != -1)
+                  && columnTypeName.indexOf("_") != -1)
             ((JButton) fieldHashMap.get(columnName)).setText((String) content);
 
          // Standard TextField
          else
          {
-            if (columnType.equals("BFILE") && !addItem)
+            if (columnTypeName.equals("BFILE") && !addItem)
             {
                // Do nothing for edits not supported.
             }
