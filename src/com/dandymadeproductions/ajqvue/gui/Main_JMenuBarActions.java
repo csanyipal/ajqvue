@@ -9,8 +9,8 @@
 //                  << Main_JMenuBarActions.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.5 08/25/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.6 06/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -39,7 +39,9 @@
 //             No Longer Required for Data Dump Threads or AboutFrame.
 //         1.4 Clarified Removal of Semicolon for database.
 //         1.5 Reverted v1.4, Multiple Databases Tag Properties on Connection
-//             URL, database.         
+//             URL, database.
+//         1.6 Method dataExportAction() Changed Instance tableColumnTypeHashMap
+//             to tableColumnTypeNameHashMap.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -108,7 +110,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * JMenuBar and JToolBar in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.5 08/25/2017
+ * @version 1.6 06/04/2018
  */
 
 class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
@@ -912,7 +914,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
       ArrayList<String> tableHeadings;
       HashMap<String, String> tableColumnNamesHashMap;
       HashMap<String, String> tableColumnClassHashMap;
-      HashMap<String, String> tableColumnTypeHashMap;
+      HashMap<String, String> tableColumnTypeNameHashMap;
       HashMap<String, Integer> tableColumnSizeHashMap;
       JTable summaryListTable;
 
@@ -931,7 +933,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
       tableHeadings = new ArrayList <String>();
       tableColumnNamesHashMap = new HashMap <String, String>();
       tableColumnClassHashMap = new HashMap <String, String>();
-      tableColumnTypeHashMap = new HashMap <String, String>();
+      tableColumnTypeNameHashMap = new HashMap <String, String>();
       tableColumnSizeHashMap = new HashMap <String, Integer>();
       summaryListTable = null;
 
@@ -1006,7 +1008,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
             {
                tableColumnNamesHashMap = (DBTablesPanel.getSelectedTableTabPanel()).getColumnNamesHashMap();
                tableColumnClassHashMap = (DBTablesPanel.getSelectedTableTabPanel()).getColumnClassHashMap();
-               tableColumnTypeHashMap = (DBTablesPanel.getSelectedTableTabPanel()).getColumnTypeHashMap();
+               tableColumnTypeNameHashMap = (DBTablesPanel.getSelectedTableTabPanel()).getColumnTypeNameHashMap();
                tableColumnSizeHashMap = (DBTablesPanel.getSelectedTableTabPanel()).getColumnSizeHashMap();
             }
 
@@ -1030,7 +1032,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
                                                                            tableColumnNamesHashMap,
                                                                            useLimit,
                                                                            tableColumnClassHashMap,
-                                                                           tableColumnTypeHashMap,
+                                                                           tableColumnTypeNameHashMap,
                                                                            tableColumnSizeHashMap,
                                                                            exportedTable, fileName),
                                                      "CSVDataDumpThread");
@@ -1045,7 +1047,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
                if (summaryListTable != null)
                {
                   Thread pdfDataTableDumpThread = new Thread(new PDFDataTableDumpThread(summaryListTable,
-                                                                                        tableColumnTypeHashMap,
+                                                                                        tableColumnTypeNameHashMap,
                                                                                         exportedTable,
                                                                                         fileName),
                                                              "PDFDataTableDumpThread");
@@ -1067,7 +1069,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
                Thread sqlDataDumpThread = new Thread(new SQLDataDumpThread(tableHeadings,
                                                                            tableColumnNamesHashMap, useLimit,
                                                                            tableColumnClassHashMap,
-                                                                           tableColumnTypeHashMap,
+                                                                           tableColumnTypeNameHashMap,
                                                                            exportedTable, fileName),
                                                                            "SQLDataDumpThread");
                sqlDataDumpThread.start();
