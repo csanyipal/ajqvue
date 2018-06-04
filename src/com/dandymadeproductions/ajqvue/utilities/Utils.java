@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.0 06/03/2018
+// Version 2.1 06/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -45,6 +45,8 @@
 //         1.8 Added Class Method convertBitsToHSQL_Bits().
 //         1.9 Added Class Method isNumeric().
 //         2.0 Class Method isNumeric() Added COUNTER, BYTE, & CURRENCY.
+//         2.1 Methods isBlob(), isNumeric() & isText() Changed Instance columnType
+//             to columnTypeName. Method isNumeric() Clarified BYTE Condition.
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -119,7 +121,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 2.0 06/03/2018
+ * @version 2.1 06/04/2018
  */
 
 public class Utils extends Ajqvue
@@ -1181,15 +1183,15 @@ public class Utils extends Ajqvue
    // Types: BLOB, BYTEA, BINARY, IMAGE, RAW.
    //==============================================================
    
-   public static boolean isBlob(String columnClass, String columnType)
+   public static boolean isBlob(String columnClass, String columnTypeName)
    {
       columnClass = columnClass.toLowerCase(Locale.ENGLISH);
-      columnType = columnType.toUpperCase(Locale.ENGLISH);
+      columnTypeName = columnTypeName.toUpperCase(Locale.ENGLISH);
       
-      if ((columnClass.indexOf("string") == -1 && columnType.indexOf("BLOB") != -1)
-          || (columnType.indexOf("BYTEA") != -1) || (columnType.indexOf("BINARY") != -1)
-          || (columnClass.indexOf("byte") != -1 && columnType.indexOf("BIT DATA") != -1)
-          || (columnType.indexOf("RAW") != -1) || (columnType.indexOf("IMAGE") != -1))
+      if ((columnClass.indexOf("string") == -1 && columnTypeName.indexOf("BLOB") != -1)
+          || (columnTypeName.indexOf("BYTEA") != -1) || (columnTypeName.indexOf("BINARY") != -1)
+          || (columnClass.indexOf("byte") != -1 && columnTypeName.indexOf("BIT DATA") != -1)
+          || (columnTypeName.indexOf("RAW") != -1) || (columnTypeName.indexOf("IMAGE") != -1))
       {
          return true;
       }
@@ -1206,15 +1208,16 @@ public class Utils extends Ajqvue
    //        NUMERIC, MONEY, SMALLMONEY
    //==============================================================
    
-   public static boolean isNumeric(String columnClass, String columnType)
+   public static boolean isNumeric(String columnClass, String columnTypeName)
    {
-      if (columnType.indexOf("INT") != -1 || columnType.indexOf("SERIAL") != -1
-            || columnType.equals("LONG") || columnType.indexOf("DOUBLE") != -1
-            || (columnType.indexOf("FLOAT") != -1 || columnType.indexOf("REAL") != -1)
-            || columnType.indexOf("DECIMAL") != -1 || columnType.indexOf("NUMBER") != -1
-            || columnType.indexOf("MONEY") != -1 || columnType.indexOf("NUMERIC") != -1
-            || columnType.indexOf("COUNTER") != -1 || columnType.equals("BYTE")
-            || columnType.equals("CURRENCY"))
+      if (columnTypeName.indexOf("INT") != -1 || columnTypeName.indexOf("SERIAL") != -1
+            || columnTypeName.equals("LONG") || columnTypeName.indexOf("DOUBLE") != -1
+            || columnTypeName.indexOf("FLOAT") != -1 || columnTypeName.indexOf("REAL") != -1
+            || columnTypeName.indexOf("DECIMAL") != -1 || columnTypeName.indexOf("NUMBER") != -1
+            || columnTypeName.indexOf("MONEY") != -1 || columnTypeName.indexOf("NUMERIC") != -1
+            || columnTypeName.indexOf("COUNTER") != -1
+            || (columnClass.indexOf("byte") != -1 && columnTypeName.equals("BYTE"))
+            || columnTypeName.equals("CURRENCY"))
       {
          return true;
       }
@@ -1234,7 +1237,7 @@ public class Utils extends Ajqvue
    // so that TextFields are not over filled.
    //==============================================================
    
-   public static boolean isText(String columnClass, String columnType, boolean isViewForm,
+   public static boolean isText(String columnClass, String columnTypeName, boolean isViewForm,
                                 int columnSize)
    {  
       // Method Instances
@@ -1246,14 +1249,14 @@ public class Utils extends Ajqvue
          varcharLimit = 32700;
       
       columnClass = columnClass.toLowerCase(Locale.ENGLISH);
-      columnType = columnType.toUpperCase(Locale.ENGLISH);
+      columnTypeName = columnTypeName.toUpperCase(Locale.ENGLISH);
       
       if ((columnClass.indexOf("string") != -1
-           && !columnType.equals("CHAR") && !columnType.equals("NCHAR")
-           && !columnType.equalsIgnoreCase("BPCHAR") && columnSize > varcharLimit)
-          || (columnClass.indexOf("string") != -1 && columnType.equals("LONG"))
-          || columnType.equals("TEXT") || columnType.indexOf("CLOB") != -1
-          || columnType.equals("XML"))
+           && !columnTypeName.equals("CHAR") && !columnTypeName.equals("NCHAR")
+           && !columnTypeName.equalsIgnoreCase("BPCHAR") && columnSize > varcharLimit)
+          || (columnClass.indexOf("string") != -1 && columnTypeName.equals("LONG"))
+          || columnTypeName.equals("TEXT") || columnTypeName.indexOf("CLOB") != -1
+          || columnTypeName.equals("XML"))
          return true;
       else
          return false;
