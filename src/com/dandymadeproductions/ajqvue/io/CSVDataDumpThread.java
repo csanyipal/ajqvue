@@ -8,8 +8,8 @@
 //                   << CSVDataDumpThread.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 04/23/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.2 06/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,10 @@
 // Version 1.0 09/18/2016 Production CSVDataDumpThread Class.
 //         1.1 07/23/2017 Method run() SQLite TEXT Type Fields Text Inclusion
 //                        Option Implemented for columnSize > 255.
+//         1.2 06/04/2018 Changed Class Instance tableColumnTypeHashMap to tableColumn
+//                        TypeNameHashMap. Code Formatting for Instances. Method
+//                        run() Changed columnType to columnTypeName. Use of Utils
+//                        isBlob() & isText() For Detecting BLOB & TEXT Fields.
 //             
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -52,7 +56,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
@@ -68,7 +71,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * is provided to allow the ability to prematurely terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.1 07/23/2017
+ * @version 1.2 06/04/2018
  */
 
 public class CSVDataDumpThread implements Runnable
@@ -80,7 +83,7 @@ public class CSVDataDumpThread implements Runnable
    private ArrayList<String> columnNameFields;
    private HashMap<String, String> tableColumnNamesHashMap;
    private HashMap<String, String> tableColumnClassHashMap;
-   private HashMap<String, String> tableColumnTypeHashMap;
+   private HashMap<String, String> tableColumnTypeNameHashMap;
    private HashMap<String, Integer> tableColumnSizeHashMap;
 
    //==============================================================
@@ -90,7 +93,7 @@ public class CSVDataDumpThread implements Runnable
    public CSVDataDumpThread(ArrayList<String> columnNameFields, HashMap<String,
                             String> tableColumnNamesHashMap, boolean limits,
                             HashMap<String, String> tableColumnClassHashMap,
-                            HashMap<String, String> tableColumnTypeHashMap,
+                            HashMap<String, String> tableColumnTypeNameHashMap,
                             HashMap<String, Integer> tableColumnSizeHashMap,
                             String exportedTable, String fileName)
    {
@@ -98,7 +101,7 @@ public class CSVDataDumpThread implements Runnable
       this.tableColumnNamesHashMap = tableColumnNamesHashMap;
       this.limits = limits;
       this.tableColumnClassHashMap = tableColumnClassHashMap;
-      this.tableColumnTypeHashMap = tableColumnTypeHashMap;
+      this.tableColumnTypeNameHashMap = tableColumnTypeNameHashMap;
       this.tableColumnSizeHashMap = tableColumnSizeHashMap;
       this.exportedTable = exportedTable;
       this.fileName = fileName;
@@ -118,11 +121,19 @@ public class CSVDataDumpThread implements Runnable
       Iterator<String> columnNamesIterator;
       StringBuffer columnNamesString;
       StringBuffer oracleColumnNamesString;
-      String dataSourceType, schemaTableName;
-      String field, firstField, columnClass, columnType, dataDelimiter;
+      String dataSourceType;
+      String schemaTableName;
+      String field;
+      String firstField;
+      String columnClass;
+      String columnTypeName;
+      String dataDelimiter;
       String identifierQuoteString;
       String fieldContent;
-      int columnSize, rowsCount, currentTableIncrement, currentRow;
+      int columnSize;
+      int rowsCount;
+      int currentTableIncrement;
+      int currentRow;
       int limitIncrement;
 
       String sqlStatementString;
@@ -180,7 +191,7 @@ public class CSVDataDumpThread implements Runnable
             // need to SET SESSION.
 
             if (dataSourceType.equals(ConnectionManager.ORACLE)
-                && (tableColumnTypeHashMap.get(field)).equals("TIMESTAMPLTZ"))
+                && (tableColumnTypeNameHashMap.get(field)).equals("TIMESTAMPLTZ"))
             {
                oracleColumnNamesString.append("TO_CHAR(" + identifierQuoteString
                                               + tableColumnNamesHashMap.get(field) 
@@ -318,17 +329,12 @@ public class CSVDataDumpThread implements Runnable
                      // Filtering out blob & text data as needed.
                      String currentHeading = columnNamesIterator.next();
                      columnClass = tableColumnClassHashMap.get(currentHeading);
-                     columnType = tableColumnTypeHashMap.get(currentHeading);
+                     columnTypeName = tableColumnTypeNameHashMap.get(currentHeading);
                      columnSize = (tableColumnSizeHashMap.get(currentHeading)).intValue();
 
                      // Blob/Bytea/Binary/Bit Data/Raw/Image data.
                      
-                     if ((columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1) ||
-                         (columnClass.toUpperCase(Locale.ENGLISH).indexOf("BLOB") != -1
-                          && columnType.indexOf("BLOB") != -1) ||
-                         (columnType.indexOf("BYTEA") != -1) || (columnType.indexOf("BINARY") != -1) ||
-                         (columnType.indexOf("BIT DATA") != -1) || (columnType.indexOf("RAW") != -1) ||
-                         (columnType.indexOf("IMAGE") != -1))
+                     if (Utils.isBlob(columnClass, columnTypeName))
                      {
                         Object binaryContent = dbResultSet.getBytes(i);
                         
@@ -339,12 +345,7 @@ public class CSVDataDumpThread implements Runnable
                      }
 
                      // Text, MediumText, LongText, & CLOB.
-                     else if ((columnClass.indexOf("String") != -1 && !columnType.equals("CHAR") &&
-                               columnSize > 255)
-                              || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT") &&
-                                    columnSize > 255)
-                              || (columnClass.indexOf("String") != -1 && columnType.equals("LONG"))
-                              || (columnType.indexOf("CLOB") != -1) || columnType.equals("XML"))
+                     else if (Utils.isText(columnClass, columnTypeName, true, columnSize))
                      {
                         fieldContent = dbResultSet.getString(i);
                         
@@ -377,7 +378,7 @@ public class CSVDataDumpThread implements Runnable
                      // MySQL/MariaDB Bit Fields up BIT(8) Only.
                      else if ((dataSourceType.equals(ConnectionManager.MYSQL)
                                || dataSourceType.equals(ConnectionManager.MARIADB))
-                              && columnType.indexOf("BIT") != -1)
+                              && columnTypeName.indexOf("BIT") != -1)
                      {
                         String byteString = Byte.toString(dbResultSet.getByte(i));
                         
@@ -389,7 +390,7 @@ public class CSVDataDumpThread implements Runnable
                      // Insure MySQL/MariaDB Date/Year fields are chopped to only 4 digits.
                      else if ((dataSourceType.equals(ConnectionManager.MYSQL)
                                || dataSourceType.equals(ConnectionManager.MARIADB))
-                              && columnType.indexOf("YEAR") != -1)
+                              && columnTypeName.indexOf("YEAR") != -1)
                      {
                         Object yearContent = dbResultSet.getObject(i);
                         
@@ -407,10 +408,10 @@ public class CSVDataDumpThread implements Runnable
                      }
                      
                      // Format Date & Timestamp Fields as Needed.
-                     else if (columnType.equals("DATE") || columnType.indexOf("DATETIME") != -1
-                              || (columnType.indexOf("TIMESTAMP") != -1 && columnClass.indexOf("Array") == -1))
+                     else if (columnTypeName.equals("DATE") || columnTypeName.indexOf("DATETIME") != -1
+                              || (columnTypeName.indexOf("TIMESTAMP") != -1 && columnClass.indexOf("Array") == -1))
                      {
-                        if (columnType.equals("DATE"))
+                        if (columnTypeName.equals("DATE"))
                         {
                            Object date = dbResultSet.getDate(i);
                            if (date != null)
@@ -421,7 +422,7 @@ public class CSVDataDumpThread implements Runnable
                         }
                         else
                         {  
-                           if (columnType.equals("DATETIMEOFFSET"))
+                           if (columnTypeName.equals("DATETIMEOFFSET"))
                            {
                               String dateTime = dbResultSet.getString(i);
                               String date;
@@ -441,7 +442,7 @@ public class CSVDataDumpThread implements Runnable
                               else
                                  fieldContent = "NULL";
                            }
-                           else if (columnType.indexOf("DATETIME") != -1 || columnType.equals("TIMESTAMP"))
+                           else if (columnTypeName.indexOf("DATETIME") != -1 || columnTypeName.equals("TIMESTAMP"))
                            {
                               Object dateTime = dbResultSet.getTimestamp(i);
                               
@@ -459,9 +460,9 @@ public class CSVDataDumpThread implements Runnable
                               else
                                  fieldContent = "NULL";
                            }
-                           else if (columnType.equals("TIMESTAMPTZ")
-                                    || columnType.equals("TIMESTAMP WITH TIME ZONE")
-                                    || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+                           else if (columnTypeName.equals("TIMESTAMPTZ")
+                                    || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                                    || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                            {
                               Object dateTime = dbResultSet.getTimestamp(i);
                               
