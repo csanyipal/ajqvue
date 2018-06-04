@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 06/04/2018
+// Version 1.4 06/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -39,6 +39,7 @@
 //         1.3 Method importCSVFile() Changed Class Instance columnTypeHashMap
 //             to columnTypeNameHashMap, & columnType to columnTypeName. Code
 //             Formatting Changes for Instances.
+//         1.4 Method importCSVFile() Use of Utils.isBlob().
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -75,7 +76,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * address the ability to cancel the import.
  * 
  * @author Dana M. Proctor
- * @version 1.3 06/04/2018
+ * @version 1.4 06/04/2018
  */
 
 public class CSVDataImportThread implements Runnable
@@ -421,11 +422,7 @@ public class CSVDataImportThread implements Runnable
                      // All Blob/Bytea, Binary Data Exported as Text
                      // 'Binary' in DataDumpThread for CSV.
 
-                     else if ((columnClass != null && columnTypeName != null)
-                              && ((columnClass.indexOf("String") == -1 && columnTypeName.indexOf("BLOB") != -1)
-                                  || (columnClass.indexOf("BLOB") != -1 && columnTypeName.indexOf("BLOB") != -1)
-                                  || (columnTypeName.indexOf("BYTEA") != -1)
-                                  || (columnTypeName.indexOf("BINARY") != -1) || (columnTypeName.indexOf("RAW") != -1)))
+                     else if (Utils.isBlob(columnClass, columnTypeName))
                      {
                         lineContent[i] = "null";
                      }
@@ -530,11 +527,7 @@ public class CSVDataImportThread implements Runnable
                      else
                      {
                         // Don't Quote Numeric Values.
-                        if (columnClass != null && columnClass.indexOf("Integer") == -1
-                              && columnClass.indexOf("Long") == -1 && columnClass.indexOf("Float") == -1
-                              && columnClass.indexOf("Double") == -1 && columnClass.indexOf("Byte") == -1
-                              && columnClass.indexOf("BigDecimal") == -1 && columnClass.indexOf("Short") == -1)
-                              
+                        if (Utils.isNumeric(columnClass, columnTypeName)) 
                            lineContent[i] = "'" + lineContent[i] + "'";
                      }
 
