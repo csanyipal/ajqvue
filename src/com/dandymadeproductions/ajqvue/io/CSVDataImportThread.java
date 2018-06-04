@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.2 05/29/2018
+// Version 1.3 06/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,9 @@
 //         1.1 Method importCSVFile() Additional Check for columnClass Not
 //             Null in Conditional for Date, Datetime, & Timestamp.
 //         1.2 Changed/Updated Import for SQLQuery Class.
+//         1.3 Method importCSVFile() Changed Class Instance columnTypeHashMap
+//             to columnTypeNameHashMap, & columnType to columnTypeName. Code
+//             Formatting Changes for Instances.
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -72,7 +75,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * address the ability to cancel the import.
  * 
  * @author Dana M. Proctor
- * @version 1.2 09/29/2018
+ * @version 1.3 06/04/2018
  */
 
 public class CSVDataImportThread implements Runnable
@@ -80,9 +83,14 @@ public class CSVDataImportThread implements Runnable
    // Class Instance Fields.
    private Connection dbConnection;
    
-   private String dataSourceType, importTable, fileName, csvOption;
-   private boolean argConnection, validImport;
-   private boolean useStatusDialog, temporaryDataFile;
+   private String dataSourceType;
+   private String importTable;
+   private String fileName;
+   private String csvOption;
+   private boolean argConnection;
+   private boolean validImport;
+   private boolean useStatusDialog;
+   private boolean temporaryDataFile;
 
    //==============================================================
    // CSVDataImportThread Constructors.
@@ -187,15 +195,22 @@ public class CSVDataImportThread implements Runnable
 
       String schemaTableName;
       ArrayList<String> primaryKeys, tableFields, fields;
-      HashMap<String, String> columnTypeHashMap;
+      HashMap<String, String> columnTypeNameHashMap;
       HashMap<String, String> columnClassHashMap;
-      String catalogSeparator, identifierQuoteString;
+      String catalogSeparator;
+      String identifierQuoteString;
 
-      String currentLine, columnClass, columnType;
-      int fileLineLength, fieldNumber, line;
+      String currentLine;
+      String columnClass;
+      String columnTypeName;
+      int fileLineLength;
+      int fieldNumber;
+      int line;
       String[] lineContent;
-      int currentBatchRows, batchSize;
-      boolean batchSizeEnabled, identityInsertEnabled;
+      int currentBatchRows;
+      int batchSize;
+      boolean batchSizeEnabled;
+      boolean identityInsertEnabled;
       
       ProgressBar csvImportProgressBar;
       String dateFormat;
@@ -240,7 +255,7 @@ public class CSVDataImportThread implements Runnable
             identifierQuoteString = ConnectionManager.getIdentifierQuoteString();
             schemaTableName = Utils.getSchemaTableName(importTable);
             primaryKeys = DBTablesPanel.getSelectedTableTabPanel().getPrimaryKeys();
-            columnTypeHashMap = DBTablesPanel.getSelectedTableTabPanel().getColumnTypeHashMap();
+            columnTypeNameHashMap = DBTablesPanel.getSelectedTableTabPanel().getColumnTypeNameHashMap();
             columnClassHashMap = DBTablesPanel.getSelectedTableTabPanel().getColumnClassHashMap();
          
             argConnection = false;
@@ -271,7 +286,7 @@ public class CSVDataImportThread implements Runnable
             }
             
             primaryKeys = new ArrayList <String>();
-            columnTypeHashMap = sqlQuery.getColumnTypeNameHashMap();
+            columnTypeNameHashMap = sqlQuery.getColumnTypeNameHashMap();
             columnClassHashMap = sqlQuery.getColumnClassHashMap();
          }
          
@@ -385,9 +400,9 @@ public class CSVDataImportThread implements Runnable
                   for (int i = 0; i < lineContent.length; i++)
                   {
                      columnClass = columnClassHashMap.get(tableFields.get(i));
-                     columnType = columnTypeHashMap.get(tableFields.get(i));
+                     columnTypeName = columnTypeNameHashMap.get(tableFields.get(i));
                      // System.out.println("tableField:" + tableFields.get(i) + " ColumnClass: "
-                     //                    + columnClass + " ColumnType: " + columnType
+                     //                    + columnClass + " ColumnType: " + columnTypeName
                      //                    + " " + lineContent[i]);
 
                      // Make sure and catch all null default entries first.
@@ -406,11 +421,11 @@ public class CSVDataImportThread implements Runnable
                      // All Blob/Bytea, Binary Data Exported as Text
                      // 'Binary' in DataDumpThread for CSV.
 
-                     else if ((columnClass != null && columnType != null)
-                              && ((columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1)
-                                  || (columnClass.indexOf("BLOB") != -1 && columnType.indexOf("BLOB") != -1)
-                                  || (columnType.indexOf("BYTEA") != -1)
-                                  || (columnType.indexOf("BINARY") != -1) || (columnType.indexOf("RAW") != -1)))
+                     else if ((columnClass != null && columnTypeName != null)
+                              && ((columnClass.indexOf("String") == -1 && columnTypeName.indexOf("BLOB") != -1)
+                                  || (columnClass.indexOf("BLOB") != -1 && columnTypeName.indexOf("BLOB") != -1)
+                                  || (columnTypeName.indexOf("BYTEA") != -1)
+                                  || (columnTypeName.indexOf("BINARY") != -1) || (columnTypeName.indexOf("RAW") != -1)))
                      {
                         lineContent[i] = "null";
                      }
@@ -419,8 +434,8 @@ public class CSVDataImportThread implements Runnable
 
                      else if ((dataSourceType.equals(ConnectionManager.MYSQL)
                                || dataSourceType.equals(ConnectionManager.MARIADB))
-                              && columnType != null
-                              && columnType.indexOf("BIT") != -1)
+                              && columnTypeName != null
+                              && columnTypeName.indexOf("BIT") != -1)
                      {
                         lineContent[i] = "B'" + lineContent[i] + "'";
                      }
@@ -430,17 +445,17 @@ public class CSVDataImportThread implements Runnable
                      else if (dataSourceType.equals(ConnectionManager.POSTGRESQL) && columnClass != null
                               && columnClass.indexOf("geometric") != -1)
                      {
-                        lineContent[i] = "'" + lineContent[i] + "'::" + columnType;
+                        lineContent[i] = "'" + lineContent[i] + "'::" + columnTypeName;
                      }
 
                      // Date, DateTime, & Timestamp Fields
 
-                     else if ((columnType != null)
-                              && (columnType.equals("DATE") || columnType.equals("DATETIME")
-                                    || (columnType.indexOf("TIMESTAMP") != -1)
+                     else if ((columnTypeName != null)
+                              && (columnTypeName.equals("DATE") || columnTypeName.equals("DATETIME")
+                                    || (columnTypeName.indexOf("TIMESTAMP") != -1)
                                         && (columnClass != null && columnClass.indexOf("Array") == -1)))
                      {
-                        if (columnType.equals("DATE"))
+                        if (columnTypeName.equals("DATE"))
                         {
                            if (dataSourceType.equals(ConnectionManager.ORACLE))
                               lineContent[i] = "TO_DATE('"
@@ -478,14 +493,14 @@ public class CSVDataImportThread implements Runnable
                            // Oracle Timestamps
                            if (dataSourceType.equals(ConnectionManager.ORACLE))
                            {
-                              if (columnType.equals("TIMESTAMP"))
+                              if (columnTypeName.equals("TIMESTAMP"))
                                  lineContent[i] = "TO_TIMESTAMP('"
                                                   + Utils.convertViewDateString_To_DBDateString(
                                                      lineContent[i], dateFormat) + time
                                                   + "', 'YYYY-MM-DD HH24:MI:SS:FF')";
 
-                              else if (columnType.equals("TIMESTAMPTZ")
-                                       || columnType.equals("TIMESTAMP WITH TIME ZONE"))
+                              else if (columnTypeName.equals("TIMESTAMPTZ")
+                                       || columnTypeName.equals("TIMESTAMP WITH TIME ZONE"))
                                  lineContent[i] = "TO_TIMESTAMP_TZ('"
                                                   + Utils.convertViewDateString_To_DBDateString(
                                                      lineContent[i], dateFormat) + time
