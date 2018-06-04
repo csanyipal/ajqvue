@@ -10,8 +10,8 @@
 //                << CSVDataTableDumpThread.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 06/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,6 +33,9 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production DataTableDumpThread Class.
+//         1.1 Changed Class Instance tableColumnTypeHashMap to tableColumn
+//             TypeNameHashMap. Code Formatting for Instances. Method run()
+//             Instance currentType Renamed to currentTypeName.
 //             
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -64,7 +67,7 @@ public class CSVDataTableDumpThread implements Runnable
    // Class Instances
    private JTable summaryListTable;
    private HashMap<String, String> tableColumnNamesHashMap;
-   private HashMap<String, String> tableColumnTypeHashMap;
+   private HashMap<String, String> tableColumnTypeNameHashMap;
    private String exportedTable, fileName;
 
    //==============================================================
@@ -72,12 +75,12 @@ public class CSVDataTableDumpThread implements Runnable
    //==============================================================
 
    public CSVDataTableDumpThread(JTable summaryListTable, HashMap<String, String> tableColumnNamesHashMap,
-                              HashMap<String, String> tableColumnTypeHashMap, String exportedTable,
+                              HashMap<String, String> tableColumnTypeNameHashMap, String exportedTable,
                               String fileName)
    {
       this.summaryListTable = summaryListTable;
       this.tableColumnNamesHashMap = tableColumnNamesHashMap;
-      this.tableColumnTypeHashMap = tableColumnTypeHashMap;
+      this.tableColumnTypeNameHashMap = tableColumnTypeNameHashMap;
       this.exportedTable = exportedTable;
       this.fileName = fileName;
    }
@@ -92,8 +95,10 @@ public class CSVDataTableDumpThread implements Runnable
       ProgressBar dumpProgressBar;
       HashMap<String, String> summaryListTableNameTypes;
       StringBuffer currentEntry;
-      String currentTableFieldName, delimiterString;
-      String currentType, currentString;
+      String currentTableFieldName;
+      String delimiterString;
+      String currentTypeName;
+      String currentString;
       int rowNumber;
 
       // Setting up
@@ -115,7 +120,7 @@ public class CSVDataTableDumpThread implements Runnable
          currentTableFieldName = summaryListTable.getColumnName(i);
          currentEntry.append(tableColumnNamesHashMap.get(currentTableFieldName) + delimiterString);
          summaryListTableNameTypes.put(Integer.toString(i),
-                                       tableColumnTypeHashMap.get(currentTableFieldName));
+                                       tableColumnTypeNameHashMap.get(currentTableFieldName));
       }
       if (currentEntry.length() != 0)
       {
@@ -142,11 +147,11 @@ public class CSVDataTableDumpThread implements Runnable
                // Format Date & Timestamp fields as needed. PostgreSQL
                // Array Timestamps to NOT be processed, identified by
                // underscore.
-               currentType = summaryListTableNameTypes.get(Integer.toString(j));
+               currentTypeName = summaryListTableNameTypes.get(Integer.toString(j));
 
-               if ((currentType != null)
-                   && (currentType.equals("DATE") || currentType.indexOf("DATETIME") != -1
-                       || (currentType.indexOf("TIMESTAMP") != -1) && currentType.indexOf("_") == -1))
+               if ((currentTypeName != null)
+                   && (currentTypeName.equals("DATE") || currentTypeName.indexOf("DATETIME") != -1
+                       || (currentTypeName.indexOf("TIMESTAMP") != -1) && currentTypeName.indexOf("_") == -1))
                {
                   if (!currentString.toLowerCase(Locale.ENGLISH).equals("null"))
                   {
