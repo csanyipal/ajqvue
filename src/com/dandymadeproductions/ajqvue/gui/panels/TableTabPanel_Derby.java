@@ -12,8 +12,8 @@
 //           << TableTabPanel_Derby.java >>
 //
 //================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 07/25/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.2 06/06/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,11 @@
 //=================================================================
 // Version 1.0 09/18/2016 Production TableTabPanel_Derby Class.
 //         1.1 07/25/2017 Method getColumnNames() Instance rs.close() Before Reuse.
+//         1.2 06/06/2018 Code Formatting Instances, One per Line. Methods getColumnNames(),
+//                        loadTable(), createWhereClause(), viewSelectedItem(), addItem(),
+//                        & editSelectedItem() Changed Class Instance columnType to
+//                        columnTypeName. Changed to TableTabPanel Instance columnType
+//                        NameHashMap.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -68,7 +73,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * also provides the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.1 07/25/2017
+ * @version 1.2 06/06/2018
  */
 
 public class TableTabPanel_Derby extends TableTabPanel
@@ -102,8 +107,10 @@ public class TableTabPanel_Derby extends TableTabPanel
       ResultSetMetaData tableMetaData;
 
       String tableName;
-      String colNameString, comboBoxNameString;
-      String columnClass, columnType;
+      String colNameString;
+      String comboBoxNameString;
+      String columnClass;
+      String columnTypeName;
       Integer columnSize;
 
       // Connecting to the data base, to obtain
@@ -179,27 +186,27 @@ public class TableTabPanel_Derby extends TableTabPanel
             colNameString = tableMetaData.getColumnName(i);
             comboBoxNameString = parseColumnNameField(colNameString);
             columnClass = tableMetaData.getColumnClassName(i);
-            columnType = tableMetaData.getColumnTypeName(i);
+            columnTypeName = tableMetaData.getColumnTypeName(i);
             columnSize = Integer.valueOf(tableMetaData.getColumnDisplaySize(i));
 
             // System.out.println(i + " " + colNameString + " " +
             //                   comboBoxNameString + " " +
-            //                   columnClass + " " + columnType + " " +
+            //                   columnClass + " " + columnTypeName + " " +
             //                   columnSize);
 
             // This going to be a problem so skip this column.
 
-            if (columnClass == null && columnType == null)
+            if (columnClass == null && columnTypeName == null)
                continue;
 
             if (columnClass == null)
-               columnClass = columnType;
+               columnClass = columnTypeName;
 
             // Process & Store.
 
             columnNamesHashMap.put(comboBoxNameString, colNameString);
             columnClassHashMap.put(comboBoxNameString, columnClass);
-            columnTypeHashMap.put(comboBoxNameString, columnType.toUpperCase(Locale.ENGLISH));
+            columnTypeNameHashMap.put(comboBoxNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
             columnSizeHashMap.put(comboBoxNameString, columnSize);
             if (comboBoxNameString.length() < 5)
                preferredColumnSizeHashMap.put(comboBoxNameString,
@@ -217,9 +224,9 @@ public class TableTabPanel_Derby extends TableTabPanel
             sqlTableFieldsString += identifierQuoteString + colNameString + identifierQuoteString + ", ";   
 
             // Collect LOBs.
-            if (((columnType.toUpperCase(Locale.ENGLISH).equals("BLOB"))
-                  || (columnType.toUpperCase(Locale.ENGLISH).equals("CLOB"))
-                  || (columnType.toUpperCase(Locale.ENGLISH).indexOf("LONG") != -1))
+            if (((columnTypeName.toUpperCase(Locale.ENGLISH).equals("BLOB"))
+                  || (columnTypeName.toUpperCase(Locale.ENGLISH).equals("CLOB"))
+                  || (columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("LONG") != -1))
                 && !primaryKeys.contains(colNameString))
             {
                lobDataTypesHashMap.put(comboBoxNameString, colNameString);
@@ -229,13 +236,13 @@ public class TableTabPanel_Derby extends TableTabPanel
             // Special Column Fields.
             
             if (columnClass.indexOf("Boolean") != -1 && columnSize.intValue() == 1)
-               columnEnumHashMap.put(parseColumnNameField(colNameString), columnType);
+               columnEnumHashMap.put(parseColumnNameField(colNameString), columnTypeName);
 
-            if (columnType.indexOf("enum") != -1)
-               columnEnumHashMap.put(parseColumnNameField(colNameString), columnType);
+            if (columnTypeName.indexOf("enum") != -1)
+               columnEnumHashMap.put(parseColumnNameField(colNameString), columnTypeName);
 
-            if (columnType.indexOf("set") != -1)
-               columnSetHashMap.put(parseColumnNameField(colNameString), columnType);
+            if (columnTypeName.indexOf("set") != -1)
+               columnSetHashMap.put(parseColumnNameField(colNameString), columnTypeName);
 
             if (primaryKeys.contains(colNameString))
             {
@@ -335,9 +342,12 @@ public class TableTabPanel_Derby extends TableTabPanel
       ResultSet rs;
 
       StringBuffer searchQueryString;
-      String columnSearchString, searchTextString;
+      String columnSearchString;
+      String searchTextString;
       String lobLessFieldsString;
-      String columnName, columnClass, columnType;
+      String columnName;
+      String columnClass;
+      String columnTypeName;
       Integer keyLength;
       int columnSize, preferredColumnSize;
       Object currentContentData;
@@ -366,15 +376,15 @@ public class TableTabPanel_Derby extends TableTabPanel
             {
                columnName = tableColumns[i].replaceAll(identifierQuoteString, "");
                columnClass = columnClassHashMap.get(parseColumnNameField(columnName.trim()));
-               columnType = columnTypeHashMap.get(parseColumnNameField(columnName.trim()));
+               columnTypeName = columnTypeNameHashMap.get(parseColumnNameField(columnName.trim()));
                
                // Skip byte types and handle temporals.
-               if (columnType.equals("BLOB") || columnType.indexOf("BIT DATA") != -1)
+               if (columnTypeName.equals("BLOB") || columnTypeName.indexOf("BIT DATA") != -1)
                   continue;
                
                String searchString = searchTextString;
                
-               if (columnType.equals("DATE"))
+               if (columnTypeName.equals("DATE"))
                {
                   searchString = Utils.processDateFormatSearch(searchString);
                   
@@ -382,7 +392,7 @@ public class TableTabPanel_Derby extends TableTabPanel
                   if (searchString.equals("0"))
                      searchString = searchTextString;
                }
-               else if (columnType.equals("TIMESTAMP"))
+               else if (columnTypeName.equals("TIMESTAMP"))
                {
                   if (searchString.indexOf(" ") != -1)
                      searchString = Utils.processDateFormatSearch(
@@ -392,7 +402,7 @@ public class TableTabPanel_Derby extends TableTabPanel
                      searchString = Utils.processDateFormatSearch(searchString);
                }
                
-               searchQueryString.append(createWhereClause(tableColumns[i], columnClass, columnType,
+               searchQueryString.append(createWhereClause(tableColumns[i], columnClass, columnTypeName,
                                                           searchString) + " OR ");
             }
             if (tableColumns.length != 0)
@@ -402,11 +412,11 @@ public class TableTabPanel_Derby extends TableTabPanel
          else
          {
             columnClass = columnClassHashMap.get(searchComboBox.getSelectedItem());
-            columnType = columnTypeHashMap.get(searchComboBox.getSelectedItem());
+            columnTypeName = columnTypeNameHashMap.get(searchComboBox.getSelectedItem());
             
-            if (columnType.equals("DATE"))
+            if (columnTypeName.equals("DATE"))
                searchTextString = Utils.processDateFormatSearch(searchTextString);
-            else if (columnType.equals("TIMESTAMP"))
+            else if (columnTypeName.equals("TIMESTAMP"))
             {
                if (searchTextString.indexOf(" ") != -1)
                   searchTextString = Utils.processDateFormatSearch(
@@ -418,7 +428,7 @@ public class TableTabPanel_Derby extends TableTabPanel
             
             searchQueryString.append(createWhereClause(
                (identifierQuoteString + columnSearchString + identifierQuoteString),
-               columnClass, columnType, searchTextString));
+               columnClass, columnTypeName, searchTextString));
          }
       }
       // System.out.println(searchTextString);
@@ -509,14 +519,14 @@ public class TableTabPanel_Derby extends TableTabPanel
                String currentHeading = headings.next();
                columnName = columnNamesHashMap.get(currentHeading);
                columnClass = columnClassHashMap.get(currentHeading);
-               columnType = columnTypeHashMap.get(currentHeading);
+               columnTypeName = columnTypeNameHashMap.get(currentHeading);
                columnSize = (columnSizeHashMap.get(currentHeading)).intValue();
                keyLength = keyLengthHashMap.get(columnName);
                preferredColumnSize = (preferredColumnSizeHashMap.get(currentHeading)).intValue();
 
                // System.out.println(i + " " + j + " " + currentHeading + " " +
                // columnName + " " + columnClass + " " +
-               // columnType + " " + columnSize + " " +
+               // columnTypeName + " " + columnSize + " " +
                // preferredColumnSize + " " + keyLength);
 
                // Storing data appropriately. If you have some date
@@ -537,7 +547,7 @@ public class TableTabPanel_Derby extends TableTabPanel
 
                   // =============================================
                   // Date
-                  else if (columnType.equals("DATE"))
+                  else if (columnTypeName.equals("DATE"))
                   {
                      currentContentData = rs.getDate(columnName);
                      String displayDate = displayMyDateString(currentContentData + "");
@@ -546,7 +556,7 @@ public class TableTabPanel_Derby extends TableTabPanel
 
                   // =============================================
                   // Timestamps
-                  else if (columnType.equals("TIMESTAMP"))
+                  else if (columnTypeName.equals("TIMESTAMP"))
                   {
                      currentContentData = rs.getTimestamp(columnName);
                      tableData[i][j++] = (new SimpleDateFormat(
@@ -556,7 +566,7 @@ public class TableTabPanel_Derby extends TableTabPanel
                   
                   // =============================================
                   // BLOB
-                  else if (columnType.equals("BLOB"))
+                  else if (columnTypeName.equals("BLOB"))
                   {
                      // Handles a key Blob
                      if (keyLength != null)
@@ -580,7 +590,7 @@ public class TableTabPanel_Derby extends TableTabPanel
                   
                   // =============================================
                   // BIT DATA
-                  else if (columnType.indexOf("BIT DATA") != -1)
+                  else if (columnTypeName.indexOf("BIT DATA") != -1)
                   {
                      tableData[i][j++] = "Bit Data";
                   }
@@ -594,14 +604,14 @@ public class TableTabPanel_Derby extends TableTabPanel
 
                   // =============================================
                   // LongVarChar, & Clob,
-                  else if ((columnClass.indexOf("String") != -1 && !columnType.equals("CHAR")
+                  else if ((columnClass.indexOf("String") != -1 && !columnTypeName.equals("CHAR")
                             && columnSize > 255)
-                           || columnType.indexOf("LONG VARCHAR") != -1
-                           || columnType.equals("CLOB"))
+                           || columnTypeName.indexOf("LONG VARCHAR") != -1
+                           || columnTypeName.equals("CLOB"))
                   {
                      String stringName;
                      
-                     if (columnType.indexOf("LONG VARCHAR") != -1)
+                     if (columnTypeName.indexOf("LONG VARCHAR") != -1)
                      {
                         stringName = (String) currentContentData;
 
@@ -617,7 +627,7 @@ public class TableTabPanel_Derby extends TableTabPanel
 
                      // Handles a key String
                      if (keyLength != null
-                         && (columnType.indexOf("LONG VARCHAR") != -1 || columnType.equals("CLOB")))
+                         && (columnTypeName.indexOf("LONG VARCHAR") != -1 || columnTypeName.equals("CLOB")))
                      {
                         BlobTextKey currentBlobElement = new BlobTextKey();
                         currentBlobElement.setName(stringName);
@@ -701,7 +711,8 @@ public class TableTabPanel_Derby extends TableTabPanel
    // on the Derby Data Type.
    //==============================================================
 
-   private String createWhereClause(String columnName, String columnClass, String columnType, String searchString)
+   private String createWhereClause(String columnName, String columnClass, String columnTypeName,
+                                    String searchString)
    {
       // Method Instances
       StringBuffer whereClauseString;
@@ -710,7 +721,7 @@ public class TableTabPanel_Derby extends TableTabPanel
       
       if (columnClass.indexOf("String") != -1)
          whereClauseString.append(columnName.trim() + " LIKE \'%" + searchString + "%\'"); 
-      else if (columnType.equals("DOUBLE") || columnType.equals("REAL"))
+      else if (columnTypeName.equals("DOUBLE") || columnTypeName.equals("REAL"))
          whereClauseString.append(columnName.trim() + "=" + searchString);
       else
          whereClauseString.append("CAST(" + columnName.trim() + " AS CHAR(254)) LIKE \'%" + searchString + "%\'");
@@ -729,9 +740,13 @@ public class TableTabPanel_Derby extends TableTabPanel
       Statement sqlStatement;
       ResultSet db_resultSet;
 
-      Iterator<String> keyIterator, textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentDB_ColumnName, currentColumnClass, currentColumnType;
+      Iterator<String> keyIterator;
+      Iterator<String> textFieldNamesIterator;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentDB_ColumnName;
+      String currentColumnClass;
+      String currentColumnTypeName;
       int keyColumn = 0;
 
       // Connecting to the data base, to obtain
@@ -796,8 +811,10 @@ public class TableTabPanel_Derby extends TableTabPanel
                         currentContentData = ((String) currentContentData).replaceAll("'", "''");
                      
                      // Reformat date keys.
-                     currentColumnType = (String) columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
-                     if (currentColumnType.equals("DATE"))
+                     currentColumnTypeName = columnTypeNameHashMap.get(
+                        parseColumnNameField(currentDB_ColumnName));
+                     
+                     if (currentColumnTypeName.equals("DATE"))
                      {
                         sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
                                                   + identifierQuoteString + "='"
@@ -832,16 +849,16 @@ public class TableTabPanel_Derby extends TableTabPanel
                currentContentData = listTable.getValueAt(rowToView, i);
                currentDB_ColumnName = (String) columnNamesHashMap.get(listTable.getColumnName(i));
                currentColumnClass = columnClassHashMap.get(listTable.getColumnName(i));
-               currentColumnType = columnTypeHashMap.get(listTable.getColumnName(i));
+               currentColumnTypeName = columnTypeNameHashMap.get(listTable.getColumnName(i));
                
                // System.out.println("field:" + currentDB_ColumnName + " class:" + currentColumnClass
-               //                     + " type:" + currentColumnType + " value:" + currentContentData);
+               //                     + " type:" + currentColumnTypeName + " value:" + currentContentData);
                
                // Skip Blob, Bit Data, & Clob Unless NULL.
-               if ((currentColumnType.equals("BLOB"))
-                     || (currentColumnType.equals("CLOB"))
+               if ((currentColumnTypeName.equals("BLOB"))
+                     || (currentColumnTypeName.equals("CLOB"))
                      || (currentColumnClass.indexOf("byte") != -1)
-                         && currentColumnType.indexOf("BIT DATA") != -1)
+                         && currentColumnTypeName.indexOf("BIT DATA") != -1)
                {
                   if (currentContentData.toString().toUpperCase(Locale.ENGLISH).equals("NULL"))
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
@@ -862,7 +879,7 @@ public class TableTabPanel_Derby extends TableTabPanel
                      + identifierQuoteString);
                   
                   // Process Date
-                  if (currentColumnType.equals("DATE"))
+                  if (currentColumnTypeName.equals("DATE"))
                   {
                      String dateString = Utils.processDateFormatSearch(
                         (String) currentContentData);
@@ -870,7 +887,7 @@ public class TableTabPanel_Derby extends TableTabPanel
                      sqlStatementString.append("='" + dateString + "' ");
                   }
                   // Process Timestamp
-                  else if (currentColumnType.equals("TIMESTAMP"))
+                  else if (currentColumnTypeName.equals("TIMESTAMP"))
                   {
                      String content, dateTimeString;
                      content = (String) currentContentData;
@@ -917,17 +934,17 @@ public class TableTabPanel_Derby extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnType = columnTypeHashMap.get(currentColumnName);
+            currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
 
             currentContentData = db_resultSet.getString(currentDB_ColumnName);
             // System.out.println(i + " " + currentColumnName + " " +
             //                    currentDB_ColumnName + " " +
-            //                    currentColumnType + " " + currentContentData);
+            //                    currentColumnTypeName + " " + currentContentData);
 
             if (currentContentData != null)
             {
                // DATE Type Field
-               if (currentColumnType.equals("DATE"))
+               if (currentColumnTypeName.equals("DATE"))
                {
                   currentContentData = db_resultSet.getDate(currentDB_ColumnName);
                   tableViewForm.setFormField(currentColumnName,
@@ -935,7 +952,7 @@ public class TableTabPanel_Derby extends TableTabPanel
                }
 
                // Timestamp Type Field
-               else if (currentColumnType.equals("TIMESTAMP"))
+               else if (currentColumnTypeName.equals("TIMESTAMP"))
                {
                   currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
                   tableViewForm.setFormField(currentColumnName,
@@ -944,16 +961,16 @@ public class TableTabPanel_Derby extends TableTabPanel
                }
 
                // Blob & Bit Data Type Field
-               else if (currentColumnType.equals("BLOB")
+               else if (currentColumnTypeName.equals("BLOB")
                         || (currentColumnClass.indexOf("byte") != -1
-                            && currentColumnType.indexOf("BIT DATA") != -1))
+                            && currentColumnTypeName.indexOf("BIT DATA") != -1))
                {
                   if (((String) currentContentData).getBytes().length != 0)
                   {
                      currentContentData = db_resultSet.getBytes(currentDB_ColumnName);
 
                      int size = ((byte[]) currentContentData).length;
-                     if (currentColumnType.equals("BLOB"))
+                     if (currentColumnTypeName.equals("BLOB"))
                      {
                         tableViewForm.setFormField(currentColumnName, (Object) ("BLOB " + size + " Bytes"));
                         tableViewForm.setFormFieldBlob(currentColumnName, (byte[]) currentContentData);
@@ -966,7 +983,7 @@ public class TableTabPanel_Derby extends TableTabPanel
                   }
                   else
                   {
-                     if (currentColumnType.equals("BLOB"))
+                     if (currentColumnTypeName.equals("BLOB"))
                         tableViewForm.setFormField(currentColumnName, (Object) "BLOB 0 Bytes");
                      else
                         tableViewForm.setFormField(currentColumnName, (Object) "BIT DATA 0 Bytes");
@@ -974,13 +991,13 @@ public class TableTabPanel_Derby extends TableTabPanel
                }
 
                // Long VarChar, & Clob Fields
-               else if ((currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+               else if ((currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
                          && (columnSizeHashMap.get(currentColumnName)).intValue() > 255)
-                        || currentColumnType.equals("CLOB"))
+                        || currentColumnTypeName.equals("CLOB"))
                {
                   String stringName;
                   
-                  if (currentColumnType.equals("CLOB"))
+                  if (currentColumnTypeName.equals("CLOB"))
                      stringName = "CLOB";
                   else
                      stringName = "TEXT";
@@ -1039,14 +1056,16 @@ public class TableTabPanel_Derby extends TableTabPanel
    public void addItem(Connection dbConnection)
    {
       Iterator<String> textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentColumnClass, currentColumnType;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentColumnClass;
+      String currentColumnTypeName;
 
       // Showing the Table Entry Form
       TableEntryForm addForm = new TableEntryForm("Add Table Entry: ", true, schemaTableName,
                                                   -1, null, primaryKeys, autoIncrementHashMap, null,
                                                   formFields, tableViewForm, columnNamesHashMap,
-                                                  columnClassHashMap, columnTypeHashMap,
+                                                  columnClassHashMap, columnTypeNameHashMap,
                                                   columnSizeHashMap, columnEnumHashMap,
                                                   columnSetHashMap);
 
@@ -1079,7 +1098,7 @@ public class TableTabPanel_Derby extends TableTabPanel
       {
          currentColumnName = textFieldNamesIterator.next();
          currentColumnClass = columnClassHashMap.get(currentColumnName);
-         currentColumnType = columnTypeHashMap.get(currentColumnName);
+         currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
 
          // Auto-Increment Type Field
          if (autoIncrementHashMap.containsKey(currentColumnName))
@@ -1103,42 +1122,42 @@ public class TableTabPanel_Derby extends TableTabPanel
          }
 
          // DATE Type Field
-         if (currentColumnType.equals("DATE"))
+         if (currentColumnTypeName.equals("DATE"))
          {
             currentContentData = DBTablesPanel.getGeneralDBProperties().getViewDateFormat();
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // TIME Type Field
-         if (currentColumnType.equals("TIME"))
+         if (currentColumnTypeName.equals("TIME"))
          {
             currentContentData = "hh:mm:ss";
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // TIMESTAMP Type Field
-         if (currentColumnType.equals("TIMESTAMP"))
+         if (currentColumnTypeName.equals("TIMESTAMP"))
          {
             currentContentData = "CURRENT_TIMESTAMP";
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // BLOB Type Field
-         if (currentColumnType.equals("BLOB"))
+         if (currentColumnTypeName.equals("BLOB"))
          {
             addForm.setFormField(currentColumnName, (Object) ("BLOB Browse"));
          }
          
          // BIT DATA Type Field
-         if (currentColumnType.indexOf("BIT DATA") != -1)
+         if (currentColumnTypeName.indexOf("BIT DATA") != -1)
          {
             addForm.setFormField(currentColumnName, (Object) ("BIT DATA Browse"));
          }
 
          // All LONG VARCHAR, & CLOB Type Field
-         if ((currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+         if ((currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
               && (columnSizeHashMap.get(currentColumnName)).intValue() > 255)
-             || (currentColumnType.equals("CLOB")))
+             || (currentColumnTypeName.equals("CLOB")))
          {
             addForm.setFormField(currentColumnName, (Object) ("TEXT Browse"));
          }
@@ -1157,9 +1176,13 @@ public class TableTabPanel_Derby extends TableTabPanel
       Statement sqlStatement;
       ResultSet db_resultSet;
 
-      Iterator<String> keyIterator, textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentDB_ColumnName, currentColumnClass, currentColumnType;
+      Iterator<String> keyIterator;
+      Iterator<String> textFieldNamesIterator;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentDB_ColumnName;
+      String currentColumnClass;
+      String currentColumnTypeName;
       int currentColumnSize;
       int keyColumn = 0;
 
@@ -1168,7 +1191,7 @@ public class TableTabPanel_Derby extends TableTabPanel
                                                    rowToEdit, this, primaryKeys,
                                                    autoIncrementHashMap, id,
                                                    formFields, tableViewForm, columnNamesHashMap,
-                                                   columnClassHashMap, columnTypeHashMap,
+                                                   columnClassHashMap, columnTypeNameHashMap,
                                                    columnSizeHashMap, columnEnumHashMap,
                                                    columnSetHashMap);
 
@@ -1245,8 +1268,8 @@ public class TableTabPanel_Derby extends TableTabPanel
                      currentContentData = ((String) currentContentData).replaceAll("'", "''");
 
                   // Reformat date keys.
-                  currentColumnType = columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
-                  if (currentColumnType.equals("DATE"))
+                  currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                  if (currentColumnTypeName.equals("DATE"))
                   {
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
                                                + identifierQuoteString + "='"
@@ -1285,7 +1308,7 @@ public class TableTabPanel_Derby extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnType = columnTypeHashMap.get(currentColumnName);
+            currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
             currentColumnSize = (columnSizeHashMap.get(currentColumnName)).intValue();
 
             currentContentData = db_resultSet.getString(currentDB_ColumnName);
@@ -1312,7 +1335,7 @@ public class TableTabPanel_Derby extends TableTabPanel
             }
 
             // DATE Type Field
-            else if (currentColumnType.equals("DATE"))
+            else if (currentColumnTypeName.equals("DATE"))
             {
                if (currentContentData != null)
                {
@@ -1326,7 +1349,7 @@ public class TableTabPanel_Derby extends TableTabPanel
             }
 
             // Timestamps Type Field
-            else if (currentColumnType.equals("TIMESTAMP"))
+            else if (currentColumnTypeName.equals("TIMESTAMP"))
             {
                if (currentContentData != null)
                {
@@ -1343,13 +1366,13 @@ public class TableTabPanel_Derby extends TableTabPanel
             }
 
             // Blob & Bit Data
-            else if (currentColumnType.equals("BLOB")
+            else if (currentColumnTypeName.equals("BLOB")
                      || (currentColumnClass.indexOf("byte") != -1
-                         && currentColumnType.indexOf("BIT DATA") != -1))
+                         && currentColumnTypeName.indexOf("BIT DATA") != -1))
             {
                String binaryType;
                
-               if (currentColumnType.equals("BLOB"))
+               if (currentColumnTypeName.equals("BLOB"))
                   binaryType = "BLOB";
                else
                   binaryType = "BIT DATA";
@@ -1375,9 +1398,9 @@ public class TableTabPanel_Derby extends TableTabPanel
             }
 
             // All Text But TinyText & Clob Type Fields
-            else if ((currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+            else if ((currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
                       && currentColumnSize > 255)
-                     || currentColumnType.indexOf("CLOB") != -1)
+                     || currentColumnTypeName.indexOf("CLOB") != -1)
             {
                if (currentContentData != null)
                {
