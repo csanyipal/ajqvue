@@ -59,7 +59,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * prematurely terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/04/2016
  */
 
 public class CSVDataTableDumpThread implements Runnable
