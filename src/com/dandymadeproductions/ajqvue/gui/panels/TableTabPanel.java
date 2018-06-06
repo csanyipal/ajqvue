@@ -10,8 +10,8 @@
 //                  << TableTabPanel.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 06/24/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.3 06/06/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,9 @@
 //             searchComboBox Action, So Method Will NOT Reload Table, Must Perform
 //             Through Other Means. Race Condition Exists With SearchFrame DBTablesPanel
 //             TabPanel Selection.
+//         1.3 Organized Imports. Changed Class Instance columnTypeHashMap to column
+//             TypeNameHashMap & Associated Getter. Method deleteSelectedItem() Changed
+//             currentColumnType Instance to currentColumnTypeName.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -47,7 +50,17 @@
 
 package com.dandymadeproductions.ajqvue.gui.panels;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
@@ -105,10 +118,10 @@ import com.dandymadeproductions.ajqvue.gui.forms.TableViewForm;
 import com.dandymadeproductions.ajqvue.gui.forms.UpdateForm;
 import com.dandymadeproductions.ajqvue.io.CSVDataImportThread;
 import com.dandymadeproductions.ajqvue.io.WriteDataFile;
+import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
 import com.dandymadeproductions.ajqvue.utilities.BlobTextKey;
 import com.dandymadeproductions.ajqvue.utilities.ImageUtil;
 import com.dandymadeproductions.ajqvue.utilities.InputDialog;
-import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
 import com.dandymadeproductions.ajqvue.utilities.TableModel;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
 
@@ -119,7 +132,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * access, while maintaining limited extensions.
  * 
  * @author Dana M. Proctor
- * @version 1.2 06/24/2017
+ * @version 1.3 06/06/2018
  */
 
 public abstract class TableTabPanel extends JPanel implements TableTabInterface, ActionListener,
@@ -192,7 +205,7 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    protected LinkedList<String> stateHistory = new LinkedList <String>();
    protected HashMap<String, String> columnNamesHashMap;
    protected HashMap<String, String> columnClassHashMap;
-   protected HashMap<String, String> columnTypeHashMap;
+   protected HashMap<String, String> columnTypeNameHashMap;
    protected HashMap<String, Integer> columnSizeHashMap;
    protected HashMap<String, Integer> preferredColumnSizeHashMap;
    
@@ -265,7 +278,7 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
       
       columnNamesHashMap = new HashMap <String, String>();
       columnClassHashMap = new HashMap <String, String>();
-      columnTypeHashMap = new HashMap <String, String>();
+      columnTypeNameHashMap = new HashMap <String, String>();
       columnSizeHashMap = new HashMap <String, Integer>();
       preferredColumnSizeHashMap = new HashMap <String, Integer>();
       
@@ -519,7 +532,7 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
       nextViewButton.setMargin(new Insets(0, 0, 0, 0));
       nextViewButton.addActionListener(this);
 
-      tableViewForm = new TableViewForm(viewFormFields, columnClassHashMap, columnTypeHashMap,
+      tableViewForm = new TableViewForm(viewFormFields, columnClassHashMap, columnTypeNameHashMap,
                                         columnSizeHashMap, previousViewButton, closeViewButton,
                                         nextViewButton);
       centerPanel.add(sqlTable + " Form", tableViewForm);
@@ -1516,7 +1529,7 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    {
       advancedSortSearchFrame = new AdvancedSortSearchForm(schemaTableName, resourceBundle,
                                                            columnNamesHashMap, columnClassHashMap,
-                                                           columnTypeHashMap, comboBoxFields);
+                                                           columnTypeNameHashMap, comboBoxFields);
       advSortSearchApplyButton = advancedSortSearchFrame.getApplyButton();
       advSortSearchApplyButton.addActionListener(this);
 
@@ -1531,7 +1544,7 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    public void createUpdateFrame()
    {
       updateFrame = new UpdateForm(schemaTableName, resourceBundle, columnNamesHashMap,
-                                   columnClassHashMap, columnTypeHashMap, columnSizeHashMap,
+                                   columnClassHashMap, columnTypeNameHashMap, columnSizeHashMap,
                                    comboBoxFields);
       updateFormFindButton = updateFrame.getFindButton();
       updateFormFindButton.addActionListener(this);
@@ -1837,8 +1850,17 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
       
       JLabel message;
       InputDialog deleteDialog;
-      String dataSourceType, currentDB_ColumnName, currentColumnClass, currentColumnType;
-      String  resourceMessage, resourceTitle, resourceCancel, resourceOK;
+      
+      String dataSourceType;
+      String currentDB_ColumnName;
+      String currentColumnClass;
+      String currentColumnTypeName;
+      String  resourceMessage;
+      
+      String resourceTitle;
+      String resourceCancel;
+      String resourceOK;
+      
       Object currentContentData;
       int keyColumn = 0;
 
@@ -1904,7 +1926,7 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
                      while (keyIterator.hasNext())
                      {
                         currentDB_ColumnName = keyIterator.next();
-                        currentColumnType = columnTypeHashMap.get(
+                        currentColumnTypeName = columnTypeNameHashMap.get(
                                      parseColumnNameField(currentDB_ColumnName));
                         currentColumnClass = columnClassHashMap.get(
                                      parseColumnNameField(currentDB_ColumnName));
@@ -1936,7 +1958,7 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
 
                            // Reformat date keys.
                            
-                           if (currentColumnType.equals("DATE"))
+                           if (currentColumnTypeName.equals("DATE"))
                            {
                               // MySQL, MariaDB, & Oracle Require Special Handling.
                               if (dataSourceType.equals(ConnectionManager.MYSQL)
@@ -1968,7 +1990,7 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
                                                            + "' AND ");
                               }
                            }
-                           else if (currentColumnType.equals("DATETIME"))
+                           else if (currentColumnTypeName.equals("DATETIME"))
                            {
                               String dateString = (String) currentContentData;
                               
@@ -2511,9 +2533,9 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    // Class method to allow classes to obtain the columnTypeHashMap.
    //==============================================================
 
-   public HashMap<String, String> getColumnTypeHashMap()
+   public HashMap<String, String> getColumnTypeNameHashMap()
    {
-      return columnTypeHashMap;
+      return columnTypeNameHashMap;
    }
 
    //==============================================================
