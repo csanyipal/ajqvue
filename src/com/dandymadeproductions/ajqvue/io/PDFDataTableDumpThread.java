@@ -8,8 +8,8 @@
 //                << PDFDataTableDumpThread.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 06/05/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production PDFDataTableDumpThread Class.
+//         1.1 Changed Class Instance tableColumnTypeHashMap to tableColumn
+//             TypeNameHashMap.
 //
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -72,14 +74,14 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * dump a TableTabPanel summary table data to a local pdf file.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/05/2018
  */
 
 public class PDFDataTableDumpThread implements PdfPageEvent, Runnable
 {
    // Class Instances
    private JTable summaryListTable;
-   private HashMap<String, String> tableColumnTypeHashMap;
+   private HashMap<String, String> tableColumnTypeNameHashMap;
    private String exportedTable, fileName;
    private DataExportProperties pdfDataExportOptions;
    private PdfTemplate pdfTemplate;
@@ -93,11 +95,11 @@ public class PDFDataTableDumpThread implements PdfPageEvent, Runnable
    // PDFDataDumpThread Constructor.
    //==============================================================
 
-   public PDFDataTableDumpThread(JTable summaryListTable, HashMap<String, String> tableColumnTypeHashMap,
+   public PDFDataTableDumpThread(JTable summaryListTable, HashMap<String, String> tableColumnTypeNameHashMap,
                                  String exportedTable, String fileName)
    {
       this.summaryListTable = summaryListTable;
-      this.tableColumnTypeHashMap = tableColumnTypeHashMap;
+      this.tableColumnTypeNameHashMap = tableColumnTypeNameHashMap;
       this.exportedTable = exportedTable;
       this.fileName = fileName;
    }
@@ -190,9 +192,9 @@ public class PDFDataTableDumpThread implements PdfPageEvent, Runnable
          pdfTable.addCell(rowHeaderCell);
          columnWidths[i] = Math.min(50000, Math.max(columnWidths[i],
                                     rowHeaderBaseFont.getWidth(currentTableFieldName + " ")));
-         if (tableColumnTypeHashMap != null)
+         if (tableColumnTypeNameHashMap != null)
             summaryListTableNameTypes.put(Integer.toString(i),
-                                          tableColumnTypeHashMap.get(currentTableFieldName));
+                                          tableColumnTypeNameHashMap.get(currentTableFieldName));
          else
             summaryListTableNameTypes.put(Integer.toString(i), "String");
       }
