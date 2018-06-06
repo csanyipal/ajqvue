@@ -8,8 +8,8 @@
 //             << TableTabInterface.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 06/06/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production TableTabInterface Class.
+//         1.1 Changed Interface getColumnTypeHashMap() to getColumnTypeNameHashMap().
 //
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -53,7 +54,7 @@ import javax.swing.JTable;
  * application with other classes.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/06/2018
  */
 
 interface TableTabInterface
@@ -248,10 +249,11 @@ interface TableTabInterface
    HashMap<String, String> getColumnClassHashMap();
 
    //==============================================================
-   // Class method to allow classes to obtain the columnTypeHashMap.
+   // Class method to allow classes to obtain the columnTypeName
+   // HashMap.
    //==============================================================
 
-   HashMap<String, String> getColumnTypeHashMap();
+   HashMap<String, String> getColumnTypeNameHashMap();
 
    //==============================================================
    // Class method to allow classes to obtain the columnSizeHashMap.
