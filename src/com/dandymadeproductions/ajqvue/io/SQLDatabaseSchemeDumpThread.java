@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 05/29/2018
+// Version 1.4 06/06/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -39,6 +39,8 @@
 //             Removed dbConnection Argument to generateHeaders(). Removed Class
 //             Methods generateHeaders() & genCommentSep(). Organized Imports.
 //         1.3 Changed/Updated Import for TableDefinitionGenerator Class.
+//         1.4 Method run() Removed Instance dbIdentifierQuoteString Since Code
+//             to Determine exportedTable Derived From Utils.getSchemaTableName().
 //                         
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -52,6 +54,7 @@ import java.util.Iterator;
 
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
+import com.dandymadeproductions.ajqvue.utilities.Utils;
 import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
 
 /**
@@ -61,7 +64,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
  * to prematurely terminate the dump.
  * 
  * @author Dana Proctor
- * @version 1.3 05/29/2018
+ * @version 1.4 06/06/2018
  */
 
 public class SQLDatabaseSchemeDumpThread extends SQLDump implements Runnable
@@ -86,7 +89,7 @@ public class SQLDatabaseSchemeDumpThread extends SQLDump implements Runnable
    {
       // Class Method Instances.
       Iterator<String> tableNamesIterator;
-      String exportedTable, dbIdentifierQuoteString;
+      String exportedTable;
       Object dumpData;
 
       // Get Connection to Database.
@@ -94,9 +97,6 @@ public class SQLDatabaseSchemeDumpThread extends SQLDump implements Runnable
 
       if (dbConnection == null)
          return;
-
-      //identifierQuoteString = DBTablesPanel.getDataExportProperties().getIdentifierQuoteString();
-      dbIdentifierQuoteString = ConnectionManager.getIdentifierQuoteString();
 
       // Create a progress bar for giving the user a
       // visual and cancel ability.
@@ -120,17 +120,8 @@ public class SQLDatabaseSchemeDumpThread extends SQLDump implements Runnable
          databaseDumpProgressBar.setCurrentValue(i + 1);
 
          // Properly construct the schema.table.
-
-         exportedTable = tableNamesIterator.next();
-         if (exportedTable.indexOf(".") != -1)
-         {
-            exportedTable = dbIdentifierQuoteString + exportedTable.substring(0, exportedTable.indexOf("."))
-                            + dbIdentifierQuoteString + "." + dbIdentifierQuoteString
-                            + exportedTable.substring(exportedTable.indexOf(".") + 1) + dbIdentifierQuoteString;
-         }
-         else
-            exportedTable = dbIdentifierQuoteString + exportedTable + dbIdentifierQuoteString;
-
+         exportedTable = Utils.getSchemaTableName(tableNamesIterator.next());
+         
          dumpData = dumpData + genCommentSep("Table structure for table " + exportedTable);
 
          dumpData = dumpData
