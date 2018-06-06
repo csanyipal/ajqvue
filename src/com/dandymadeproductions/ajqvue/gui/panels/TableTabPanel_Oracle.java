@@ -12,8 +12,8 @@
 //              << TableTabPanel_Oracle.java >>
 //
 //================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 07/28/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.2 06/06/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,10 @@
 //=================================================================
 // Version 1.0 Production TableTabPanel_Oracle Class.
 //         1.1 Method getColumnNames() Instance rs.close() Before Reuse.
+//         1.2 Code Formatting Instances, One per Line. Methods getColumnNames(),
+//             loadTable(), viewSelectedItem(), addItem(), & editSelectedItem().
+//             Changed Class Instance columnType to columnTypeName. Changed to
+//             TableTabPanel Instance columnTypeNameHashMap.
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -78,7 +82,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * provides the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.1 07/28/2017
+ * @version 1.2 06/06/2018
  */
 
 public class TableTabPanel_Oracle extends TableTabPanel
@@ -113,9 +117,13 @@ public class TableTabPanel_Oracle extends TableTabPanel
       DatabaseMetaData dbMetaData;
       ResultSetMetaData tableMetaData;
 
-      String databaseName, schemaName, tableName;
-      String colNameString, comboBoxNameString;
-      String columnClass, columnType;
+      String databaseName;
+      String schemaName;
+      String tableName;
+      String colNameString;
+      String comboBoxNameString;
+      String columnClass;
+      String columnTypeName;
       Integer columnSize;
 
       // Connecting to the data base, to obtain
@@ -206,40 +214,40 @@ public class TableTabPanel_Oracle extends TableTabPanel
             colNameString = tableMetaData.getColumnName(i);
             comboBoxNameString = parseColumnNameField(colNameString);
             columnClass = tableMetaData.getColumnClassName(i);
-            columnType = tableMetaData.getColumnTypeName(i);
+            columnTypeName = tableMetaData.getColumnTypeName(i);
             columnSize = Integer.valueOf(tableMetaData.getColumnDisplaySize(i));
 
             // System.out.println(i + " " + colNameString + " " +
             // comboBoxNameString + " " +
-            // columnClass + " " + columnType + " " +
+            // columnClass + " " + columnTypeName + " " +
             // columnSize);
 
             // This going to be a problem so skip this column.
 
-            if (columnClass == null && columnType == null)
+            if (columnClass == null && columnTypeName == null)
                continue;
 
             if (columnClass == null)
             {
-               if (columnType.toUpperCase(Locale.ENGLISH).equals("BINARY_FLOAT"))
+               if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("BINARY_FLOAT"))
                {
                   columnClass = "java.lang.Float";
-                  columnType = "FLOAT";
+                  columnTypeName = "FLOAT";
                }
-               else if (columnType.toUpperCase(Locale.ENGLISH).equals("BINARY_DOUBLE"))
+               else if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("BINARY_DOUBLE"))
                {
                   columnClass = "java.lang.Double";
-                  columnType = "DOUBLE";
+                  columnTypeName = "DOUBLE";
                }
                else
-                  columnClass = columnType;
+                  columnClass = columnTypeName;
             }
 
             // Process & Store.
 
             columnNamesHashMap.put(comboBoxNameString, colNameString);
             columnClassHashMap.put(comboBoxNameString, columnClass);
-            columnTypeHashMap.put(comboBoxNameString, columnType.toUpperCase(Locale.ENGLISH));
+            columnTypeNameHashMap.put(comboBoxNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
             columnSizeHashMap.put(comboBoxNameString, columnSize);
             if (comboBoxNameString.length() < 5)
                preferredColumnSizeHashMap.put(comboBoxNameString,
@@ -257,10 +265,10 @@ public class TableTabPanel_Oracle extends TableTabPanel
             sqlTableFieldsString += identifierQuoteString + colNameString + identifierQuoteString + ", ";
             
             // Collect LOBs.
-            if (((columnType.toUpperCase(Locale.ENGLISH).indexOf("BLOB") != -1)
-                  || (columnType.toUpperCase(Locale.ENGLISH).indexOf("RAW") != -1)
-                  || (columnType.toUpperCase(Locale.ENGLISH).indexOf("LONG") != -1)
-                  || (columnType.toUpperCase(Locale.ENGLISH).indexOf("CLOB") != -1))
+            if (((columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("BLOB") != -1)
+                  || (columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("RAW") != -1)
+                  || (columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("LONG") != -1)
+                  || (columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("CLOB") != -1))
                  && !primaryKeys.contains(colNameString))
             {
                lobDataTypesHashMap.put(comboBoxNameString, colNameString);
@@ -272,7 +280,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
             // SESSION TIMEZONE NOT SET. Were not going to do this at the
             // connection or ALTER SESSION. Only 10, not 11.
 
-            if (columnType.toUpperCase(Locale.ENGLISH).equals("TIMESTAMPLTZ"))
+            if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("TIMESTAMPLTZ"))
             {
                sqlTableFieldsStringLTZ += "TO_CHAR(" + identifierQuoteString + colNameString
                                           + identifierQuoteString + ", 'YYYY-MM-DD HH24:MM:SS TZR') AS "
@@ -286,7 +294,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
             // Special Column Fields.
 
             if (columnClass.indexOf("Boolean") != -1 && columnSize.intValue() == 1)
-               columnEnumHashMap.put(parseColumnNameField(colNameString), columnType);
+               columnEnumHashMap.put(parseColumnNameField(colNameString), columnTypeName);
 
             if (primaryKeys.contains(colNameString))
             {
@@ -409,11 +417,15 @@ public class TableTabPanel_Oracle extends TableTabPanel
       ResultSet rs;
 
       StringBuffer searchQueryString;
-      String columnSearchString, searchTextString;
+      String columnSearchString;
+      String searchTextString;
       String lobLessFieldsString;
-      String columnName, columnClass, columnType;
+      String columnName;
+      String columnClass;
+      String columnTypeName;
       Integer keyLength;
-      int columnSize, preferredColumnSize;
+      int columnSize;
+      int preferredColumnSize;
       Object currentContentData;
 
       // Obtain search parameters, column names as needed and
@@ -441,15 +453,15 @@ public class TableTabPanel_Oracle extends TableTabPanel
             for (int i = 0; i < tableColumns.length; i++)
             {
                columnName = tableColumns[i].replaceAll(identifierQuoteString, "");
-               columnType = columnTypeHashMap.get(parseColumnNameField(columnName.trim()));
+               columnTypeName = columnTypeNameHashMap.get(parseColumnNameField(columnName.trim()));
                
                String searchString = searchTextString;
                
-               if (columnType.equals("BFILE") || columnType.equals("LONG")
-                   || columnType.equals("BLOB"))
+               if (columnTypeName.equals("BFILE") || columnTypeName.equals("LONG")
+                   || columnTypeName.equals("BLOB"))
                   continue;
                
-               if (columnType.equals("DATE"))
+               if (columnTypeName.equals("DATE"))
                {
                   searchString = Utils.processDateFormatSearch(searchString);
                   
@@ -475,15 +487,15 @@ public class TableTabPanel_Oracle extends TableTabPanel
          // Field specified.
          else
          {
-            columnType = columnTypeHashMap.get(searchComboBox.getSelectedItem());
+            columnTypeName = columnTypeNameHashMap.get(searchComboBox.getSelectedItem());
             
-            if (columnType.equals("DATE"))
+            if (columnTypeName.equals("DATE"))
             {
                searchTextString = Utils.processDateFormatSearch(searchTextString);
                searchQueryString.append(identifierQuoteString + columnSearchString + identifierQuoteString
                                         + " LIKE TO_DATE('" + searchTextString + "', 'YYYY-MM-dd')");  
             }
-            else if (columnType.equals("TIMESTAMP"))
+            else if (columnTypeName.equals("TIMESTAMP"))
             {
                if (searchTextString.indexOf(" ") != -1)
                   searchTextString = Utils.processDateFormatSearch(
@@ -656,14 +668,14 @@ public class TableTabPanel_Oracle extends TableTabPanel
                String currentHeading = headings.next();
                columnName = columnNamesHashMap.get(currentHeading);
                columnClass = columnClassHashMap.get(currentHeading);
-               columnType = columnTypeHashMap.get(currentHeading);
+               columnTypeName = columnTypeNameHashMap.get(currentHeading);
                columnSize = (columnSizeHashMap.get(currentHeading)).intValue();
                keyLength = keyLengthHashMap.get(columnName);
                preferredColumnSize = ((Integer) preferredColumnSizeHashMap.get(currentHeading)).intValue();
 
                // System.out.println(i + " " + j + " " + currentHeading + " " +
                // columnName + " " + columnClass + " " +
-               // columnType + " " + columnSize + " " +
+               // columnTypeName + " " + columnSize + " " +
                // preferredColumnSize + " " + keyLength);
 
                // Storing data appropriately. If you have some date
@@ -684,7 +696,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
 
                   // =============================================
                   // Date
-                  else if (columnType.equals("DATE"))
+                  else if (columnTypeName.equals("DATE"))
                   {
                      currentContentData = rs.getDate(columnName);
                      String displayDate = displayMyDateString(currentContentData + "");
@@ -693,7 +705,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
 
                   // =============================================
                   // Timestamps
-                  else if (columnType.equals("TIMESTAMP"))
+                  else if (columnTypeName.equals("TIMESTAMP"))
                   {
                      currentContentData = rs.getTimestamp(columnName);
                      tableData[i][j++] = (new SimpleDateFormat(
@@ -701,8 +713,8 @@ public class TableTabPanel_Oracle extends TableTabPanel
                         + " HH:mm:ss").format(currentContentData));
                   }
 
-                  else if (columnType.equals("TIMESTAMPTZ") || columnType.equals("TIMESTAMP WITH TIME ZONE")
-                           || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+                  else if (columnTypeName.equals("TIMESTAMPTZ") || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                           || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                   {
                      currentContentData = rs.getTimestamp(columnName);
                      
@@ -711,7 +723,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
                         + " HH:mm:ss Z").format(currentContentData));
                   }
                   
-                  else if (columnType.equals("TIMESTAMPLTZ"))
+                  else if (columnTypeName.equals("TIMESTAMPLTZ"))
                   {
                      currentContentData = rs.getString(columnName);
                      String timestampString = (String) currentContentData;
@@ -726,17 +738,17 @@ public class TableTabPanel_Oracle extends TableTabPanel
 
                   // =============================================
                   // BLOB, RAW, LONG, & CLOB
-                  else if (columnType.equals("BLOB") || columnType.indexOf("RAW") != -1
-                           || columnType.indexOf("CLOB") != -1
-                           || (columnClass.indexOf("String") != -1 && columnType.equals("LONG")))
+                  else if (columnTypeName.equals("BLOB") || columnTypeName.indexOf("RAW") != -1
+                           || columnTypeName.indexOf("CLOB") != -1
+                           || (columnClass.indexOf("String") != -1 && columnTypeName.equals("LONG")))
                   {
                      String blobName;
                      
-                     if (columnType.equals("BLOB"))
+                     if (columnTypeName.equals("BLOB"))
                         blobName = "Blob";
-                     else if (columnType.indexOf("RAW") != -1)
+                     else if (columnTypeName.indexOf("RAW") != -1)
                         blobName = "Raw";
-                     else if (columnType.equals("LONG"))
+                     else if (columnTypeName.equals("LONG"))
                         blobName = "Long";
                      else
                         blobName = "Clob";
@@ -763,7 +775,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
 
                   // =============================================
                   // BFILE
-                  else if (columnType.equals("BFILE"))
+                  else if (columnTypeName.equals("BFILE"))
                   {
                      tableData[i][j++] = "BFILE";
                   }
@@ -771,7 +783,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
                   // =============================================
                   // VARCHAR2/NVARCHAR2/LONG
                   else if (columnClass.indexOf("String") != -1
-                           && (!columnType.equals("CHAR") || !columnType.equals("NCHAR"))
+                           && (!columnTypeName.equals("CHAR") || !columnTypeName.equals("NCHAR"))
                            && columnSize > 255)
                   {
                      String stringName;
@@ -873,9 +885,13 @@ public class TableTabPanel_Oracle extends TableTabPanel
       Statement sqlStatement;
       ResultSet db_resultSet;
 
-      Iterator<String> keyIterator, textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentDB_ColumnName, currentColumnClass, currentColumnType;
+      Iterator<String> keyIterator;
+      Iterator<String> textFieldNamesIterator;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentDB_ColumnName;
+      String currentColumnClass;
+      String currentColumnTypeName;
       int columnSize;
       int keyColumn = 0;
 
@@ -941,8 +957,8 @@ public class TableTabPanel_Oracle extends TableTabPanel
                         currentContentData = ((String) currentContentData).replaceAll("'", "''");
 
                      // Reformat date keys.
-                     currentColumnType = columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
-                     if (currentColumnType.equals("DATE"))
+                     currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                     if (currentColumnTypeName.equals("DATE"))
                      {
                         sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
                                                   + identifierQuoteString + "=TO_DATE('"
@@ -969,21 +985,21 @@ public class TableTabPanel_Oracle extends TableTabPanel
                currentContentData = listTable.getValueAt(rowToView, i);
                currentDB_ColumnName = (String) columnNamesHashMap.get(listTable.getColumnName(i));
                currentColumnClass = columnClassHashMap.get(listTable.getColumnName(i));
-               currentColumnType = columnTypeHashMap.get(listTable.getColumnName(i));
+               currentColumnTypeName = columnTypeNameHashMap.get(listTable.getColumnName(i));
                columnSize = columnSizeHashMap.get(listTable.getColumnName(i)).intValue();
                
                // System.out.println("field:" + currentDB_ColumnName + " class:" + currentColumnClass
-               //                     + " type:" + currentColumnType + " value:" + currentContentData);
+               //                     + " type:" + currentColumnTypeName + " value:" + currentContentData);
                
                // Skip Blob, Text, Clob, Float, BFile & Timestamps Unless NULL.
-               if ((currentColumnType.equals("BLOB") || currentColumnType.indexOf("RAW") != -1)
-                     || ((currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+               if ((currentColumnTypeName.equals("BLOB") || currentColumnTypeName.indexOf("RAW") != -1)
+                     || ((currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
                           && columnSize > 255)
-                         || (currentColumnClass.indexOf("String") != -1 && currentColumnType.equals("LONG")))
-                     || (currentColumnType.indexOf("CLOB") != -1)
-                     || (currentColumnType.indexOf("FLOAT") != -1)
-                     || (currentColumnType.equals("BFILE"))
-                     || (currentColumnType.indexOf("TIMESTAMP") != -1))
+                         || (currentColumnClass.indexOf("String") != -1 && currentColumnTypeName.equals("LONG")))
+                     || (currentColumnTypeName.indexOf("CLOB") != -1)
+                     || (currentColumnTypeName.indexOf("FLOAT") != -1)
+                     || (currentColumnTypeName.equals("BFILE"))
+                     || (currentColumnTypeName.indexOf("TIMESTAMP") != -1))
                {
                   if (currentContentData.toString().toUpperCase(Locale.ENGLISH).equals("NULL"))
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
@@ -1004,7 +1020,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
                      + identifierQuoteString);
                   
                   // Process Date
-                  if (currentColumnType.equals("DATE"))
+                  if (currentColumnTypeName.equals("DATE"))
                   {
                      String dateString = Utils.processDateFormatSearch(
                         (String) currentContentData);
@@ -1048,33 +1064,33 @@ public class TableTabPanel_Oracle extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnType = columnTypeHashMap.get(currentColumnName);
+            currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
 
             // Oracle only provides a one time chance to obtain the result
             // set for LONG RAW fields so just collect BLOB & RAW content once.
 
-            if (currentColumnType.equals("BLOB") || currentColumnType.indexOf("RAW") != -1)
+            if (currentColumnTypeName.equals("BLOB") || currentColumnTypeName.indexOf("RAW") != -1)
                currentContentData = db_resultSet.getBytes(currentDB_ColumnName);
             else
                currentContentData = db_resultSet.getObject(currentDB_ColumnName);
 
             // System.out.println(i + " " + currentColumnName + " " +
             // currentDB_ColumnName + " " +
-            // currentColumnType + " " +
+            // currentColumnTypeName + " " +
             // columnSizeHashMap.get(currentColumnName) +
             // " " + currentContentData);
 
             if (currentContentData != null)
             {
                // DATE Type Field
-               if (currentColumnType.equals("DATE"))
+               if (currentColumnTypeName.equals("DATE"))
                {
                   currentContentData = db_resultSet.getDate(currentDB_ColumnName);
                   tableViewForm.setFormField(currentColumnName, displayMyDateString(currentContentData + ""));
                }
 
                // Timestamps Type Field
-               else if (currentColumnType.equals("TIMESTAMP"))
+               else if (currentColumnTypeName.equals("TIMESTAMP"))
                {
                   currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
                   tableViewForm.setFormField(currentColumnName,
@@ -1084,9 +1100,9 @@ public class TableTabPanel_Oracle extends TableTabPanel
                }
 
                // Timestamps With Time Zone Type Field
-               else if (currentColumnType.equals("TIMESTAMPTZ")
-                        || currentColumnType.equals("TIMESTAMP WITH TIME ZONE")
-                        || currentColumnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+               else if (currentColumnTypeName.equals("TIMESTAMPTZ")
+                        || currentColumnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                        || currentColumnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                {
                   currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
                   tableViewForm.setFormField(currentColumnName,
@@ -1095,7 +1111,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
                }
 
                // Timestamps With Local Time Zone Type Field
-               else if (currentColumnType.equals("TIMESTAMPLTZ"))
+               else if (currentColumnTypeName.equals("TIMESTAMPLTZ"))
                {
                   currentContentData = db_resultSet.getString(currentDB_ColumnName);
                   String timestampString = (String) currentContentData;
@@ -1109,10 +1125,10 @@ public class TableTabPanel_Oracle extends TableTabPanel
                }
 
                // Blob/Raw Type Field
-               else if (currentColumnType.equals("BLOB") || currentColumnType.indexOf("RAW") != -1)
+               else if (currentColumnTypeName.equals("BLOB") || currentColumnTypeName.indexOf("RAW") != -1)
                {
                   String binaryType;
-                  if (currentColumnType.equals("BLOB"))
+                  if (currentColumnTypeName.equals("BLOB"))
                      binaryType = "BLOB";
                   else
                      binaryType = "RAW";
@@ -1130,13 +1146,13 @@ public class TableTabPanel_Oracle extends TableTabPanel
                }
 
                // BFILE Type Field
-               else if (currentColumnType.equals("BFILE"))
+               else if (currentColumnTypeName.equals("BFILE"))
                {
                   tableViewForm.setFormField(currentColumnName, (Object) "BFILE Views Not Supported.");
                }
 
                // CLOB Type Field
-               else if (currentColumnType.indexOf("CLOB") != -1)
+               else if (currentColumnTypeName.indexOf("CLOB") != -1)
                {
                   currentContentData = db_resultSet.getString(currentDB_ColumnName);
 
@@ -1154,9 +1170,9 @@ public class TableTabPanel_Oracle extends TableTabPanel
 
                // VARCHAR2 & LONG
                else if ((currentColumnClass.indexOf("String") != -1 &&
-                         (!currentColumnType.equals("CHAR") || !currentColumnType.equals("NCHAR")) &&
+                         (!currentColumnTypeName.equals("CHAR") || !currentColumnTypeName.equals("NCHAR")) &&
                         (columnSizeHashMap.get(currentColumnName)).intValue() > 255) ||
-                        (currentColumnClass.indexOf("String") != -1 && currentColumnType.equals("LONG")))
+                        (currentColumnClass.indexOf("String") != -1 && currentColumnTypeName.equals("LONG")))
                {
                   if (((String) currentContentData).getBytes().length != 0)
                   {
@@ -1214,15 +1230,17 @@ public class TableTabPanel_Oracle extends TableTabPanel
    public void addItem(Connection dbConnection)
    {
       Iterator<String> textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentColumnClass, currentColumnType;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentColumnClass;
+      String currentColumnTypeName;
 
       // Showing the Table Entry Form
       TableEntryForm addForm = new TableEntryForm("Add Table Entry: ", true, schemaTableName,
                                                   -1, null, primaryKeys,
                                                   autoIncrementHashMap, null,
                                                   formFields, tableViewForm, columnNamesHashMap,
-                                                  columnClassHashMap, columnTypeHashMap,
+                                                  columnClassHashMap, columnTypeNameHashMap,
                                                   columnSizeHashMap, columnEnumHashMap,
                                                   columnSetHashMap);
 
@@ -1255,7 +1273,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
       {
          currentColumnName = textFieldNamesIterator.next();
          currentColumnClass = columnClassHashMap.get(currentColumnName);
-         currentColumnType = columnTypeHashMap.get(currentColumnName);
+         currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
 
          // Auto-Increment Type Field
          if (autoIncrementHashMap.containsKey(currentColumnName))
@@ -1265,42 +1283,42 @@ public class TableTabPanel_Oracle extends TableTabPanel
          }
 
          // DATE Type Field
-         if (currentColumnType.equals("DATE"))
+         if (currentColumnTypeName.equals("DATE"))
          {
             currentContentData = DBTablesPanel.getGeneralDBProperties().getViewDateFormat();
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // TIMESTAMP Type Field
-         if (currentColumnType.equals("TIMESTAMP") || currentColumnType.equals("TIMESTAMPTZ")
-             || currentColumnType.equals("TIMESTAMP WITH TIME ZONE")
-             || currentColumnType.equals("TIMESTAMPLTZ")
-             || currentColumnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+         if (currentColumnTypeName.equals("TIMESTAMP") || currentColumnTypeName.equals("TIMESTAMPTZ")
+             || currentColumnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+             || currentColumnTypeName.equals("TIMESTAMPLTZ")
+             || currentColumnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
          {
             currentContentData = "NOW()";
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // BLOB, & RAW Type Field
-         if (currentColumnType.equals("BLOB") || currentColumnType.indexOf("RAW") != -1)
+         if (currentColumnTypeName.equals("BLOB") || currentColumnTypeName.indexOf("RAW") != -1)
          {
-            if (currentColumnType.equals("BLOB"))
+            if (currentColumnTypeName.equals("BLOB"))
                addForm.setFormField(currentColumnName, (Object) ("BLOB Browse"));
             else
                addForm.setFormField(currentColumnName, (Object) ("RAW Browse"));
          }
 
          // BFILE Field
-         if (currentColumnType.equals("BFILE"))
+         if (currentColumnTypeName.equals("BFILE"))
          {
             addForm.setFormField(currentColumnName, (Object) ("DIRECTORY OBJECT, FILENAME"));
          }
 
          // VARCHAR, LONG, & CLOB Type Field
-         if ((currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+         if ((currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
               && (columnSizeHashMap.get(currentColumnName)).intValue() > 255)
-             || (currentColumnClass.indexOf("String") != -1 && currentColumnType.equals("LONG"))
-             || currentColumnType.indexOf("CLOB") != -1)
+             || (currentColumnClass.indexOf("String") != -1 && currentColumnTypeName.equals("LONG"))
+             || currentColumnTypeName.indexOf("CLOB") != -1)
          {
             addForm.setFormField(currentColumnName, (Object) ("TEXT Browse"));
          }
@@ -1319,9 +1337,13 @@ public class TableTabPanel_Oracle extends TableTabPanel
       Statement sqlStatement;
       ResultSet db_resultSet;
 
-      Iterator<String> keyIterator, textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentDB_ColumnName, currentColumnClass, currentColumnType;
+      Iterator<String> keyIterator;
+      Iterator<String> textFieldNamesIterator;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentDB_ColumnName;
+      String currentColumnClass;
+      String currentColumnTypeName;
       int currentColumnSize;
       int keyColumn = 0;
 
@@ -1330,7 +1352,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
                                                    rowToEdit, this, primaryKeys,
                                                    autoIncrementHashMap, id,
                                                    formFields, tableViewForm,
-                                                   columnNamesHashMap, columnClassHashMap, columnTypeHashMap,
+                                                   columnNamesHashMap, columnClassHashMap, columnTypeNameHashMap,
                                                    columnSizeHashMap, columnEnumHashMap, columnSetHashMap);
 
       if ((((formFields.size() / 2) + 1) * 35) > 400)
@@ -1406,8 +1428,8 @@ public class TableTabPanel_Oracle extends TableTabPanel
                      currentContentData = ((String) currentContentData).replaceAll("'", "''");
 
                   // Reformat date keys.
-                  currentColumnType = columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
-                  if (currentColumnType.equals("DATE"))
+                  currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                  if (currentColumnTypeName.equals("DATE"))
                   {
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
                                                + identifierQuoteString + "=TO_DATE('"
@@ -1437,15 +1459,15 @@ public class TableTabPanel_Oracle extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnType = columnTypeHashMap.get(currentColumnName);
+            currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
             currentColumnSize = (columnSizeHashMap.get(currentColumnName)).intValue();
 
             // Oracle only provides a one time chance to obtain the result
             // set for LONG RAW fields so just collect all BLOB and RAW content.
 
-            if (currentColumnType.equals("BLOB") || currentColumnType.indexOf("RAW") != -1)
+            if (currentColumnTypeName.equals("BLOB") || currentColumnTypeName.indexOf("RAW") != -1)
                currentContentData = db_resultSet.getBytes(currentDB_ColumnName);
-            else if (currentColumnType.equals("BFILE"))
+            else if (currentColumnTypeName.equals("BFILE"))
             {
                // BFILE edits not supported.
                continue;
@@ -1461,7 +1483,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
                setSpecialFieldData(editForm, dbConnection, currentColumnName, currentContentData);
 
             // DATE Type Field
-            else if (currentColumnType.equals("DATE"))
+            else if (currentColumnTypeName.equals("DATE"))
             {
                if (currentContentData != null)
                {
@@ -1475,7 +1497,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
             }
 
             // Timestamps Type Field
-            else if (currentColumnType.equals("TIMESTAMP"))
+            else if (currentColumnTypeName.equals("TIMESTAMP"))
             {
                if (currentContentData != null)
                {
@@ -1491,16 +1513,16 @@ public class TableTabPanel_Oracle extends TableTabPanel
             }
 
             // Timestamps With Time Zone Type Fields
-            else if (currentColumnType.equals("TIMESTAMPTZ")
-                     || currentColumnType.equals("TIMESTAMP WITH TIME ZONE")
-                     || currentColumnType.equals("TIMESTAMPLTZ")
-                     || currentColumnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+            else if (currentColumnTypeName.equals("TIMESTAMPTZ")
+                     || currentColumnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                     || currentColumnTypeName.equals("TIMESTAMPLTZ")
+                     || currentColumnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
             {
                if (currentContentData != null)
                {
-                  if (currentColumnType.equals("TIMESTAMPTZ")
-                      || currentColumnType.equals("TIMESTAMP WITH TIME ZONE")
-                      || currentColumnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+                  if (currentColumnTypeName.equals("TIMESTAMPTZ")
+                      || currentColumnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                      || currentColumnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                   {
                      currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
                      // System.out.println(currentContentData);
@@ -1526,10 +1548,10 @@ public class TableTabPanel_Oracle extends TableTabPanel
             }
 
             // Blob & Raw Type Field
-            else if (currentColumnType.equals("BLOB") || currentColumnType.indexOf("RAW") != -1)
+            else if (currentColumnTypeName.equals("BLOB") || currentColumnTypeName.indexOf("RAW") != -1)
             {
                String binaryType;
-               if (currentColumnType.indexOf("BLOB") != -1)
+               if (currentColumnTypeName.indexOf("BLOB") != -1)
                   binaryType = "BLOB";
                else
                   binaryType = "RAW";
@@ -1552,7 +1574,7 @@ public class TableTabPanel_Oracle extends TableTabPanel
             }
 
             // CLOB
-            else if (currentColumnType.indexOf("CLOB") != -1)
+            else if (currentColumnTypeName.indexOf("CLOB") != -1)
             {
                if (currentContentData != null)
                {
@@ -1574,9 +1596,9 @@ public class TableTabPanel_Oracle extends TableTabPanel
 
             // VARCHAR & LONG
             else if ((currentColumnClass.indexOf("String") != -1 &&
-                     (!currentColumnType.equals("CHAR") || !currentColumnType.equals("NCHAR"))
+                     (!currentColumnTypeName.equals("CHAR") || !currentColumnTypeName.equals("NCHAR"))
                       && currentColumnSize > 255)
-                     || (currentColumnClass.indexOf("String") != -1 && currentColumnType.equals("LONG")))
+                     || (currentColumnClass.indexOf("String") != -1 && currentColumnTypeName.equals("LONG")))
             {
                if (currentContentData != null)
                {

@@ -12,8 +12,8 @@
 //              << TableTabPanel_MSAccess.java >>
 //
 //================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 06/06/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,10 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production TableTabPanel_MSAccess Class.
+//         1.1 Code Formatting Instances, One per Line. Methods getColumnNames(),
+//             loadTable(), viewSelectedItem(), addItem(), & editSelectedItem().
+//             Changed Class Instance columnType to columnTypeName. Changed to
+//             TableTabPanel Instance columnTypeNameHashMap.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -67,7 +71,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/06/2018
  */
 
 public class TableTabPanel_MSAccess extends TableTabPanel
@@ -97,9 +101,13 @@ public class TableTabPanel_MSAccess extends TableTabPanel
       ResultSetMetaData tableMetaData;
 
       String tableName;
-      String tableMetaData_Catalog, tableMetaData_Schema, tableMetaData_Table;
-      String colNameString, comboBoxNameString;
-      String columnClass, columnType;
+      String tableMetaData_Catalog;
+      String tableMetaData_Schema;
+      String tableMetaData_Table;
+      String colNameString;
+      String comboBoxNameString;
+      String columnClass;
+      String columnTypeName;
       Integer columnSize;
 
       // Connecting to the data base, to obtain
@@ -189,32 +197,32 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             colNameString = tableMetaData.getColumnName(i);
             comboBoxNameString = parseColumnNameField(colNameString);
             columnClass = tableMetaData.getColumnClassName(i);
-            columnType = tableMetaData.getColumnTypeName(i);
+            columnTypeName = tableMetaData.getColumnTypeName(i);
             columnSize = Integer.valueOf(tableMetaData.getColumnDisplaySize(i));
 
             // System.out.println(i + " " + colNameString + " " +
             //                     comboBoxNameString + " " +
-            //                     columnClass + " " + columnType + " " +
+            //                     columnClass + " " + columnTypeName + " " +
             //                     columnSize);
 
             // This going to be a problem so skip this column.
 
-            if (columnClass == null && columnType == null)
+            if (columnClass == null && columnTypeName == null)
                continue;
 
             if (columnClass == null)
-               columnClass = columnType;
+               columnClass = columnTypeName;
             
             // Replace Counter with Integer to standardize.
             
-            if (columnType.toUpperCase(Locale.ENGLISH).equals("COUNTER"))
-               columnType = "INTEGER";
+            if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("COUNTER"))
+               columnTypeName = "INTEGER";
 
             // Process & Store.
 
             columnNamesHashMap.put(comboBoxNameString, colNameString);
             columnClassHashMap.put(comboBoxNameString, columnClass);
-            columnTypeHashMap.put(comboBoxNameString, columnType.toUpperCase(Locale.ENGLISH));
+            columnTypeNameHashMap.put(comboBoxNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
             columnSizeHashMap.put(comboBoxNameString, columnSize);
             if (comboBoxNameString.length() < 5)
                preferredColumnSizeHashMap.put(comboBoxNameString,
@@ -232,10 +240,10 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             sqlTableFieldsString += identifierQuoteString + colNameString + identifierQuoteString + ", ";   
 
             // Collect LOBs.
-            if (((columnType.toUpperCase(Locale.ENGLISH).indexOf("BINARY") != -1)
-                  || (columnType.toUpperCase(Locale.ENGLISH).indexOf("LONGCHAR") != -1)
-                  || (columnClass.indexOf("String") != -1 && columnType.toUpperCase(Locale.ENGLISH).equals("TEXT"))
-                  || (columnType.toUpperCase(Locale.ENGLISH).equals("IMAGE")))
+            if (((columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("BINARY") != -1)
+                  || (columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("LONGCHAR") != -1)
+                  || (columnClass.indexOf("String") != -1 && columnTypeName.toUpperCase(Locale.ENGLISH).equals("TEXT"))
+                  || (columnTypeName.toUpperCase(Locale.ENGLISH).equals("IMAGE")))
                   && !primaryKeys.contains(colNameString))
             {
                lobDataTypesHashMap.put(comboBoxNameString, colNameString);
@@ -350,10 +358,14 @@ public class TableTabPanel_MSAccess extends TableTabPanel
       ResultSet rs;
 
       StringBuffer searchQueryString;
-      String columnSearchString, searchTextString;
+      String columnSearchString;
+      String searchTextString;
       String lobLessFieldsString;
-      String columnName, columnClass, columnType;
-      int columnSize, preferredColumnSize;
+      String columnName;
+      String columnClass;
+      String columnTypeName;
+      int columnSize;
+      int preferredColumnSize;
       Integer keyLength;
       int currentRow;
       Object currentContentData;
@@ -381,13 +393,13 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             for (int i = 0; i < tableColumns.length; i++)
             {
                columnName = tableColumns[i].replaceAll(identifierQuoteString, "");
-               columnType = columnTypeHashMap.get(parseColumnNameField(columnName.trim()));
+               columnTypeName = columnTypeNameHashMap.get(parseColumnNameField(columnName.trim()));
                
                String searchString = searchTextString;
                
-               if (columnType.equals("DATE") || columnType.equals("DATETIME"))
+               if (columnTypeName.equals("DATE") || columnTypeName.equals("DATETIME"))
                {
-                  if (columnType.equals("DATE"))
+                  if (columnTypeName.equals("DATE"))
                   {
                      searchString = Utils.processDateFormatSearch(searchString);
                      
@@ -395,7 +407,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                      if (searchString.equals("0"))
                         searchString = searchTextString;
                   }
-                  else if (columnType.equals("DATETIME") || columnType.equals("TIMESTAMP"))
+                  else if (columnTypeName.equals("DATETIME") || columnTypeName.equals("TIMESTAMP"))
                   {
                      if (searchString.indexOf(" ") != -1)
                         searchString = Utils.processDateFormatSearch(
@@ -427,13 +439,13 @@ public class TableTabPanel_MSAccess extends TableTabPanel
          // Field specified.
          else
          {
-            columnType = columnTypeHashMap.get(searchComboBox.getSelectedItem());
+            columnTypeName = columnTypeNameHashMap.get(searchComboBox.getSelectedItem());
             
-            if (columnType.equals("DATE") || columnType.equals("DATETIME"))
+            if (columnTypeName.equals("DATE") || columnTypeName.equals("DATETIME"))
             {
-               if (columnType.equals("DATE"))
+               if (columnTypeName.equals("DATE"))
                   searchTextString = Utils.processDateFormatSearch(searchTextString);
-               else if (columnType.equals("DATETIME") || columnType.equals("TIMESTAMP"))
+               else if (columnTypeName.equals("DATETIME") || columnTypeName.equals("TIMESTAMP"))
                {
                   if (searchTextString.indexOf(" ") != -1)
                      searchTextString = Utils.processDateFormatSearch(
@@ -545,14 +557,14 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                String currentHeading = headings.next();
                columnName = columnNamesHashMap.get(currentHeading);
                columnClass = columnClassHashMap.get(currentHeading);
-               columnType = columnTypeHashMap.get(currentHeading);
+               columnTypeName = columnTypeNameHashMap.get(currentHeading);
                columnSize = (columnSizeHashMap.get(currentHeading)).intValue();
                keyLength = keyLengthHashMap.get(columnName);
                preferredColumnSize = (preferredColumnSizeHashMap.get(currentHeading)).intValue();
 
                // System.out.println(i + " " + j + " " + currentHeading + " " +
                //                   columnName + " " + columnClass + " " +
-               //                   columnType + " " + columnSize + " " +
+               //                   columnTypeName + " " + columnSize + " " +
                //                   preferredColumnSize + " " + keyLength);
 
                // Storing data appropriately. If you have some date
@@ -575,7 +587,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
 
                // =============================================
                // Date
-               else if (columnType.equals("DATE"))
+               else if (columnTypeName.equals("DATE"))
                {
                   currentContentData = rs.getDate(columnName);
                   if (currentContentData == null)
@@ -589,7 +601,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
 
                // =============================================
                // Datetime
-               else if (columnType.equals("DATETIME"))
+               else if (columnTypeName.equals("DATETIME"))
                {
                   currentContentData = rs.getTimestamp(columnName);
                   // System.out.println(currentContentData);
@@ -606,7 +618,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                   
                // =============================================
                // BINARY
-               else if (columnType.indexOf("BINARY") != -1 || columnType.indexOf("IMAGE") != -1)
+               else if (columnTypeName.indexOf("BINARY") != -1 || columnTypeName.indexOf("IMAGE") != -1)
                {
                   // Handles a key Binary/Blob
                   if (keyLength != null)
@@ -642,7 +654,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                
                // =============================================
                // Text
-               else if ((columnType.equals("LONGCHAR") || columnType.equals("TEXT"))
+               else if ((columnTypeName.equals("LONGCHAR") || columnTypeName.equals("TEXT"))
                          && columnSize > 255)
                {
                   String stringName = "Text";
@@ -736,9 +748,13 @@ public class TableTabPanel_MSAccess extends TableTabPanel
       Statement sqlStatement;
       ResultSet db_resultSet;
 
-      Iterator<String> keyIterator, textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentDB_ColumnName, currentColumnClass, currentColumnType;
+      Iterator<String> keyIterator;
+      Iterator<String> textFieldNamesIterator;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentDB_ColumnName;
+      String currentColumnClass;
+      String currentColumnTypeName;
       int columnSize;
       int keyColumn = 0;
 
@@ -765,7 +781,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             while (keyIterator.hasNext())
             {
                currentDB_ColumnName = keyIterator.next();
-               currentColumnType = (String) columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
+               currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
 
                for (int i = 0; i < listTable.getColumnCount(); i++)
                   if (listTable.getColumnName(i).equals(parseColumnNameField(currentDB_ColumnName)))
@@ -804,8 +820,8 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                         currentContentData = ((String) currentContentData).replaceAll("'", "''");
                      
                      // Reformat date keys.
-                     currentColumnType = (String) columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
-                     if (currentColumnType.equals("DATETIME"))
+                     currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                     if (currentColumnTypeName.equals("DATETIME"))
                      {
                         String dateString = (String) currentContentData;
                         
@@ -848,19 +864,19 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                currentContentData = listTable.getValueAt(rowToView, i);
                currentDB_ColumnName = (String) columnNamesHashMap.get(listTable.getColumnName(i));
                currentColumnClass = columnClassHashMap.get(listTable.getColumnName(i));
-               currentColumnType = columnTypeHashMap.get(listTable.getColumnName(i));
+               currentColumnTypeName = columnTypeNameHashMap.get(listTable.getColumnName(i));
                columnSize = columnSizeHashMap.get(listTable.getColumnName(i)).intValue();
                
                // System.out.println("field:" + currentDB_ColumnName + " class:" + currentColumnClass
-               //                     + " type:" + currentColumnType + " value:" + currentContentData);
+               //                     + " type:" + currentColumnTypeName + " value:" + currentContentData);
                
                // Skip Blob, Text, & Float Unless NULL.
-               if ((currentColumnType.indexOf("BINARY") != -1 || currentColumnType.indexOf("IMAGE") != -1)
-                     || (((currentColumnType.equals("LONGCHAR"))
+               if ((currentColumnTypeName.indexOf("BINARY") != -1 || currentColumnTypeName.indexOf("IMAGE") != -1)
+                     || (((currentColumnTypeName.equals("LONGCHAR"))
                            || (currentColumnClass.indexOf("String") != -1
-                                 && currentColumnType.toUpperCase(Locale.ENGLISH).equals("TEXT")))
+                                 && currentColumnTypeName.toUpperCase(Locale.ENGLISH).equals("TEXT")))
                             && (columnSize > 255))
-                     || (currentColumnType.equals("REAL")))
+                     || (currentColumnTypeName.equals("REAL")))
                {
                   if (currentContentData.toString().toUpperCase(Locale.ENGLISH).equals("NULL"))
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
@@ -881,7 +897,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                      + identifierQuoteString);
                   
                   // Process Date
-                  if (currentColumnType.equals("DATE"))
+                  if (currentColumnTypeName.equals("DATE"))
                   {
                      String dateString = Utils.processDateFormatSearch(
                         (String) currentContentData);
@@ -889,7 +905,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                      sqlStatementString.append("='" + dateString + "' ");
                   }
                   // Process DateTime
-                  else if (currentColumnType.equals("DATETIME"))
+                  else if (currentColumnTypeName.equals("DATETIME"))
                   {
                      String content, dateTimeString;
                      content = (String) currentContentData;
@@ -938,16 +954,16 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnType = columnTypeHashMap.get(currentColumnName);
+            currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
             //columnSize = (columnSizeHashMap.get(currentColumnName)).intValue();
 
             //currentContentData = db_resultSet.getString(currentDB_ColumnName);
             //System.out.println(i + " " + currentColumnName + " " +
             //currentDB_ColumnName + " " +
-            //currentColumnType + " " + columnSize + " " + currentContentData);
+            //currentColumnTypeName + " " + columnSize + " " + currentContentData);
 
             // DATE Type Field
-            if (currentColumnType.equals("DATE"))
+            if (currentColumnTypeName.equals("DATE"))
             {
                   currentContentData = db_resultSet.getDate(currentDB_ColumnName);
                   
@@ -959,7 +975,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             }
 
             // DATETIME Type Field
-            else if (currentColumnType.equals("DATETIME"))
+            else if (currentColumnTypeName.equals("DATETIME"))
             {
                
                currentContentData = db_resultSet.getString(currentDB_ColumnName);
@@ -980,8 +996,8 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             }
 
             // Binary/Image Type Field
-            else if (currentColumnType.indexOf("BINARY") != -1 ||
-                     currentColumnType.indexOf("IMAGE") != -1)
+            else if (currentColumnTypeName.indexOf("BINARY") != -1 ||
+                     currentColumnTypeName.indexOf("IMAGE") != -1)
             {
                currentContentData = db_resultSet.getBytes(currentDB_ColumnName);
                
@@ -992,7 +1008,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                   if (((byte[]) currentContentData).length != 0)
                   {
                      int size = ((byte[]) currentContentData).length;
-                     if (currentColumnType.equals("IMAGE"))
+                     if (currentColumnTypeName.equals("IMAGE"))
                      {
                         tableViewForm.setFormField(currentColumnName, (Object) ("IMAGE " + size + " Bytes"));
                         tableViewForm.setFormFieldBlob(currentColumnName, (byte[]) currentContentData);
@@ -1005,7 +1021,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                   }
                   else
                   {
-                     if (currentColumnType.equals("IMAGE"))
+                     if (currentColumnTypeName.equals("IMAGE"))
                         tableViewForm.setFormField(currentColumnName, (Object) "IMAGE 0 Bytes");
                      else
                         tableViewForm.setFormField(currentColumnName, (Object) "BINARY 0 Bytes");
@@ -1014,9 +1030,9 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             }
 
             // Text, Fields
-            else if (((currentColumnType.equals("LONGCHAR"))
+            else if (((currentColumnTypeName.equals("LONGCHAR"))
                       || (currentColumnClass.indexOf("String") != -1
-                          && currentColumnType.toUpperCase(Locale.ENGLISH).equals("TEXT")))
+                          && currentColumnTypeName.toUpperCase(Locale.ENGLISH).equals("TEXT")))
                      && (columnSizeHashMap.get(currentColumnName)).intValue() > 255)
             {
                currentContentData = db_resultSet.getString(currentDB_ColumnName);
@@ -1080,14 +1096,16 @@ public class TableTabPanel_MSAccess extends TableTabPanel
    public void addItem(Connection dbConnection)
    {
       Iterator<String> textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentColumnClass, currentColumnType;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentColumnClass;
+      String currentColumnTypeName;
 
       // Showing the Table Entry Form
       TableEntryForm addForm = new TableEntryForm("Add Table Entry: ", true, schemaTableName,
                                                   -1, null, primaryKeys, autoIncrementHashMap, null,
                                                   formFields, tableViewForm, columnNamesHashMap,
-                                                  columnClassHashMap, columnTypeHashMap,
+                                                  columnClassHashMap, columnTypeNameHashMap,
                                                   columnSizeHashMap, columnEnumHashMap,
                                                   columnSetHashMap);
 
@@ -1120,7 +1138,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
       {
          currentColumnName = textFieldNamesIterator.next();
          currentColumnClass = columnClassHashMap.get(currentColumnName);
-         currentColumnType = columnTypeHashMap.get(currentColumnName);
+         currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
 
          // Auto-Increment Type Field
          if (autoIncrementHashMap.containsKey(currentColumnName))
@@ -1144,31 +1162,31 @@ public class TableTabPanel_MSAccess extends TableTabPanel
          }
 
          // DATE Type Field
-         if (currentColumnType.equals("DATE"))
+         if (currentColumnTypeName.equals("DATE"))
          {
             currentContentData = DBTablesPanel.getGeneralDBProperties().getViewDateFormat();
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // TIMESTAMP Type Field
-         if (currentColumnType.equals("TIMESTAMP") || currentColumnType.equals("TIMESTAMPTZ"))
+         if (currentColumnTypeName.equals("TIMESTAMP") || currentColumnTypeName.equals("TIMESTAMPTZ"))
          {
             currentContentData = "NOW()";
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // BLOB/BYTEA/BINARY Type Field
-         if (currentColumnType.indexOf("BINARY") != -1 || currentColumnType.equals("IMAGE"))
+         if (currentColumnTypeName.indexOf("BINARY") != -1 || currentColumnTypeName.equals("IMAGE"))
          {
-            if (currentColumnType.equals("IMAGE"))
+            if (currentColumnTypeName.equals("IMAGE"))
                addForm.setFormField(currentColumnName, (Object) ("IMAGE Browse"));
             else
                addForm.setFormField(currentColumnName, (Object) ("BINARY Browse"));
          }
 
          // All TEXT, MEDIUMTEXT & LONGTEXT Type Field
-         if (((currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("TEXT"))
-               || (currentColumnType.equals("LONGCHAR")))
+         if (((currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("TEXT"))
+               || (currentColumnTypeName.equals("LONGCHAR")))
              && (columnSizeHashMap.get(currentColumnName)).intValue() > 255)
          {
             addForm.setFormField(currentColumnName, (Object) ("TEXT Browse"));
@@ -1188,9 +1206,13 @@ public class TableTabPanel_MSAccess extends TableTabPanel
       Statement sqlStatement;
       ResultSet db_resultSet;
 
-      Iterator<String> keyIterator, textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentDB_ColumnName, currentColumnClass, currentColumnType;
+      Iterator<String> keyIterator;
+      Iterator<String> textFieldNamesIterator;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentDB_ColumnName;
+      String currentColumnClass;
+      String currentColumnTypeName;
       int currentColumnSize;
       int keyColumn = 0;
 
@@ -1199,7 +1221,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                                                    rowToEdit, this, primaryKeys,
                                                    autoIncrementHashMap, id,
                                                    formFields, tableViewForm, columnNamesHashMap,
-                                                   columnClassHashMap, columnTypeHashMap,
+                                                   columnClassHashMap, columnTypeNameHashMap,
                                                    columnSizeHashMap, columnEnumHashMap,
                                                    columnSetHashMap);
 
@@ -1276,8 +1298,8 @@ public class TableTabPanel_MSAccess extends TableTabPanel
                      currentContentData = ((String) currentContentData).replaceAll("'", "''");
 
                   // Reformat date keys.
-                  currentColumnType = columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
-                  if (currentColumnType.equals("DATETIME"))
+                  currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                  if (currentColumnTypeName.equals("DATETIME"))
                   {
                      String dateString = (String) currentContentData;
                      
@@ -1323,7 +1345,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnType = columnTypeHashMap.get(currentColumnName);
+            currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
             currentColumnSize = (columnSizeHashMap.get(currentColumnName)).intValue();
 
             // Special content from other tables, ComboBoxes, maybe.
@@ -1352,7 +1374,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             }
 
             // DATE Type Field
-            else if (currentColumnType.equals("DATE"))
+            else if (currentColumnTypeName.equals("DATE"))
             {
                currentContentData = db_resultSet.getDate(currentDB_ColumnName);
                
@@ -1367,7 +1389,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             }
             
             // DATETIME Type Field
-            else if (currentColumnType.equals("DATETIME"))
+            else if (currentColumnTypeName.equals("DATETIME"))
             {
                currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
                
@@ -1385,11 +1407,11 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             }
 
             // Binary/Image Type Field
-            else if (currentColumnType.indexOf("BINARY") != -1 ||
-                     currentColumnType.equals("IMAGE"))
+            else if (currentColumnTypeName.indexOf("BINARY") != -1 ||
+                     currentColumnTypeName.equals("IMAGE"))
             {
                String binaryType;
-               if (currentColumnType.equals("IMAGE"))
+               if (currentColumnTypeName.equals("IMAGE"))
                   binaryType = "Image";
                else
                   binaryType = "BINARY";
@@ -1415,7 +1437,7 @@ public class TableTabPanel_MSAccess extends TableTabPanel
             }
 
             // All Text But TinyText Type Field
-            else if (currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+            else if (currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
                      && currentColumnSize > 255)
             {
                currentContentData = db_resultSet.getString(currentDB_ColumnName);

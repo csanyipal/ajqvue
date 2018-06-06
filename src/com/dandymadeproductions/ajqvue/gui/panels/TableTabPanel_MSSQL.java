@@ -12,8 +12,8 @@
 //           << TableTabPanel_MSSQL.java >>
 //
 //================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 07/26/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.2 06/06/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,10 @@
 //=================================================================
 // Version 1.0 Production TableTabPanel_MSSQL Class.
 //         1.1 Method getColumnNames() Instance rs.close() Before Reuse.
+//         1.2 Code Formatting Instances, One per Line. Methods getColumnNames(),
+//             loadTable(), viewSelectedItem(), addItem(), & editSelectedItem().
+//             Changed Class Instance columnType to columnTypeName. Changed to
+//             TableTabPanel Instance columnTypeNameHashMap.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -69,7 +73,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.1 07/26/2017
+ * @version 1.2 06/06/2018
  */
 
 public class TableTabPanel_MSSQL extends TableTabPanel
@@ -98,9 +102,13 @@ public class TableTabPanel_MSSQL extends TableTabPanel
       DatabaseMetaData dbMetaData;
       ResultSetMetaData tableMetaData;
 
-      String databaseName, schemaName, tableName;
-      String colNameString, comboBoxNameString;
-      String columnClass, columnType;
+      String databaseName;
+      String schemaName;
+      String tableName;
+      String colNameString;
+      String comboBoxNameString;
+      String columnClass;
+      String columnTypeName;
       Integer columnSize;
 
       // Connecting to the data base, to obtain
@@ -184,28 +192,28 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             colNameString = tableMetaData.getColumnName(i);
             comboBoxNameString = parseColumnNameField(colNameString);
             columnClass = tableMetaData.getColumnClassName(i);
-            columnType = tableMetaData.getColumnTypeName(i);
+            columnTypeName = tableMetaData.getColumnTypeName(i);
             columnSize = Integer.valueOf(tableMetaData.getColumnDisplaySize(i));
 
             // System.out.println(i + " " + colNameString + " " +
             //                      comboBoxNameString + " " +
-            //                      columnClass + " " + columnType + " " +
+            //                      columnClass + " " + columnTypeName + " " +
             //                      columnSize);
 
             // These going to be a problem so skip these columns.
 
-            if ((columnClass == null && columnType == null)
-                || columnType.toUpperCase(Locale.ENGLISH).equals("TIMESTAMP"))
+            if ((columnClass == null && columnTypeName == null)
+                || columnTypeName.toUpperCase(Locale.ENGLISH).equals("TIMESTAMP"))
                continue;
 
             if (columnClass == null)
-               columnClass = columnType;
+               columnClass = columnTypeName;
 
             // Process & Store.
 
             columnNamesHashMap.put(comboBoxNameString, colNameString);
             columnClassHashMap.put(comboBoxNameString, columnClass);
-            columnTypeHashMap.put(comboBoxNameString, columnType.toUpperCase(Locale.ENGLISH));
+            columnTypeNameHashMap.put(comboBoxNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
             columnSizeHashMap.put(comboBoxNameString, columnSize);
             if (comboBoxNameString.length() < 5)
                preferredColumnSizeHashMap.put(comboBoxNameString,
@@ -223,11 +231,11 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             sqlTableFieldsString += identifierQuoteString + colNameString + identifierQuoteString + ", ";   
 
             // Collect LOBs.
-            if (((columnType.toUpperCase(Locale.ENGLISH).indexOf("BINARY") != -1)
-                  || (columnType.toUpperCase(Locale.ENGLISH).indexOf("IMAGE") != -1)
-                  || (columnType.toUpperCase(Locale.ENGLISH).indexOf("XML") != -1)
+            if (((columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("BINARY") != -1)
+                  || (columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("IMAGE") != -1)
+                  || (columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("XML") != -1)
                   || (columnClass.indexOf("String") != -1 &&
-                      columnType.toUpperCase(Locale.ENGLISH).indexOf("TEXT") != -1))
+                      columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("TEXT") != -1))
                   && !primaryKeys.contains(colNameString))
             {
                lobDataTypesHashMap.put(comboBoxNameString, colNameString);
@@ -237,7 +245,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             // Special Column Fields.
 
             if (columnClass.indexOf("Boolean") != -1 && columnSize.intValue() == 1)
-               columnEnumHashMap.put(parseColumnNameField(colNameString), columnType);
+               columnEnumHashMap.put(parseColumnNameField(colNameString), columnTypeName);
 
             if (primaryKeys.contains(colNameString))
             {
@@ -337,9 +345,12 @@ public class TableTabPanel_MSSQL extends TableTabPanel
       ResultSet rs;
 
       StringBuffer searchQueryString;
-      String columnSearchString, searchTextString;
+      String columnSearchString;
+      String searchTextString;
       String lobLessFieldsString;
-      String columnName, columnClass, columnType;
+      String columnName;
+      String columnClass;
+      String columnTypeName;
       Integer keyLength;
       int columnSize, preferredColumnSize;
       Object currentContentData;
@@ -367,15 +378,15 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             for (int i = 0; i < tableColumns.length; i++)
             {
                columnName = tableColumns[i].replaceAll(identifierQuoteString, "");
-               columnType = columnTypeHashMap.get(parseColumnNameField(columnName.trim()));
+               columnTypeName = columnTypeNameHashMap.get(parseColumnNameField(columnName.trim()));
                
-               if (columnType.indexOf("BINARY") != -1 || columnType.indexOf("IMAGE") != -1
-                   || columnType.indexOf("XML") != -1)
+               if (columnTypeName.indexOf("BINARY") != -1 || columnTypeName.indexOf("IMAGE") != -1
+                   || columnTypeName.indexOf("XML") != -1)
                   continue;
                
                String searchString = searchTextString;
                
-               if (columnType.equals("DATE"))
+               if (columnTypeName.equals("DATE"))
                {
                   searchString = Utils.processDateFormatSearch(searchString);
                   
@@ -383,7 +394,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                   if (searchString.equals("0"))
                      searchString = searchTextString;
                }
-               else if (columnType.indexOf("DATETIME") != -1 || columnType.equals("TIMESTAMP"))
+               else if (columnTypeName.indexOf("DATETIME") != -1 || columnTypeName.equals("TIMESTAMP"))
                {
                   if (searchString.indexOf(" ") != -1)
                      searchString = Utils.processDateFormatSearch(
@@ -402,11 +413,11 @@ public class TableTabPanel_MSSQL extends TableTabPanel
          // Field specified.
          else
          {
-            columnType = columnTypeHashMap.get(searchComboBox.getSelectedItem());
+            columnTypeName = columnTypeNameHashMap.get(searchComboBox.getSelectedItem());
             
-            if (columnType.equals("DATE"))
+            if (columnTypeName.equals("DATE"))
                searchTextString = Utils.processDateFormatSearch(searchTextString);
-            else if (columnType.indexOf("DATETIME") != -1 || columnType.equals("TIMESTAMP"))
+            else if (columnTypeName.indexOf("DATETIME") != -1 || columnTypeName.equals("TIMESTAMP"))
             {
                if (searchTextString.indexOf(" ") != -1)
                   searchTextString = Utils.processDateFormatSearch(
@@ -575,14 +586,14 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                String currentHeading = headings.next();
                columnName = columnNamesHashMap.get(currentHeading);
                columnClass = columnClassHashMap.get(currentHeading);
-               columnType = columnTypeHashMap.get(currentHeading);
+               columnTypeName = columnTypeNameHashMap.get(currentHeading);
                columnSize = (columnSizeHashMap.get(currentHeading)).intValue();
                keyLength = keyLengthHashMap.get(columnName);
                preferredColumnSize = (preferredColumnSizeHashMap.get(currentHeading)).intValue();
 
                // System.out.println(i + " " + j + " " + currentHeading + " " +
                // columnName + " " + columnClass + " " +
-               // columnType + " " + columnSize + " " +
+               // columnTypeName + " " + columnSize + " " +
                // preferredColumnSize + " " + keyLength);
 
                // Storing data appropriately. If you have some date
@@ -604,7 +615,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
 
                   // =============================================
                   // Date
-                  else if (columnType.equals("DATE"))
+                  else if (columnTypeName.equals("DATE"))
                   {
                      currentContentData = rs.getDate(columnName);
                      String displayDate = displayMyDateString(currentContentData + "");
@@ -613,7 +624,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                   
                   // =============================================
                   // Datetime Offset
-                  else if (columnType.equals("DATETIMEOFFSET"))
+                  else if (columnTypeName.equals("DATETIMEOFFSET"))
                   {
                      String dateString, timeString;
                      
@@ -629,7 +640,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                   
                   // =============================================
                   // Datetime
-                  else if (columnType.indexOf("DATETIME") != -1)
+                  else if (columnTypeName.indexOf("DATETIME") != -1)
                   {
                      currentContentData = rs.getTimestamp(columnName);
                      // System.out.println(currentContentData);
@@ -641,7 +652,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
 
                   // =============================================
                   // Timestamps
-                  else if (columnType.equals("TIMESTAMP"))
+                  else if (columnTypeName.equals("TIMESTAMP"))
                   {
                      currentContentData = rs.getTimestamp(columnName);
                      tableData[i][j++] = (new SimpleDateFormat(
@@ -651,8 +662,8 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                   
                   // =============================================
                   // BINARY, & IMAGE
-                  else if ((columnType.toUpperCase(Locale.ENGLISH).indexOf("BINARY") != -1)
-                            || (columnType.toUpperCase(Locale.ENGLISH).indexOf("IMAGE") != -1))
+                  else if ((columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("BINARY") != -1)
+                            || (columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("IMAGE") != -1))
                   {
                      // Handles a key Blob
                      if (keyLength != null)
@@ -683,7 +694,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
 
                   // =============================================
                   // Text & XML
-                  else if (columnClass.indexOf("String") != -1 && columnType.indexOf("CHAR") == -1
+                  else if (columnClass.indexOf("String") != -1 && columnTypeName.indexOf("CHAR") == -1
                            && columnSize > 255)
                   {
                      String stringName;
@@ -784,9 +795,13 @@ public class TableTabPanel_MSSQL extends TableTabPanel
       Statement sqlStatement;
       ResultSet db_resultSet;
 
-      Iterator<String> keyIterator, textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentDB_ColumnName, currentColumnClass, currentColumnType;
+      Iterator<String> keyIterator;
+      Iterator<String> textFieldNamesIterator;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentDB_ColumnName;
+      String currentColumnClass;
+      String currentColumnTypeName;
       // int columnSize = 0;
       int keyColumn = 0;
 
@@ -852,8 +867,8 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                         currentContentData = ((String) currentContentData).replaceAll("'", "''");
                      
                      // Reformat date keys.
-                     currentColumnType = columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
-                     if (currentColumnType.equals("DATE"))
+                     currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                     if (currentColumnTypeName.equals("DATE"))
                      {
                         sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
                                                   + identifierQuoteString + "='"
@@ -888,19 +903,19 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                currentContentData = listTable.getValueAt(rowToView, i);
                currentDB_ColumnName = (String) columnNamesHashMap.get(listTable.getColumnName(i));
                currentColumnClass = columnClassHashMap.get(listTable.getColumnName(i));
-               currentColumnType = columnTypeHashMap.get(listTable.getColumnName(i));
+               currentColumnTypeName = columnTypeNameHashMap.get(listTable.getColumnName(i));
                // columnSize = columnSizeHashMap.get(listTable.getColumnName(i)).intValue();
                
                // System.out.println("field:" + currentDB_ColumnName + " class:" + currentColumnClass
-               //                    + " type:" + currentColumnType + " value:" + currentContentData);
+               //                    + " type:" + currentColumnTypeName + " value:" + currentContentData);
                
                // Skip Blob, Text, & Float Unless NULL.
-               if ((currentColumnType.toUpperCase(Locale.ENGLISH).indexOf("BINARY") != -1)
-                     || (currentColumnType.toUpperCase(Locale.ENGLISH).indexOf("IMAGE") != -1)
-                     || (currentColumnType.toUpperCase(Locale.ENGLISH).indexOf("XML") != -1)
+               if ((currentColumnTypeName.toUpperCase(Locale.ENGLISH).indexOf("BINARY") != -1)
+                     || (currentColumnTypeName.toUpperCase(Locale.ENGLISH).indexOf("IMAGE") != -1)
+                     || (currentColumnTypeName.toUpperCase(Locale.ENGLISH).indexOf("XML") != -1)
                      || (currentColumnClass.indexOf("String") != -1
-                         && currentColumnType.toUpperCase(Locale.ENGLISH).indexOf("TEXT") != -1)
-                     || (currentColumnType.indexOf("FLOAT") != -1))
+                         && currentColumnTypeName.toUpperCase(Locale.ENGLISH).indexOf("TEXT") != -1)
+                     || (currentColumnTypeName.indexOf("FLOAT") != -1))
                {
                   if (currentContentData.toString().toUpperCase(Locale.ENGLISH).equals("NULL"))
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
@@ -921,7 +936,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                      + identifierQuoteString);
                   
                   // Process Date
-                  if (currentColumnType.equals("DATE"))
+                  if (currentColumnTypeName.equals("DATE"))
                   {
                      String dateString = Utils.processDateFormatSearch(
                         (String) currentContentData);
@@ -930,7 +945,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                   }
                   
                   // Process DateTime
-                  else if (currentColumnType.indexOf("DATETIME") != -1 || currentColumnType.equals("TIMESTAMP"))
+                  else if (currentColumnTypeName.indexOf("DATETIME") != -1 || currentColumnTypeName.equals("TIMESTAMP"))
                   {
                      String content, dateTimeString;
                      content = (String) currentContentData;
@@ -978,17 +993,17 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnType = columnTypeHashMap.get(currentColumnName);
+            currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
 
             currentContentData = db_resultSet.getString(currentDB_ColumnName);
             // System.out.println(i + " " + currentColumnName + " " +
             //                    currentDB_ColumnName + " " +
-            //                    currentColumnType + " " + columnSize + " " + currentContentData);
+            //                    currentColumnTypeName + " " + columnSize + " " + currentContentData);
 
             if (currentContentData != null)
             {
                // DATE Type Field
-               if (currentColumnType.equals("DATE"))
+               if (currentColumnTypeName.equals("DATE"))
                {
                   currentContentData = db_resultSet.getDate(currentDB_ColumnName);
                   tableViewForm.setFormField(currentColumnName,
@@ -996,7 +1011,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                }
                
                // DATETIME Type Field
-               else if (currentColumnType.indexOf("DATETIME") != -1)
+               else if (currentColumnTypeName.indexOf("DATETIME") != -1)
                {
                   String dateString = currentContentData + "";
                   dateString = dateString.substring(0, (dateString.indexOf(" ")));
@@ -1009,7 +1024,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                }
 
                // Timestamps Type Field
-               else if (currentColumnType.equals("TIMESTAMP"))
+               else if (currentColumnTypeName.equals("TIMESTAMP"))
                {
                   currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
                   tableViewForm.setFormField(currentColumnName,
@@ -1018,12 +1033,12 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                }
 
                // Binary, Image Type Field
-               else if ((currentColumnType.indexOf("BINARY") != -1)
-                        || (currentColumnType.equals("IMAGE")))
+               else if ((currentColumnTypeName.indexOf("BINARY") != -1)
+                        || (currentColumnTypeName.equals("IMAGE")))
                {
                   String typeName;
                   
-                  if (currentColumnType.indexOf("BINARY") != -1)
+                  if (currentColumnTypeName.indexOf("BINARY") != -1)
                      typeName = "BINARY";
                   else
                      typeName = "IMAGE";
@@ -1041,10 +1056,10 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                }
 
                // Text, & Clob Fields
-               else if ((currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+               else if ((currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
                          && (columnSizeHashMap.get(currentColumnName)).intValue() > 255)
-                        || currentColumnType.indexOf("TEXT") != -1
-                        || currentColumnType.equals("XML"))
+                        || currentColumnTypeName.indexOf("TEXT") != -1
+                        || currentColumnTypeName.equals("XML"))
                {
                   if (((String) currentContentData).getBytes().length != 0)
                   {
@@ -1099,14 +1114,16 @@ public class TableTabPanel_MSSQL extends TableTabPanel
    public void addItem(Connection dbConnection)
    {
       Iterator<String> textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentColumnClass, currentColumnType;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentColumnClass;
+      String currentColumnTypeName;
 
       // Showing the Table Entry Form
       TableEntryForm addForm = new TableEntryForm("Add Table Entry: ", true, schemaTableName,
                                                   -1, null, primaryKeys, autoIncrementHashMap, null,
                                                   formFields, tableViewForm, columnNamesHashMap,
-                                                  columnClassHashMap, columnTypeHashMap,
+                                                  columnClassHashMap, columnTypeNameHashMap,
                                                   columnSizeHashMap, columnEnumHashMap,
                                                   columnSetHashMap);
 
@@ -1139,7 +1156,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
       {
          currentColumnName = textFieldNamesIterator.next();
          currentColumnClass = columnClassHashMap.get(currentColumnName);
-         currentColumnType = columnTypeHashMap.get(currentColumnName);
+         currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
 
          // Auto-Increment Type Field
          if (autoIncrementHashMap.containsKey(currentColumnName))
@@ -1163,22 +1180,22 @@ public class TableTabPanel_MSSQL extends TableTabPanel
          }
 
          // DATE Type Field
-         if (currentColumnType.equals("DATE"))
+         if (currentColumnTypeName.equals("DATE"))
          {
             currentContentData = DBTablesPanel.getGeneralDBProperties().getViewDateFormat();
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // TIME Type Field
-         if (currentColumnType.equals("TIME") || currentColumnType.equals("TIMETZ"))
+         if (currentColumnTypeName.equals("TIME") || currentColumnTypeName.equals("TIMETZ"))
          {
             currentContentData = "hh:mm:ss";
             addForm.setFormField(currentColumnName, currentContentData);
          }
          
          // DATETIME Type Field
-         if (currentColumnType.equals("DATETIME") || currentColumnType.equals("DATETIME2")
-             || currentColumnType.equals("SMALLDATETIME"))
+         if (currentColumnTypeName.equals("DATETIME") || currentColumnTypeName.equals("DATETIME2")
+             || currentColumnTypeName.equals("SMALLDATETIME"))
          {
             currentContentData = DBTablesPanel.getGeneralDBProperties().getViewDateFormat();
             currentContentData = currentContentData + " HH:mm:ss";
@@ -1186,7 +1203,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
          }
          
          // DATETIME OFFSET Type Field
-         if (currentColumnType.equals("DATETIMEOFFSET"))
+         if (currentColumnTypeName.equals("DATETIMEOFFSET"))
          {
             currentContentData = DBTablesPanel.getGeneralDBProperties().getViewDateFormat();
             currentContentData = currentContentData + " HH:mm:ss.nnnnnnn +|-hh:mm";
@@ -1194,17 +1211,17 @@ public class TableTabPanel_MSSQL extends TableTabPanel
          }
 
          // TIMESTAMP Type Field
-         if (currentColumnType.equals("TIMESTAMP"))
+         if (currentColumnTypeName.equals("TIMESTAMP"))
          {
             currentContentData = "";
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // BLOB/BYTEA/BINARY Type Field
-         if (currentColumnType.indexOf("BINARY") != -1
-             || currentColumnType.equals("IMAGE"))
+         if (currentColumnTypeName.indexOf("BINARY") != -1
+             || currentColumnTypeName.equals("IMAGE"))
          {
-            if (currentColumnType.indexOf("BINARY") != -1)
+            if (currentColumnTypeName.indexOf("BINARY") != -1)
                addForm.setFormField(currentColumnName, (Object) ("BINARY Browse"));
             else
                addForm.setFormField(currentColumnName, (Object) ("IMAGE Browse"));
@@ -1212,7 +1229,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
 
          // All TEXT, & XML
          if (currentColumnClass.indexOf("TEXT") != -1
-             || currentColumnType.equals("XML"))
+             || currentColumnTypeName.equals("XML"))
          {
             addForm.setFormField(currentColumnName, (Object) ("TEXT Browse"));
          }
@@ -1231,9 +1248,13 @@ public class TableTabPanel_MSSQL extends TableTabPanel
       Statement sqlStatement;
       ResultSet db_resultSet;
 
-      Iterator<String> keyIterator, textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentDB_ColumnName, currentColumnClass, currentColumnType;
+      Iterator<String> keyIterator;
+      Iterator<String> textFieldNamesIterator;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentDB_ColumnName;
+      String currentColumnClass;
+      String currentColumnTypeName;
       int currentColumnSize;
       int keyColumn = 0;
 
@@ -1242,7 +1263,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                                                    rowToEdit, this, primaryKeys,
                                                    autoIncrementHashMap, id,
                                                    formFields, tableViewForm, columnNamesHashMap,
-                                                   columnClassHashMap, columnTypeHashMap,
+                                                   columnClassHashMap, columnTypeNameHashMap,
                                                    columnSizeHashMap, columnEnumHashMap,
                                                    columnSetHashMap);
 
@@ -1319,8 +1340,8 @@ public class TableTabPanel_MSSQL extends TableTabPanel
                      currentContentData = ((String) currentContentData).replaceAll("'", "''");
 
                   // Reformat date keys.
-                  currentColumnType = columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
-                  if (currentColumnType.equals("DATE"))
+                  currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                  if (currentColumnTypeName.equals("DATE"))
                   {
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
                                                + identifierQuoteString + "='"
@@ -1359,7 +1380,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnType = columnTypeHashMap.get(currentColumnName);
+            currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
             currentColumnSize = (columnSizeHashMap.get(currentColumnName)).intValue();
 
             currentContentData = db_resultSet.getString(currentDB_ColumnName);
@@ -1386,7 +1407,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             }
 
             // DATE Type Field
-            else if (currentColumnType.equals("DATE"))
+            else if (currentColumnTypeName.equals("DATE"))
             {
                if (currentContentData != null)
                {
@@ -1400,7 +1421,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             }
             
             // DATETIME OFFSET Type Field
-            else if (currentColumnType.equals("DATETIMEOFFSET"))
+            else if (currentColumnTypeName.equals("DATETIMEOFFSET"))
             {
                String dateString, timeString;
                
@@ -1423,7 +1444,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             }
             
             // DATETIME Type Field
-            else if (currentColumnType.indexOf("DATETIME") != -1)
+            else if (currentColumnTypeName.indexOf("DATETIME") != -1)
             {
                if (currentContentData != null)
                {
@@ -1441,7 +1462,7 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             }
 
             // Timestamps Type Field
-            else if (currentColumnType.equals("TIMESTAMP"))
+            else if (currentColumnTypeName.equals("TIMESTAMP"))
             {
                if (currentContentData != null)
                {
@@ -1458,11 +1479,11 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             }
 
             // Binary/Image Type Field
-            else if (currentColumnType.indexOf("BINARY") != -1
-                     || currentColumnType.equals("IMAGE"))
+            else if (currentColumnTypeName.indexOf("BINARY") != -1
+                     || currentColumnTypeName.equals("IMAGE"))
             {
                String binaryType;
-               if (currentColumnType.indexOf("BINARY") != -1)
+               if (currentColumnTypeName.indexOf("BINARY") != -1)
                   binaryType = "BINARY";
                else
                   binaryType = "IMAGE";
@@ -1488,9 +1509,9 @@ public class TableTabPanel_MSSQL extends TableTabPanel
             }
 
             // All Text But TinyText & Clob Type Fields
-            else if ((currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+            else if ((currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
                       && currentColumnSize > 255)
-                     || currentColumnType.equals("XML"))
+                     || currentColumnTypeName.equals("XML"))
             {
                if (currentContentData != null)
                {

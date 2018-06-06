@@ -12,8 +12,8 @@
 //            << TableTabPanel_MySQL.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 06/06/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,10 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production TableTabPanel Class.
+//         1.1 Code Formatting Instances, One per Line. Methods getColumnNames(),
+//             loadTable(), viewSelectedItem(), addItem(), & editSelectedItem().
+//             Changed Class Instance columnType to columnTypeName. Changed to
+//             TableTabPanel Instance columnTypeNameHashMap.
 //        
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -66,7 +70,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/06/2018
  */
 
 public class TableTabPanel_MySQL extends TableTabPanel
@@ -94,8 +98,12 @@ public class TableTabPanel_MySQL extends TableTabPanel
       ResultSet db_resultSet;
       ResultSetMetaData tableMetaData;
 
-      String colNameString, comboBoxNameString;
-      String columnClass, columnType, columnKey, columnExtra;
+      String colNameString;
+      String comboBoxNameString;
+      String columnClass;
+      String columnTypeName;
+      String columnKey;
+      String columnExtra;
       Integer columnSize;
 
       // Connecting to the data base, to obtain
@@ -127,10 +135,10 @@ public class TableTabPanel_MySQL extends TableTabPanel
          while (db_resultSet.next())
          {
             colNameString = db_resultSet.getString("Field");
-            columnType = db_resultSet.getString("Type");
+            columnTypeName = db_resultSet.getString("Type");
             columnKey = db_resultSet.getString("Key");
             columnExtra = db_resultSet.getString("Extra");
-            //System.out.println(colNameString + " " + columnType + " " +
+            //System.out.println(colNameString + " " + columnTypeName + " " +
             //columnKey + " " + columnExtra);
 
             if (columnKey.indexOf("PRI") != -1)
@@ -141,11 +149,11 @@ public class TableTabPanel_MySQL extends TableTabPanel
                autoIncrementHashMap.put(parseColumnNameField(colNameString), colNameString);
 
             // Boolean fields are set as enum.
-            if (columnType.indexOf("enum") != -1 || columnType.equals("tinyint(1)"))
-               columnEnumHashMap.put(parseColumnNameField(colNameString), columnType);
+            if (columnTypeName.indexOf("enum") != -1 || columnTypeName.equals("tinyint(1)"))
+               columnEnumHashMap.put(parseColumnNameField(colNameString), columnTypeName);
 
-            if (columnType.indexOf("set") != -1)
-               columnSetHashMap.put(parseColumnNameField(colNameString), columnType);
+            if (columnTypeName.indexOf("set") != -1)
+               columnSetHashMap.put(parseColumnNameField(colNameString), columnTypeName);
          }
          db_resultSet.close();
 
@@ -172,29 +180,29 @@ public class TableTabPanel_MySQL extends TableTabPanel
             colNameString = tableMetaData.getColumnName(i);
             comboBoxNameString = parseColumnNameField(colNameString);
             columnClass = tableMetaData.getColumnClassName(i);
-            columnType = tableMetaData.getColumnTypeName(i);
+            columnTypeName = tableMetaData.getColumnTypeName(i);
             columnSize = Integer.valueOf(tableMetaData.getColumnDisplaySize(i));
 
             // System.out.println(i + " " + colNameString + " " +
             //                    comboBoxNameString + " " +
-            //                    columnClass + " " + columnType + " " +
+            //                    columnClass + " " + columnTypeName + " " +
             //                    columnSize);
 
             // This going to be a problem so skip this column.
 
-            if (columnClass == null && columnType == null)
+            if (columnClass == null && columnTypeName == null)
                continue;
 
             if (columnClass == null)
-               columnClass = columnType;
+               columnClass = columnTypeName;
 
             // Process & Store.
 
             columnNamesHashMap.put(comboBoxNameString, colNameString);
             columnClassHashMap.put(comboBoxNameString, columnClass);
-            columnTypeHashMap.put(comboBoxNameString, columnType.toUpperCase(Locale.ENGLISH));
+            columnTypeNameHashMap.put(comboBoxNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
             
-            if (columnType.toUpperCase(Locale.ENGLISH).equals("VARCHAR") && columnSize <= 0)
+            if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("VARCHAR") && columnSize <= 0)
                columnSize = 2147483647;
             
             columnSizeHashMap.put(comboBoxNameString, columnSize);
@@ -216,9 +224,9 @@ public class TableTabPanel_MySQL extends TableTabPanel
             
             //  Collect LOBs.
             if (((columnClass.indexOf("String") == -1
-                  && columnType.toUpperCase(Locale.ENGLISH).indexOf("BLOB") != -1)
+                  && columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("BLOB") != -1)
                   || (columnClass.indexOf("String") != -1
-                      && !columnType.toUpperCase(Locale.ENGLISH).equals("CHAR")
+                      && !columnTypeName.toUpperCase(Locale.ENGLISH).equals("CHAR")
                       && columnSize.intValue() > 65535)) && !primaryKeys.contains(colNameString))
             {
                lobDataTypesHashMap.put(comboBoxNameString, colNameString);
@@ -288,9 +296,12 @@ public class TableTabPanel_MySQL extends TableTabPanel
       ResultSet rs;
 
       StringBuffer searchQueryString;
-      String columnSearchString, searchTextString;
+      String columnSearchString;
+      String searchTextString;
       String lobLessFieldsString;
-      String columnName, columnClass, columnType;
+      String columnName;
+      String columnClass;
+      String columnTypeName;
       Integer keyLength;
       int columnSize, preferredColumnSize;
       Object currentContentData;
@@ -318,11 +329,11 @@ public class TableTabPanel_MySQL extends TableTabPanel
             for (int i = 0; i < tableColumns.length; i++)
             {
                columnName = tableColumns[i].replaceAll(identifierQuoteString, "");
-               columnType = columnTypeHashMap.get(parseColumnNameField(columnName.trim()));
+               columnTypeName = columnTypeNameHashMap.get(parseColumnNameField(columnName.trim()));
                
                String searchString = searchTextString;
                
-               if (columnType.equals("DATE"))
+               if (columnTypeName.equals("DATE"))
                {
                   searchString = Utils.processDateFormatSearch(searchString);
                   
@@ -330,7 +341,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                   if (searchString.equals("0"))
                      searchString = searchTextString;
                }
-               else if (columnType.equals("DATETIME") || columnType.equals("TIMESTAMP"))
+               else if (columnTypeName.equals("DATETIME") || columnTypeName.equals("TIMESTAMP"))
                {
                   if (searchString.indexOf(" ") != -1)
                      searchString = Utils.processDateFormatSearch(
@@ -339,10 +350,10 @@ public class TableTabPanel_MySQL extends TableTabPanel
                   else if (searchString.indexOf("-") != -1 || searchString.indexOf("/") != -1)
                      searchString = Utils.processDateFormatSearch(searchString);
                }
-               else if (columnType.equals("BIT"))
+               else if (columnTypeName.equals("BIT"))
                   searchString = "B'" + searchString + "'";
                
-               if (columnType.equals("BIT"))
+               if (columnTypeName.equals("BIT"))
                   searchQueryString.append(tableColumns[i] + " LIKE " + searchString);
                else
                   searchQueryString.append(tableColumns[i] + " LIKE '%" + searchString + "%'");
@@ -354,11 +365,11 @@ public class TableTabPanel_MySQL extends TableTabPanel
          // Field specified.
          else
          {
-            columnType = columnTypeHashMap.get(searchComboBox.getSelectedItem());
+            columnTypeName = columnTypeNameHashMap.get(searchComboBox.getSelectedItem());
             
-            if (columnType.equals("DATE"))
+            if (columnTypeName.equals("DATE"))
                searchTextString = Utils.processDateFormatSearch(searchTextString);
-            else if (columnType.equals("DATETIME") || columnType.equals("TIMESTAMP"))
+            else if (columnTypeName.equals("DATETIME") || columnTypeName.equals("TIMESTAMP"))
             {
                if (searchTextString.indexOf(" ") != -1)
                   searchTextString = Utils.processDateFormatSearch(
@@ -367,10 +378,10 @@ public class TableTabPanel_MySQL extends TableTabPanel
                else if (searchTextString.indexOf("-") != -1 || searchTextString.indexOf("/") != -1)
                   searchTextString = Utils.processDateFormatSearch(searchTextString);
             }
-            else if (columnType.equals("BIT"))
+            else if (columnTypeName.equals("BIT"))
                searchTextString = "B'" + searchTextString + "'";
             
-            if (columnType.equals("BIT"))
+            if (columnTypeName.equals("BIT"))
                searchQueryString.append(identifierQuoteString + columnSearchString + identifierQuoteString
                                         + " LIKE " + searchTextString);
             else
@@ -465,14 +476,14 @@ public class TableTabPanel_MySQL extends TableTabPanel
                String currentHeading = headings.next();
                columnName = columnNamesHashMap.get(currentHeading);
                columnClass = columnClassHashMap.get(currentHeading);
-               columnType = columnTypeHashMap.get(currentHeading);
+               columnTypeName = columnTypeNameHashMap.get(currentHeading);
                columnSize = (columnSizeHashMap.get(currentHeading)).intValue();
                keyLength = keyLengthHashMap.get(columnName);
                preferredColumnSize = (preferredColumnSizeHashMap.get(currentHeading)).intValue();
 
                // System.out.println(i + " " + j + " " + currentHeading + " " +
                //                    columnName + " " + columnClass + " " +
-               //                    columnType + " " + columnSize + " " +
+               //                    columnTypeName + " " + columnSize + " " +
                //                    preferredColumnSize + " " + keyLength);
 
                // Storing data appropriately. If you have some date
@@ -493,7 +504,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
 
                   // =============================================
                   // Date
-                  else if (columnType.equals("DATE"))
+                  else if (columnTypeName.equals("DATE"))
                   {
                      currentContentData = rs.getDate(columnName);
                      String displayDate = displayMyDateString(currentContentData + "");
@@ -502,7 +513,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
 
                   // =============================================
                   // Datetime
-                  else if (columnType.equals("DATETIME"))
+                  else if (columnTypeName.equals("DATETIME"))
                   {
                      currentContentData = rs.getTimestamp(columnName);
                      // System.out.println(currentContentData);
@@ -514,7 +525,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
 
                   // =============================================
                   // Timestamp
-                  else if (columnType.equals("TIMESTAMP"))
+                  else if (columnTypeName.equals("TIMESTAMP"))
                   {
                      currentContentData = rs.getTimestamp(columnName);
                      // System.out.println(currentContentData);
@@ -542,7 +553,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
 
                   // =============================================
                   // Year
-                  else if (columnType.equals("YEAR"))
+                  else if (columnTypeName.equals("YEAR"))
                   {
                      String displayYear = currentContentData + "";
                      displayYear = displayYear.trim();
@@ -560,7 +571,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
 
                   // =============================================
                   // Blob
-                  else if (columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1)
+                  else if (columnClass.indexOf("String") == -1 && columnTypeName.indexOf("BLOB") != -1)
                   {
                      String blobName;
 
@@ -604,7 +615,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
 
                   // =============================================
                   // Bit
-                  else if (columnType.indexOf("BIT") != -1)
+                  else if (columnTypeName.indexOf("BIT") != -1)
                   {
                      // The bit field has been defined as a Type [B &
                      // Class -3, VARBINARY. The only way to retrieve
@@ -621,7 +632,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                   
                   // =============================================
                   // Text
-                  else if (columnClass.indexOf("String") != -1 && !columnType.equals("CHAR")
+                  else if (columnClass.indexOf("String") != -1 && !columnTypeName.equals("CHAR")
                            && columnSize > 255)
                   {
                      String stringName;
@@ -732,9 +743,13 @@ public class TableTabPanel_MySQL extends TableTabPanel
       Statement sqlStatement;
       ResultSet db_resultSet;
 
-      Iterator<String> keyIterator, textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentDB_ColumnName, currentColumnClass, currentColumnType;
+      Iterator<String> keyIterator;
+      Iterator<String> textFieldNamesIterator;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentDB_ColumnName;
+      String currentColumnClass;
+      String currentColumnTypeName;
       int columnSize;
       int keyColumn = 0;
 
@@ -784,16 +799,15 @@ public class TableTabPanel_MySQL extends TableTabPanel
                else
                {
                   // Escape single quotes.
-                  currentColumnClass = (String) columnClassHashMap
-                        .get(parseColumnNameField(currentDB_ColumnName));
+                  currentColumnClass = columnClassHashMap.get(parseColumnNameField(currentDB_ColumnName));
                   
                   if (currentColumnClass.indexOf("String") != -1)
                      currentContentData = ((String) currentContentData).replaceAll("'", "''");
 
                   // Reformat date keys.
-                  currentColumnType = columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                  currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
                   
-                  if (currentColumnType.equals("DATE"))
+                  if (currentColumnTypeName.equals("DATE"))
                   {
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
                                                + identifierQuoteString + "='"
@@ -820,17 +834,17 @@ public class TableTabPanel_MySQL extends TableTabPanel
                currentContentData = listTable.getValueAt(rowToView, i);
                currentDB_ColumnName = (String) columnNamesHashMap.get(listTable.getColumnName(i));
                currentColumnClass = columnClassHashMap.get(listTable.getColumnName(i));
-               currentColumnType = columnTypeHashMap.get(listTable.getColumnName(i));
+               currentColumnTypeName = columnTypeNameHashMap.get(listTable.getColumnName(i));
                columnSize = columnSizeHashMap.get(listTable.getColumnName(i)).intValue();
                
                // System.out.println("field:" + currentDB_ColumnName + " class:" + currentColumnClass
-               //                    + " type:" + currentColumnType + " value:" + currentContentData);
+               //                    + " type:" + currentColumnTypeName + " value:" + currentContentData);
                
                // Skip Blob, Text, & Float Unless NULL.
-               if ((currentColumnClass.indexOf("String") == -1 && currentColumnType.indexOf("BLOB") != -1)
-                     || (currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+               if ((currentColumnClass.indexOf("String") == -1 && currentColumnTypeName.indexOf("BLOB") != -1)
+                     || (currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
                          && columnSize > 255)
-                     || (currentColumnType.indexOf("FLOAT") != -1))
+                     || (currentColumnTypeName.indexOf("FLOAT") != -1))
                {
                   if (currentContentData.toString().toUpperCase(Locale.ENGLISH).equals("NULL"))
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
@@ -851,7 +865,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                      + identifierQuoteString);
                   
                   // Process Date
-                  if (currentColumnType.equals("DATE"))
+                  if (currentColumnTypeName.equals("DATE"))
                   {
                      String dateString = Utils.processDateFormatSearch(
                         (String) currentContentData);
@@ -859,7 +873,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                      sqlStatementString.append("='" + dateString + "' ");
                   }
                   // Process DateTime
-                  else if (currentColumnType.equals("DATETIME") || currentColumnType.equals("TIMESTAMP"))
+                  else if (currentColumnTypeName.equals("DATETIME") || currentColumnTypeName.equals("TIMESTAMP"))
                   {
                      String content, dateTimeString;
                      content = (String) currentContentData;
@@ -871,7 +885,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                      sqlStatementString.append("='" + dateTimeString + "' ");
                   }
                   // Process BIT
-                  else if (currentColumnType.indexOf("BIT") != -1)
+                  else if (currentColumnTypeName.indexOf("BIT") != -1)
                   {
                      sqlStatementString.append("=B'" + currentContentData + "' ");
                   }
@@ -912,18 +926,18 @@ public class TableTabPanel_MySQL extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnType = columnTypeHashMap.get(currentColumnName);
+            currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
             columnSize = (columnSizeHashMap.get(currentColumnName)).intValue();
 
             currentContentData = db_resultSet.getString(currentDB_ColumnName);
             // System.out.println(i + " " + currentColumnName + " " +
             // currentDB_ColumnName + " " +
-            // currentColumnType + " " + columnSize + " " + currentContentData);
+            // currentColumnTypeName + " " + columnSize + " " + currentContentData);
 
             if (currentContentData != null)
             {
                // DATE Type Field
-               if (currentColumnType.equals("DATE"))
+               if (currentColumnTypeName.equals("DATE"))
                {
                   currentContentData = db_resultSet.getDate(currentDB_ColumnName);
                   tableViewForm.setFormField(currentColumnName,
@@ -931,7 +945,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                }
 
                // DATETIME Type Field
-               else if (currentColumnType.equals("DATETIME"))
+               else if (currentColumnTypeName.equals("DATETIME"))
                {
                   currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
                   // System.out.println(currentContentData);
@@ -943,7 +957,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                }
 
                // TIMESTAMP Type Field
-               else if (currentColumnType.equals("TIMESTAMP"))
+               else if (currentColumnTypeName.equals("TIMESTAMP"))
                {
                   currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
 
@@ -973,7 +987,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                }
 
                // YEAR Type Field
-               else if (currentColumnType.equals("YEAR"))
+               else if (currentColumnTypeName.equals("YEAR"))
                {
                   String displayYear = currentContentData + "";
                   displayYear = displayYear.trim();
@@ -991,7 +1005,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                }
 
                // Blob Type Field
-               else if (currentColumnClass.indexOf("String") == -1 && currentColumnType.indexOf("BLOB") != -1)
+               else if (currentColumnClass.indexOf("String") == -1 && currentColumnTypeName.indexOf("BLOB") != -1)
                {
                   if (((String) currentContentData).getBytes().length != 0)
                   {
@@ -1006,7 +1020,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                }
 
                // Bit Type Field
-               else if (currentColumnType.equals("BIT"))
+               else if (currentColumnTypeName.equals("BIT"))
                {
                   String byteString = Byte.toString((db_resultSet.getByte(currentDB_ColumnName)));
                   currentContentData = Integer.toBinaryString(Integer.parseInt(byteString));
@@ -1014,7 +1028,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                }
 
                // Text, MediumText & LongText Type Fields
-               else if (currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+               else if (currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
                         && columnSize > 255)
                {
                   if (((String) currentContentData).getBytes().length != 0)
@@ -1070,14 +1084,16 @@ public class TableTabPanel_MySQL extends TableTabPanel
    public void addItem(Connection dbConnection)
    {
       Iterator<String> textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentColumnClass, currentColumnType;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentColumnClass;
+      String currentColumnTypeName;
 
       // Showing the Table Entry Form
       TableEntryForm addForm = new TableEntryForm("Add Table Entry: ", true, schemaTableName,
                                                   -1, null, primaryKeys, autoIncrementHashMap, null,
                                                   formFields, tableViewForm, columnNamesHashMap,
-                                                  columnClassHashMap, columnTypeHashMap,
+                                                  columnClassHashMap, columnTypeNameHashMap,
                                                   columnSizeHashMap, columnEnumHashMap,
                                                   columnSetHashMap);
 
@@ -1110,7 +1126,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
       {
          currentColumnName = textFieldNamesIterator.next();
          currentColumnClass = columnClassHashMap.get(currentColumnName);
-         currentColumnType = columnTypeHashMap.get(currentColumnName);
+         currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
 
          // Auto-Increment Type Field
          if (autoIncrementHashMap.containsKey(currentColumnName))
@@ -1134,48 +1150,48 @@ public class TableTabPanel_MySQL extends TableTabPanel
          }
 
          // DATE Type Field
-         if (currentColumnType.equals("DATE"))
+         if (currentColumnTypeName.equals("DATE"))
          {
             currentContentData = DBTablesPanel.getGeneralDBProperties().getViewDateFormat();
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // TIME Type Field
-         if (currentColumnType.equals("TIME"))
+         if (currentColumnTypeName.equals("TIME"))
          {
             currentContentData = "hh:mm:ss";
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // DATETIME Type Field
-         if (currentColumnType.equals("DATETIME"))
+         if (currentColumnTypeName.equals("DATETIME"))
          {
             currentContentData = DBTablesPanel.getGeneralDBProperties().getViewDateFormat() + " hh:mm:ss";
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // TIMESTAMP Type Field
-         if (currentColumnType.equals("TIMESTAMP"))
+         if (currentColumnTypeName.equals("TIMESTAMP"))
          {
             currentContentData = "NOW()";
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
          // BLOB Type Field
-         if (currentColumnClass.indexOf("String") == -1 && currentColumnType.indexOf("BLOB") != -1)
+         if (currentColumnClass.indexOf("String") == -1 && currentColumnTypeName.indexOf("BLOB") != -1)
          {
             addForm.setFormField(currentColumnName, (Object) ("BLOB Browse"));
          }
 
          // All TEXT, MEDIUMTEXT & LONGTEXT Type Field
-         if (currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+         if (currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
              && ((columnSizeHashMap.get(currentColumnName)).intValue() > 255))
          {
             addForm.setFormField(currentColumnName, (Object) ("TEXT Browse"));
          }
 
          // YEAR Type Field
-         if (currentColumnType.equals("YEAR"))
+         if (currentColumnTypeName.equals("YEAR"))
          {
             currentContentData = "YYYY";
             addForm.setFormField(currentColumnName, currentContentData);
@@ -1195,9 +1211,13 @@ public class TableTabPanel_MySQL extends TableTabPanel
       Statement sqlStatement;
       ResultSet db_resultSet;
 
-      Iterator<String> keyIterator, textFieldNamesIterator;
-      Object currentColumnName, currentContentData;
-      String currentDB_ColumnName, currentColumnClass, currentColumnType;
+      Iterator<String> keyIterator;
+      Iterator<String> textFieldNamesIterator;
+      Object currentColumnName;
+      Object currentContentData;
+      String currentDB_ColumnName;
+      String currentColumnClass;
+      String currentColumnTypeName;
       int currentColumnSize;
       int keyColumn = 0;
 
@@ -1206,7 +1226,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                                                    rowToEdit, this, primaryKeys,
                                                    autoIncrementHashMap, id,
                                                    formFields, tableViewForm, columnNamesHashMap,
-                                                   columnClassHashMap, columnTypeHashMap,
+                                                   columnClassHashMap, columnTypeNameHashMap,
                                                    columnSizeHashMap, columnEnumHashMap,
                                                    columnSetHashMap);
 
@@ -1273,8 +1293,8 @@ public class TableTabPanel_MySQL extends TableTabPanel
                   currentContentData = ((String) currentContentData).replaceAll("'", "''");
 
                // Reformat date keys.
-               currentColumnType = columnTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
-               if (currentColumnType.equals("DATE"))
+               currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
+               if (currentColumnTypeName.equals("DATE"))
                {
                   sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
                                             + identifierQuoteString + "='"
@@ -1303,7 +1323,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnType = columnTypeHashMap.get(currentColumnName);
+            currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
             currentColumnSize = (columnSizeHashMap.get(currentColumnName)).intValue();
 
             currentContentData = db_resultSet.getString(currentDB_ColumnName);
@@ -1330,7 +1350,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
             }
 
             // DATE Type Field
-            else if (currentColumnType.equals("DATE"))
+            else if (currentColumnTypeName.equals("DATE"))
             {
                if (currentContentData != null)
                {
@@ -1344,7 +1364,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
             }
 
             // DATETIME Type Field
-            else if (currentColumnType.equals("DATETIME"))
+            else if (currentColumnTypeName.equals("DATETIME"))
             {
                if (currentContentData != null)
                {
@@ -1362,7 +1382,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
             }
 
             // TIMESTAMP Type Field
-            else if (currentColumnType.equals("TIMESTAMP"))
+            else if (currentColumnTypeName.equals("TIMESTAMP"))
             {
                currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
                // System.out.println(currentContentData);
@@ -1444,7 +1464,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
             }
 
             // YEAR Type Field
-            else if (currentColumnType.equals("YEAR"))
+            else if (currentColumnTypeName.equals("YEAR"))
             {
                currentContentData = db_resultSet.getObject(currentDB_ColumnName);
                String displayYear = currentContentData + "";
@@ -1476,7 +1496,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
             }
 
             // Blob Type Field
-            else if (currentColumnClass.indexOf("String") == -1 && currentColumnType.indexOf("BLOB") != -1)
+            else if (currentColumnClass.indexOf("String") == -1 && currentColumnTypeName.indexOf("BLOB") != -1)
             {
                if (currentContentData != null)
                {
@@ -1497,7 +1517,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
             }
 
             // Bit/Tinyint(1) Type Field
-            else if (currentColumnType.equals("BIT"))
+            else if (currentColumnTypeName.equals("BIT"))
             {
                String byteString = Byte.toString((db_resultSet.getByte(currentDB_ColumnName)));
                currentContentData = Integer.toBinaryString(Integer.parseInt(byteString));
@@ -1505,7 +1525,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
             }
 
             // All Text But TinyText Type Field
-            else if (currentColumnClass.indexOf("String") != -1 && !currentColumnType.equals("CHAR")
+            else if (currentColumnClass.indexOf("String") != -1 && !currentColumnTypeName.equals("CHAR")
                      && currentColumnSize > 255)
             {
                if (currentContentData != null)
