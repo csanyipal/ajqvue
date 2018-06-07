@@ -10,8 +10,8 @@
 //              << SQLDataDumpImportThread.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.2 09/20/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.3 06/07/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@
 // Version 1.0 Production SQLDataDumpImportThread Class.
 //         1.1 Correction Import of Main_JMenuBar.
 //         1.2 Correction run to Main_JMenuBar.
+//         1.3 Code Formatting Instances, One per Line.
 //          
 //-----------------------------------------------------------------
 //             poisonerbg@users.sourceforge.net
@@ -69,15 +70,16 @@ import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
  * to cancel the import.
  * 
  * @author Borislav Gizdov a.k.a. PoisoneR, Dana M. Proctor
- * @version 1.2 09/20/2016
+ * @version 1.4 06/07/2018
  */
 
 public class SQLDataDumpImportThread implements Runnable
 {
    // Class Instance Fields.
-   String fileName;
-   String dataSourceType;
-   boolean validImport, reloadDatabase;
+   private String fileName;
+   private String dataSourceType;
+   private boolean validImport;
+   private boolean reloadDatabase;
 
    //==============================================================
    // SQLDataDumpImportThread Constructor.
@@ -154,9 +156,12 @@ public class SQLDataDumpImportThread implements Runnable
       String currentLine;
       StringBuffer queryStatement;
       String failedQuery;
-      int fileLineLength, line;
-      int currentBatchRows, batchSize;
-      boolean batchSizeEnabled, identityInsertEnabled;
+      int fileLineLength;
+      int line;
+      int currentBatchRows;
+      int batchSize;
+      boolean batchSizeEnabled;
+      boolean identityInsertEnabled;
       
       ProgressBar sqlImportProgressBar;
 
