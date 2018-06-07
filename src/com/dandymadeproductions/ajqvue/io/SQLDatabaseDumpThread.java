@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 06/087/2018
+// Version 1.5 06/07/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -47,6 +47,8 @@
 //             Class Instance columnTypeHashMap Changed to columnTypeNameHashMap.
 //             Replaced in Methods Instance columnType With columnTypeName. Use
 //             of Both isBlob() & isNumerics() in insertReplace/explicitStatementData().
+//         1.5 Corrected in insertReplace/explicitStatementData() Use of dbSchemaTableName
+//             for MSSQL & Derby.
 //                         
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -681,7 +683,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
             {
                sqlStatementString = "SELECT " + columnNamesString.toString() + " FROM "
                                     + "(SELECT *, ROW_NUMBER() OVER (ORDER BY " + firstField + " ASC) "
-                                    + "AS dmprownumber FROM " + schemaTableName + " AS t) AS t1 "
+                                    + "AS dmprownumber FROM " + dbSchemaTableName + " AS t) AS t1 "
                                     + "WHERE t1.dmprownumber BETWEEN "
                                     + (currentTableIncrement + 1) + " AND " + (currentTableIncrement
                                           + limitIncrement);
@@ -689,7 +691,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
             // Derby
             else if (dataSourceType.equals(ConnectionManager.DERBY))
                sqlStatementString = "SELECT " + columnNamesString.toString() + " FROM "
-                                    + schemaTableName + " OFFSET " + currentTableIncrement + " ROWS "
+                                    + dbSchemaTableName + " OFFSET " + currentTableIncrement + " ROWS "
                                     + "FETCH NEXT " + limitIncrement + " ROWS ONLY";
             else
                sqlStatementString = "SELECT " + columnNamesString.toString() + " FROM "
@@ -1150,7 +1152,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
             {
                sqlStatementString = "SELECT " + columnNamesString.toString() + " FROM "
                                     + "(SELECT *, ROW_NUMBER() OVER (ORDER BY " + firstField + " ASC) "
-                                    + "AS dmprownumber FROM " + schemaTableName + " AS t) AS t1 "
+                                    + "AS dmprownumber FROM " + dbSchemaTableName + " AS t) AS t1 "
                                     + "WHERE t1.dmprownumber BETWEEN "
                                     + (currentTableIncrement + 1) + " AND " + (currentTableIncrement
                                           + limitIncrement);
@@ -1158,7 +1160,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
             // Derby
             else if (dataSourceType.equals(ConnectionManager.DERBY))
                sqlStatementString = "SELECT " + columnNamesString.toString() + " FROM "
-                                    + schemaTableName + " OFFSET " + currentTableIncrement + " ROWS "
+                                    + dbSchemaTableName + " OFFSET " + currentTableIncrement + " ROWS "
                                     + "FETCH NEXT " + limitIncrement + " ROWS ONLY"; 
             else
                sqlStatementString = "SELECT " + columnNamesString.toString() + " FROM "
