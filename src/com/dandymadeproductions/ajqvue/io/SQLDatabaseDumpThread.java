@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 05/30/2018
+// Version 1.4 06/087/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,13 @@
 //         1.3 Change in Methods insertReplace/explicitStatementData() for
 //             Additional Condition Check for Utils.isNumerics() for Not
 //             Using Quotes With Numbers.
+//         1.4 Code Formatting for Instances, One per Line. Corrected Error in
+//             dumpDatabaseData() Selection of currentTableTabPanel for Derby.
+//             Same Method Use of Utils.getSchemaTableName(), Adding sqlStatement
+//             String Instance, & Corrected Identifying Class for Error Reporting.
+//             Class Instance columnTypeHashMap Changed to columnTypeNameHashMap.
+//             Replaced in Methods Instance columnType With columnTypeName. Use
+//             of Both isBlob() & isNumerics() in insertReplace/explicitStatementData().
 //                         
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -68,6 +75,7 @@ import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
 import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel;
+import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel_Derby;
 import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel_Generic;
 import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel_HSQL;
 import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel_MSAccess;
@@ -88,7 +96,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
  * the ability to prematurely terminate the dump.
  * 
  * @author Dana Proctor
- * @version 1.3 05/30/2018
+ * @version 1.4 06/07/2018
  */
 
 public class SQLDatabaseDumpThread extends SQLDump implements Runnable
@@ -98,14 +106,20 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
    private ArrayList<String> columnNameFields;
    private HashMap<String, String> tableColumnNames;
    private HashMap<String, String> tableColumnClassHashMap;
-   private HashMap<String, String> tableColumnTypeHashMap;
-   private String dataSourceType, schemaName, tableName;
-   private String dbSchemaTableName, schemaTableName;
-   private String dbIdentifierQuoteString, identifierQuoteString;
+   private HashMap<String, String> tableColumnTypeNameHashMap;
+   private String dataSourceType;
+   private String schemaName;
+   private String tableName;
+   private String dbSchemaTableName;
+   private String schemaTableName;
+   private String dbIdentifierQuoteString;
+   private String identifierQuoteString;
    private TableTabPanel currentTableTabPanel;
 
-   private boolean insertReplaceDump, updateDump;
-   private int limitIncrement, pluralValueLimit;
+   private boolean insertReplaceDump;
+   private boolean updateDump;
+   private int limitIncrement;
+   private int pluralValueLimit;
    private DataExportProperties sqlDataExportOptions;
    private SQLDatabaseDump_ProgressBar databaseDumpProgressBar;
 
@@ -144,7 +158,9 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       Iterator<String> tablesIterator;
       String exportedTable;
       FileOutputStream fileStream;
-      int i, tableCount;
+      String sqlStatementString;
+      int i;
+      int tableCount;
 
       Statement sqlStatement;
       ResultSet rs;
@@ -160,6 +176,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       sqlDataExportOptions = DBTablesPanel.getDataExportProperties();
       identifierQuoteString = sqlDataExportOptions.getIdentifierQuoteString();
       limitIncrement = DBTablesPanel.getGeneralDBProperties().getLimitIncrement();
+      
       if (sqlDataExportOptions.getInsertReplaceUpdate().equals("Insert"))
          pluralValueLimit = sqlDataExportOptions.getInsertPluralSize();
       else
@@ -243,35 +260,25 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                // MSSQL
                else if (dataSourceType.equals(ConnectionManager.MSSQL))
                   currentTableTabPanel = new TableTabPanel_MSSQL(exportedTable, dbConnection, true);
+               // Derby
+               else if (dataSourceType.equals(ConnectionManager.DERBY))
+                  currentTableTabPanel = new TableTabPanel_Derby(exportedTable, dbConnection, true);
                // Generic
                else
                   currentTableTabPanel = new TableTabPanel_Generic(exportedTable, dbConnection, true);
                
-               // Create the appropriate SQL table name qualifier.
-               if (exportedTable.indexOf(".") != -1)
-               {
-                  dbSchemaTableName = dbIdentifierQuoteString
-                                      + exportedTable.substring(0, exportedTable.indexOf("."))
-                                      + dbIdentifierQuoteString + "." + dbIdentifierQuoteString
-                                      + exportedTable.substring(exportedTable.indexOf(".") + 1)
-                                      + dbIdentifierQuoteString;
-                  schemaTableName = identifierQuoteString
-                                    + exportedTable.substring(0, exportedTable.indexOf("."))
-                                    + identifierQuoteString + "." + identifierQuoteString
-                                    + exportedTable.substring(exportedTable.indexOf(".") + 1)
-                                    + identifierQuoteString;
-               }
-               else
-               {
-                  dbSchemaTableName = dbIdentifierQuoteString + exportedTable + dbIdentifierQuoteString;
-                  schemaTableName = identifierQuoteString + exportedTable + identifierQuoteString;
-               }
+               // Create the appropriate SQL table name qualifier for
+               // query and export qualifier.
+               
+               dbSchemaTableName = Utils.getSchemaTableName(exportedTable);
+               schemaTableName = Utils.getSchemaTableName(exportedTable, ConnectionManager.getCatalogSeparator(),
+                                                           identifierQuoteString);
 
                columnNameFields = new ArrayList <String>();
                columnNameFields = currentTableTabPanel.getAllTableHeadings();
                tableColumnNames = currentTableTabPanel.getColumnNamesHashMap();
                tableColumnClassHashMap = currentTableTabPanel.getColumnClassHashMap();
-               tableColumnTypeHashMap = currentTableTabPanel.getColumnTypeHashMap();
+               tableColumnTypeNameHashMap = currentTableTabPanel.getColumnTypeNameHashMap();
 
                // Create Table Statements As Needed.
                if (sqlDataExportOptions.getTableStructure())
@@ -301,16 +308,19 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                // dumped from the table.
 
                if (dataSourceType.equals(ConnectionManager.ORACLE))
-                  rs = sqlStatement.executeQuery("SELECT * FROM " + dbSchemaTableName + " WHERE ROWNUM=1");
+                  sqlStatementString = "SELECT * FROM " + dbSchemaTableName + " WHERE ROWNUM=1";
                else if (dataSourceType.equals(ConnectionManager.MSACCESS))
-                  rs = sqlStatement.executeQuery("SELECT * FROM " + dbSchemaTableName + " AS t");
+                  sqlStatementString = "SELECT * FROM " + dbSchemaTableName + " AS t";
                else if (dataSourceType.equals(ConnectionManager.MSSQL))
-                  rs = sqlStatement.executeQuery("SELECT TOP 1 * FROM " + dbSchemaTableName + " AS t");
+                  sqlStatementString = "SELECT TOP 1 * FROM " + dbSchemaTableName + " AS t";
                else if (dataSourceType.equals(ConnectionManager.DERBY))
-                  rs = sqlStatement.executeQuery("SELECT * FROM " + schemaTableName 
-                                                 + " AS t FETCH FIRST ROW ONLY");
+                  sqlStatementString = "SELECT * FROM " + schemaTableName + " AS t FETCH FIRST ROW ONLY";
                else
-                  rs = sqlStatement.executeQuery("SELECT * FROM " + dbSchemaTableName + " AS t LIMIT 1");
+                  sqlStatementString = "SELECT * FROM " + dbSchemaTableName + " AS t LIMIT 1";
+                  
+               // System.out.println(sqlStatementString);
+               
+               rs = sqlStatement.executeQuery(sqlStatementString);
 
                if (rs.next())
                {
@@ -401,7 +411,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                }
             }
             databaseDumpProgressBar.dispose();
-            ConnectionManager.displaySQLErrors(e, "SQLDataDumpThread dumbDatabaseData()");
+            ConnectionManager.displaySQLErrors(e, "SQLDatabaseDumpThread dumbDatabaseData()");
          }
          finally
          {
@@ -412,7 +422,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
             }
             catch (SQLException sqle)
             {
-               ConnectionManager.displaySQLErrors(sqle, "SQLDataDumpThread dumbDatabaseData()");
+               ConnectionManager.displaySQLErrors(sqle, "SQLDatabaseDumpThread dumbDatabaseData()");
             }
             finally
             {
@@ -445,6 +455,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       StringBuffer columnNamesString;
       StringBuffer oracleColumnNamesString;
       Iterator<String> columnNamesIterator;
+      
       HashMap<Integer, String> autoIncrementFieldIndexes;
       ArrayList<Integer> blobFieldIndexes;
       ArrayList<Integer> bitFieldIndexes;
@@ -455,10 +466,16 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       ArrayList<Integer> yearIndexes;
       ArrayList<Integer> arrayIndexes;
       ArrayList<Integer> numericIndexes;
-      String field, columnClass, columnType;
-      String firstField, sqlFieldValuesString;
+      
+      String field;
+      String columnClass;
+      String columnTypeName;
+      String firstField;
+      String sqlFieldValuesString;
       String expressionType;
-      int rowsCount, currentTableIncrement, currentRow;
+      int rowsCount;
+      int currentTableIncrement;
+      int currentRow;
       int currentPluralValueCount;
       int columnsCount;
 
@@ -501,9 +518,9 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       {
          field = columnNamesIterator.next();
          columnClass = tableColumnClassHashMap.get(field);
-         columnType = tableColumnTypeHashMap.get(field);
+         columnTypeName = tableColumnTypeNameHashMap.get(field);
          // System.out.println("field:" + field + " class:" + columnClass +
-         //                   "type:" + columnType);
+         //                   "type:" + columnTypeName);
 
          // Save the index of autoIncrement entries.
          if (currentTableTabPanel.getAutoIncrementHashMap().containsKey(field))
@@ -519,16 +536,13 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
          }
 
          // Save the index of blob/bytea/binary/image/raw entries.
-         if ((columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1) ||
-             (columnClass.indexOf("BLOB") != -1 && columnType.indexOf("BLOB") != -1) ||
-             (columnType.indexOf("BYTEA") != -1) || (columnType.indexOf("BINARY") != -1) ||
-             (columnType.indexOf("IMAGE")!= -1) || (columnType.indexOf("RAW") != -1))
+         if (Utils.isBlob(columnClass, columnTypeName))
          {
             blobFieldIndexes.add(Integer.valueOf(columnsCount + 1));
          }
 
          // Save the index of bit entries.
-         if (columnType.indexOf("BIT") != -1)
+         if (columnTypeName.indexOf("BIT") != -1)
          {
             if (!dataSourceType.equals(ConnectionManager.MSACCESS)
                 && !dataSourceType.equals(ConnectionManager.MSSQL))
@@ -536,7 +550,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
          }
 
          // Save the index of TimeStamp Fields.
-         if (columnType.indexOf("TIMESTAMP") != -1)
+         if (columnTypeName.indexOf("TIMESTAMP") != -1)
          {
             if (!dataSourceType.equals(ConnectionManager.MSSQL))
                timeStampIndexes.add(Integer.valueOf(columnsCount + 1));
@@ -544,52 +558,47 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
 
          // Save the index of Oracle TimeStamp(TZ) Fields.
          if (dataSourceType.equals(ConnectionManager.ORACLE) &&
-             (columnType.equals("TIMESTAMP") || columnType.equals("TIMESTAMPTZ")
-              || columnType.equals("TIMESTAMP WITH TIME ZONE")
-              || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE")))
+             (columnTypeName.equals("TIMESTAMP") || columnTypeName.equals("TIMESTAMPTZ")
+              || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+              || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE")))
          {
             oracleTimeStamp_TZIndexes.add(Integer.valueOf(columnsCount + 1));
          }
 
          // Save the index of Oracle TimeStamp(LTZ) Fields.
          if (dataSourceType.equals(ConnectionManager.ORACLE) &&
-             columnType.equals("TIMESTAMPLTZ"))
+             columnTypeName.equals("TIMESTAMPLTZ"))
          {
             oracleTimeStamp_LTZIndexes.add(Integer.valueOf(columnsCount + 1));
          }
 
          // Save the index of date entries.
-         if (columnType.equals("DATE"))
+         if (columnTypeName.equals("DATE"))
          {
             dateIndexes.add(Integer.valueOf(columnsCount + 1));
          }
 
          // Save the index of year entries.
-         if (columnType.indexOf("YEAR") != -1)
+         if (columnTypeName.indexOf("YEAR") != -1)
          {
             yearIndexes.add(Integer.valueOf(columnsCount + 1));
          }
 
          // Save the index of array entries.
-         if (columnType.indexOf("_") != -1)
+         if (columnTypeName.indexOf("_") != -1)
          {
             arrayIndexes.add(Integer.valueOf(columnsCount + 1));
          }
          
          // Save the index of numeric entries.
-         if (columnClass.indexOf("Integer") != -1 || columnClass.indexOf("Long") != -1
-             || columnClass.indexOf("Float") != -1 || columnClass.indexOf("Double") != -1
-             || (columnClass.indexOf("Byte") != -1 && columnType.indexOf("CHAR") == -1)
-             || columnClass.indexOf("BigDecimal") != -1 || columnClass.indexOf("Short") != -1
-             || (dataSourceType.equalsIgnoreCase(ConnectionManager.SQLITE)
-                 && Utils.isNumeric(columnClass, columnType)))
+         if (Utils.isNumeric(columnClass, columnTypeName))
          {
             numericIndexes.add(Integer.valueOf(columnsCount + 1));
          }
          
          // Modify Statement as needed for Oracle TIMESTAMPLTZ Fields.
          if (dataSourceType.equals(ConnectionManager.ORACLE) &&
-             columnType.equals("TIMESTAMPLTZ"))
+             columnTypeName.equals("TIMESTAMPLTZ"))
          {
             oracleColumnNamesString.append("TO_CHAR(" + dbIdentifierQuoteString + tableColumnNames.get(field)
                                            + dbIdentifierQuoteString + ", 'YYYY-MM-DD HH24:MM:SS TZR') AS "
@@ -1016,12 +1025,16 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       StringBuffer columnNamesString;
       StringBuffer oracleColumnNamesString;
       Iterator<String> columnNamesIterator;
-      String field, columnClass, columnType;
+      String field;
+      String columnClass;
+      String columnTypeName;
       String firstField;
       
       ArrayList<String> keys;
       StringBuffer keyStringStatement;
-      int rowsCount, currentTableIncrement, currentRow;
+      int rowsCount;
+      int currentTableIncrement;
+      int currentRow;
 
       String sqlStatementString;
       Statement sqlStatement;
@@ -1065,7 +1078,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
          field = columnNamesIterator.next();
 
          if (dataSourceType.equals(ConnectionManager.ORACLE)
-             && (tableColumnTypeHashMap.get(field)).equals("TIMESTAMPLTZ"))
+             && (tableColumnTypeNameHashMap.get(field)).equals("TIMESTAMPLTZ"))
          {
             oracleColumnNamesString.append("TO_CHAR(" + dbIdentifierQuoteString + tableColumnNames.get(field)
                                            + dbIdentifierQuoteString + ", 'YYYY-MM-DD HH24:MM:SS TZR') AS "
@@ -1099,7 +1112,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       }
       catch (SQLException sqle)
       {
-         ConnectionManager.displaySQLErrors(sqle, "SQLDataDumpThread explicitStatementData()");
+         ConnectionManager.displaySQLErrors(sqle, "SQLDatabaseDumpThread explicitStatementData()");
       }
       
       currentTableIncrement = 0;
@@ -1168,9 +1181,9 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                {
                   field = (String) columnNamesIterator.next();
                   columnClass = tableColumnClassHashMap.get(field);
-                  columnType = tableColumnTypeHashMap.get(field);
+                  columnTypeName = tableColumnTypeNameHashMap.get(field);
                   // System.out.println("field:" + field + " class:" + columnClass
-                  //                   + " type:" + columnType);
+                  //                   + " type:" + columnTypeName);
 
                   // Setting up WHERE Statement for Update Dump.
                   if (keys.contains(tableColumnNames.get(field)) && updateDump)
@@ -1188,7 +1201,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                         if (dataSourceType.equals(ConnectionManager.MSACCESS)
                             || dataSourceType.equals(ConnectionManager.DERBY))
                         {
-                           if (columnType.indexOf("CHAR") != -1 || columnType.indexOf("TEXT") != -1)
+                           if (columnTypeName.indexOf("CHAR") != -1 || columnTypeName.indexOf("TEXT") != -1)
                               keyStringStatement.append("'" + keyValue + "' AND ");
                            else
                               keyStringStatement.append(keyValue + " AND ");   
@@ -1205,10 +1218,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                                 + identifierQuoteString + "=";
 
                      // Blob/Bytea/Binary data adding
-                     if ((columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1) ||
-                         (columnClass.indexOf("BLOB") != -1 && columnType.indexOf("BLOB") != -1) ||
-                         (columnType.indexOf("BYTEA") != -1) || (columnType.indexOf("BINARY") != -1) ||
-                         (columnType.indexOf("IMAGE") != -1) || (columnType.indexOf("RAW") != -1))
+                     if (Utils.isBlob(columnClass, columnTypeName))
                      {
                         byte[] theBytes = rs.getBytes(tableColumnNames.get(field));
 
@@ -1278,9 +1288,9 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                         }
 
                         // Setting TimeStamp Fields
-                        else if (columnType.indexOf("TIMESTAMP") != -1 && sqlDataExportOptions.getTimeStamp())
+                        else if (columnTypeName.indexOf("TIMESTAMP") != -1 && sqlDataExportOptions.getTimeStamp())
                         {
-                           if (columnType.indexOf("_") != -1)
+                           if (columnTypeName.indexOf("_") != -1)
                               dumpData = dumpData + "'{NOW()}'. ";
                            else
                            {
@@ -1297,7 +1307,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                         }
                         
                         // Setting SQLite Timestamp
-                        else if (columnType.equals("TIMESTAMP")
+                        else if (columnTypeName.equals("TIMESTAMP")
                                  && dataSourceType.equals(ConnectionManager.SQLITE))
                         {
                            java.sql.Timestamp timestampValue = rs.getTimestamp(tableColumnNames.get(field));
@@ -1309,9 +1319,9 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                         }
 
                         // Setting Oracle TimeStamp(TZ)
-                        else if ((columnType.equals("TIMESTAMP") || columnType.equals("TIMESTAMPTZ")
-                                  || columnType.equals("TIMESTAMP WITH TIME ZONE")
-                                  || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE")) &&
+                        else if ((columnTypeName.equals("TIMESTAMP") || columnTypeName.equals("TIMESTAMPTZ")
+                                  || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                                  || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE")) &&
                                  dataSourceType.equals(ConnectionManager.ORACLE) &&
                                  !sqlDataExportOptions.getTimeStamp())
                         {
@@ -1325,7 +1335,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                         }
 
                         // Setting Date Fields
-                        else if (columnType.equals("DATE"))
+                        else if (columnTypeName.equals("DATE"))
                         {
                            if (dataSourceType.equals(ConnectionManager.ORACLE))
                            {
@@ -1351,7 +1361,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                         // a whole date YYYY-MM-DD. Don't know what else
                         // to do it hangs my imports, but works with
                         // mysql console.
-                        else if (columnType.equals("YEAR"))
+                        else if (columnTypeName.equals("YEAR"))
                         {
                            String yearValue = rs.getString(tableColumnNames.get(field));
                            
@@ -1367,7 +1377,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                         }
 
                         // Setting Bit Fields
-                        else if (columnType.indexOf("BIT") != -1)
+                        else if (columnTypeName.indexOf("BIT") != -1)
                         {
                            String bitValue = rs.getString(tableColumnNames.get(field));
                            
@@ -1376,7 +1386,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                               if (dataSourceType.equals(ConnectionManager.POSTGRESQL)
                                   || dataSourceType.equals(ConnectionManager.HSQL2))
                               {
-                                 if (columnType.indexOf("_") != -1)
+                                 if (columnTypeName.indexOf("_") != -1)
                                     dumpData = dumpData + "'" + bitValue + "', ";
                                  else
                                     dumpData = dumpData + "B'" + bitValue + "', ";
@@ -1429,18 +1439,13 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
 
                            if (contentString != null)
                            {
-                              if (columnType.equals("TIMESTAMPLTZ") &&
+                              if (columnTypeName.equals("TIMESTAMPLTZ") &&
                                   dataSourceType.equals(ConnectionManager.ORACLE))
                                  dumpData = dumpData + "TO_TIMESTAMP_TZ('" + contentString
                                             + "', 'YYYY-MM-DD HH24:MI:SS TZH:TZM'), ";
                               
                               // Don't quote numbers.
-                              else if (columnClass.indexOf("Integer") != -1 || columnClass.indexOf("Long") != -1
-                                       || columnClass.indexOf("Float") != -1 || columnClass.indexOf("Double") != -1
-                                       || (columnClass.indexOf("Byte") != -1 && columnType.indexOf("CHAR") == -1)
-                                       || columnClass.indexOf("BigDecimal") != -1 || columnClass.indexOf("Short") != -1
-                                       || (dataSourceType.equalsIgnoreCase(ConnectionManager.SQLITE)
-                                           && Utils.isNumeric(columnClass, columnType)))
+                              else if (Utils.isNumeric(columnClass, columnTypeName))
                               {
                                  dumpData = dumpData + contentString + ", ";
                               }
@@ -1509,7 +1514,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       catch (SQLException e)
       {
          databaseDumpProgressBar.setCanceled(true);
-         ConnectionManager.displaySQLErrors(e, "SQLDataDumpThread explicitStatementData()");
+         ConnectionManager.displaySQLErrors(e, "SQLDatabaseDumpThread explicitStatementData()");
       }
       finally
       {
@@ -1548,7 +1553,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       }
       catch (SQLException e)
       {
-         ConnectionManager.displaySQLErrors(e, "SQLDataDumpThread getRowsCount()");
+         ConnectionManager.displaySQLErrors(e, "SQLDatabaseDumpThread getRowsCount()");
          return rowCount;
       }
       finally
@@ -1560,7 +1565,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
          }
          catch (SQLException sqle)
          {
-            ConnectionManager.displaySQLErrors(sqle, "SQLDataDumpThread getRowsCount()");
+            ConnectionManager.displaySQLErrors(sqle, "SQLDatabaseDumpThread getRowsCount()");
          }
          finally
          {
