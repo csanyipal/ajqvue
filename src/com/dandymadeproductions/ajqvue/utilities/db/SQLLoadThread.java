@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2013-2018 Dana M. Proctor
-// Version 2.8 05/29/2018
+// Version 2.9 06/08/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -77,6 +77,8 @@
 //         2.8 05/29/2018 Moved From DB_To_FileMemoryDB Project to Ajqvue, Changed Package to
 //                        utilities.db in Ajqvue. Changed References to DB_To_FileMemoryDBThread
 //                        to DB_To_DBThread.
+//         2.9 06/08/2018 Method loadData() Used Identifier Quote on firstField & SQLQuery sql
+//                        OracleColumnNames.
 //             
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -103,7 +105,7 @@ import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
  * Memory/File database transfer.
  * 
  * @author Dana M. Proctor
- * @version 2.8 05/29/2018
+ * @version 2.9 06/08/2018
  */
 
 public class SQLLoadThread implements Runnable
@@ -213,9 +215,11 @@ public class SQLLoadThread implements Runnable
       currentTableIncrement = 0;
       currentRow = 0;
 
-      // Start a progress bar for tracking/canceling.
+      // Setup a progress bar for tracking/canceling,
+      // rowsCount and fields.
       
       loadProgressBar = new ProgressBar("SQL Load Data");
+      
       rowsCount = sqlQuery.getRowCount(connectionInstance);
       log(Level.FINE, "SQLLoadThread", "loadData()", "rowsCount: " + rowsCount);
       
@@ -242,17 +246,19 @@ public class SQLLoadThread implements Runnable
          {
             if (useLimits)
             { 
-               // NOTE Needs Work!
+               // NOTE May Need Work!
                // Tested all, but Oracle, and MSSQL.
                
-               firstField = sqlQuery.getColumnNames().get(0);
+               firstField = connectionInstance.getIdentifierQuoteString() + sqlQuery.getColumnNames().get(0)
+                            + connectionInstance.getIdentifierQuoteString();
                
                // Oracle
                if (connectionInstance.getDataSourceType().equals(ConnectionInstance.ORACLE))
                   sqlStatementString = "SELECT * FROM "
                                        + "(SELECT ROW_NUMBER() OVER (ORDER BY " + firstField + " ASC) "
-                                       + "AS dmprownumber, * FROM (" + sqlQuery.getSQLQuery() + ") AS t1)"
-                                       + " WHERE dmprownumber BETWEEN "
+                                       + "AS dmprownumber, " + sqlQuery.getSqlOrcaleColumnNamesString()
+                                       +  " FROM (" + sqlQuery.getSQLQuery() + ") AS t1) "
+                                       + "WHERE dmprownumber BETWEEN "
                                        + (currentTableIncrement + 1) + " AND "
                                        + (currentTableIncrement + limitIncrement);
                
