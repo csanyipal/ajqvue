@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 05/29/2018
+// Version 1.4 06/09/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,6 +36,12 @@
 //         1.2 Added Methods executeSQL() & getRowCount() With Argument
 //             ConnectionInstance.
 //         1.3 Moved to utilities.db Package.
+//         1.4 Added Class Instances sqlColumnNamesString & sqlOracleColumn
+//             NamesString & Setup in Main executeSQL(). Same Method Added
+//             Instances identifierQuoteString & isOracleDB. Code Formatting
+//             for Instances, One per Line. Added Additional try to Main
+//             executeSQL() for Closing db_resultSet. Added Methods getSQL
+//             ColumnNamesString() & getSQLOracleColumnNamesString().
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -61,7 +67,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
  * the characteristics of a SQL query.   
  * 
  * @author Dana M. Proctor
- * @version 1.3 05/29/2018
+ * @version 1.4 06/09/2018
  */
 
 public class SQLQuery
@@ -81,6 +87,9 @@ public class SQLQuery
    private HashMap<String, Integer> columnSizeHashMap;
    private HashMap<String, Integer> columnIsNullableHashMap;
    private HashMap<String, Boolean> columnIsAutoIncrementHashMap;
+   
+   private StringBuilder sqlColumnNamesString;
+   private StringBuilder sqlOracleColumnNamesString;
    
    //==============================================================
    // SQLQuery Constructors
@@ -110,6 +119,9 @@ public class SQLQuery
       columnSizeHashMap = new HashMap <String, Integer>();
       columnIsNullableHashMap = new HashMap <String, Integer>();
       columnIsAutoIncrementHashMap = new HashMap <String, Boolean>();
+      
+      sqlColumnNamesString = new StringBuilder();
+      sqlOracleColumnNamesString = new StringBuilder();
    }
          
    //==============================================================
@@ -171,8 +183,17 @@ public class SQLQuery
       Statement sqlStatement;
       int updateCount;
       
-      String colNameString, columnClass, columnTypeName;
-      int columnType, columnScale, columnPrecision, columnSize, columnIsNullable;
+      String identifierQuoteString;
+      boolean isOracleDB;
+      
+      String colNameString;
+      String columnClass;
+      String columnTypeName;
+      int columnType;
+      int columnScale;
+      int columnPrecision;
+      int columnSize;
+      int columnIsNullable;
       boolean columnIsAutoIncrement;
       
       ResultSet db_resultSet;
@@ -187,7 +208,16 @@ public class SQLQuery
       // Connecting to the data base, to obtain
       // meta data, and column names.
       
+      db_resultSet = null;
       sqlStatement = null;
+      
+      identifierQuoteString = dbConnection.getMetaData().getIdentifierQuoteString();
+      
+      if (dbConnection.getMetaData().getDatabaseProductName().toUpperCase(Locale.ENGLISH).indexOf(
+         "ORACLE") != -1)
+         isOracleDB = true;
+      else
+         isOracleDB = false;
       
       try
       {
@@ -298,8 +328,32 @@ public class SQLQuery
                columnSizeHashMap.put(colNameString, Integer.valueOf(columnSize));
                columnIsNullableHashMap.put(colNameString, Integer.valueOf(columnIsNullable));
                columnIsAutoIncrementHashMap.put(colNameString, Boolean.valueOf(columnIsAutoIncrement));
+               
+               // Quoted modified column names string as needed for
+               // Oracle TIMESTAMPLTZ Fields.
+               
+               if (isOracleDB && columnTypeName.equals("TIMESTAMPLTZ"))
+               {
+                  sqlOracleColumnNamesString.append("TO_CHAR(" + identifierQuoteString + colNameString
+                                                 + identifierQuoteString
+                                                 + ", 'YYYY-MM-DD HH24:MM:SS TZR') AS "
+                                                 + identifierQuoteString + colNameString
+                                                 + identifierQuoteString + ", ");
+               }
+               else
+                  sqlOracleColumnNamesString.append(identifierQuoteString + colNameString
+                                                 + identifierQuoteString + ", ");
+               // Unmodified Quoted Names.
+               sqlColumnNamesString.append(identifierQuoteString + colNameString
+                                           + identifierQuoteString + ", ");
             }
-            db_resultSet.close();
+            if (sqlColumnNamesString.length() != 0)
+            {
+               sqlOracleColumnNamesString.delete((sqlOracleColumnNamesString.length() - 2),
+                                                  sqlOracleColumnNamesString.length());
+               sqlColumnNamesString.delete((sqlColumnNamesString.length() - 2),
+                                            sqlColumnNamesString.length());
+            }
             
             // Looks good so validate.
             validQuery = 1; 
@@ -319,8 +373,23 @@ public class SQLQuery
       }
       finally
       {
-         if (sqlStatement != null)
-            sqlStatement.close();
+         try
+         {
+            if (db_resultSet != null) 
+               db_resultSet.close();
+            
+         }
+         catch (SQLException e)
+         {
+            ConnectionManager.displaySQLErrors(e, "SQLQuery executeSQL()");
+            validQuery = -1;
+            return validQuery;
+         }
+         finally
+         {
+            if (sqlStatement != null)
+               sqlStatement.close();
+         }   
       }
    }
    
@@ -412,6 +481,21 @@ public class SQLQuery
    public HashMap<String, Boolean> getColumnIsAutoIncrementHashMap()
    {
       return columnIsAutoIncrementHashMap;
+   }
+   
+   //==============================================================
+   // Class method to allow classes to obtain the identifier quoted
+   // standard column names and Oracle modified same.
+   //==============================================================
+
+   public StringBuilder getSqlColumnNamesString()
+   {
+      return sqlColumnNamesString;
+   }
+   
+   public StringBuilder getSqlOrcaleColumnNamesString()
+   {
+      return sqlOracleColumnNamesString;
    }
    
    //==============================================================
