@@ -9,8 +9,8 @@
 //                 << CSVQueryDataDumpThread.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 06/09/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,14 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production CSVQueryDataDumpThread Class.
+//         1.1 Code Formatting Instances, One per Line. Class Instance
+//             columnTypeHashMap Changed to run() columnTypeNameHashMap.
+//             Method run() Instance columnType Changed to columnTypeName,
+//             & Use of isBlob() & isText(). Added Class Instance sqlQuery.
+//             Moved Class Instances columnNameFields, columnClassHashMap,
+//             columnTypeNameHashMap, & columnSizeHashMap to run(). Used
+//             SQLQuery to Collect Meta Data, Removed getColumnColumnNames().
+//             Minor Changes in run() for useLimitIncrement Queries.
 //             
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -45,14 +53,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
@@ -61,6 +67,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
 import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
+import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
 
 /**
  *    The CSVQueryDumpThread class provides a thread to safely dump a
@@ -69,22 +76,21 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/09/2018
  */
 
 public class CSVQueryDataDumpThread implements Runnable
 {
    // Class Instances
    private Connection db_Connection;
+   private SQLQuery sqlQuery;
    
-   private ArrayList<String> columnNameFields;
-   private HashMap<String, String> columnClassHashMap;
-   private HashMap<String, String> columnTypeHashMap;
-   private HashMap<String, Integer> columnSizeHashMap;
-   
-   private String queryString, fileName;
+   private String queryString;
+   private String fileName;
    private String dataSourceType;
-   private boolean useStatusDialog, useLimitIncrement, argConnection;
+   private boolean useStatusDialog;
+   private boolean useLimitIncrement;
+   private boolean argConnection;
    
    private BufferedOutputStream filebuff;
    
@@ -113,11 +119,6 @@ public class CSVQueryDataDumpThread implements Runnable
       this.useStatusDialog = useStatusDialog;
       this.useLimitIncrement = useLimitIncrement;
       
-      columnNameFields = new ArrayList <String>();
-      columnClassHashMap = new HashMap <String, String>();
-      columnTypeHashMap = new HashMap <String, String>();
-      columnSizeHashMap = new HashMap <String, Integer>();
-      
       dataSourceType = ConnectionManager.getDataSourceType();
       argConnection = true;
    }
@@ -132,12 +133,22 @@ public class CSVQueryDataDumpThread implements Runnable
       Object dumpData;
       FileOutputStream fileStream;
       ProgressBar dumpProgressBar;
+      
+      ArrayList<String> columnNameFields;
       Iterator<String> columnNamesIterator;
-      StringBuffer columnNamesString;
-      String columnClass, columnType, dataDelimiter;
+      HashMap<String, String> columnClassHashMap;
+      HashMap<String, String> columnTypeNameHashMap;
+      HashMap<String, Integer> columnSizeHashMap;
+      
+      String columnClass;
+      String columnTypeName;
+      String dataDelimiter;
       String identifierQuoteString;
       String fieldContent;
-      int columnSize, rowsCount, currentTableIncrement, currentRow;
+      int columnSize;
+      int rowsCount;
+      int currentTableIncrement;
+      int currentRow;
       int limitIncrement;
 
       String sqlStatementString;
@@ -161,6 +172,27 @@ public class CSVQueryDataDumpThread implements Runnable
       if (db_Connection == null || queryString.isEmpty())
          return;
       
+      // Create a SQLQery to handle collection
+      // of meta information.
+      
+      sqlQuery = new SQLQuery(queryString);
+      
+      try
+      {
+         if (sqlQuery.executeSQL(db_Connection) != 1)
+            return;
+      }
+      catch (SQLException sqle)
+      {
+         return;
+      }
+      
+      // Collect the column information.
+      columnNameFields = sqlQuery.getColumnNames();
+      columnClassHashMap = sqlQuery.getColumnClassHashMap();
+      columnTypeNameHashMap = sqlQuery.getColumnTypeNameHashMap();
+      columnSizeHashMap = sqlQuery.getColumnSizeHashMap();
+      
       fileStream = null;
       filebuff = null;
       
@@ -183,27 +215,6 @@ public class CSVQueryDataDumpThread implements Runnable
          }
          fileStream = new FileOutputStream(fileName, true);
          filebuff = new BufferedOutputStream(fileStream);
-         
-         // Collect the column names.
-         try
-         {
-            getColumnNames(db_Connection, queryString);
-         }
-         catch (SQLException sqle)
-         {
-            return;
-         }
-         
-         // Compose a the column names into a quoted format.
-         columnNamesString = new StringBuffer();
-         columnNamesIterator = columnNameFields.iterator();
-         
-         while (columnNamesIterator.hasNext())
-         {
-            columnNamesString.append(identifierQuoteString + columnNamesIterator.next()
-                                     + identifierQuoteString + ", ");
-         }
-         columnNamesString.delete((columnNamesString.length() - 2), columnNamesString.length());
          
          // Have a connection, columns, query, & file to write to
          // so begin dumping data.
@@ -266,10 +277,11 @@ public class CSVQueryDataDumpThread implements Runnable
                   // Oracle
                   if (dataSourceType.equals(ConnectionManager.ORACLE))
                   {
-                     sqlStatementString = "SELECT " + columnNamesString.toString() + " FROM "
+                     sqlStatementString = "SELECT * FROM "
                                           + "(SELECT ROW_NUMBER() OVER (ORDER BY " + identifierQuoteString
                                           + columnNameFields.get(0) + identifierQuoteString
-                                          + " ASC) " + "AS dmprownumber, " + columnNamesString.toString()
+                                          + " ASC) " + "AS dmprownumber, "
+                                          + sqlQuery.getSqlOrcaleColumnNamesString()
                                           + " FROM (" + queryString + ")) " + "WHERE "
                                           + "dmprownumber BETWEEN " + (currentTableIncrement + 1) + " AND "
                                           + (currentTableIncrement + limitIncrement);
@@ -282,7 +294,7 @@ public class CSVQueryDataDumpThread implements Runnable
                   // MSSQL
                   else if (dataSourceType.equals(ConnectionManager.MSSQL))
                   {
-                     sqlStatementString = "SELECT " + columnNamesString.toString() + " FROM "
+                     sqlStatementString = "SELECT * FROM "
                                           + "(SELECT *, ROW_NUMBER() OVER (ORDER BY " + identifierQuoteString
                                           + columnNameFields.get(0) + identifierQuoteString + " ASC) "
                                           + "AS dmprownumber FROM (" +  queryString + ")"+ " AS t) AS t1 "
@@ -321,17 +333,12 @@ public class CSVQueryDataDumpThread implements Runnable
                      // Filtering out blob & text data as needed.
                      String currentHeading = columnNamesIterator.next();
                      columnClass = columnClassHashMap.get(currentHeading);
-                     columnType = columnTypeHashMap.get(currentHeading);
+                     columnTypeName = columnTypeNameHashMap.get(currentHeading);
                      columnSize = columnSizeHashMap.get(currentHeading).intValue();
 
                      // Blob/Bytea/Binary/Bit Data/Raw data.
                      
-                     if ((columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1) ||
-                         (columnClass.toUpperCase(Locale.ENGLISH).indexOf("BLOB") != -1
-                          && columnType.indexOf("BLOB") != -1) ||
-                         (columnType.indexOf("BYTEA") != -1) || (columnType.indexOf("BINARY") != -1) ||
-                         (columnType.indexOf("BIT DATA") != -1) || (columnType.indexOf("RAW") != -1) ||
-                         (columnType.indexOf("IMAGE") != -1))
+                     if (Utils.isBlob(columnClass, columnTypeName))
                      {
                         Object binaryContent = dbResultSet.getBytes(i);
                         
@@ -342,10 +349,7 @@ public class CSVQueryDataDumpThread implements Runnable
                      }
 
                      // Text, MediumText, LongText, & CLOB.
-                     else if ((columnClass.indexOf("String") != -1 && !columnType.equals("CHAR") &&
-                               columnSize > 255) ||
-                              (columnClass.indexOf("String") != -1 && columnType.equals("LONG")) ||
-                              (columnType.indexOf("CLOB") != -1) || (columnType.indexOf("XML") != -1))
+                     else if (Utils.isText(columnClass, columnTypeName, true, columnSize))
                      {
                         fieldContent = dbResultSet.getString(i);
                         
@@ -378,7 +382,7 @@ public class CSVQueryDataDumpThread implements Runnable
                      // MySQL/MariaDB Bit Fields up BIT(8) Only.
                      else if ((dataSourceType.equals(ConnectionManager.MYSQL)
                                || dataSourceType.equals(ConnectionManager.MARIADB))
-                              && columnType.indexOf("BIT") != -1)
+                              && columnTypeName.indexOf("BIT") != -1)
                      {
                         String byteString = Byte.toString(dbResultSet.getByte(i));
                         
@@ -390,7 +394,7 @@ public class CSVQueryDataDumpThread implements Runnable
                      // Insure MySQL/MariaDB Date/Year fields are chopped to only 4 digits.
                      else if ((dataSourceType.equals(ConnectionManager.MYSQL)
                                || dataSourceType.equals(ConnectionManager.MARIADB))
-                              && columnType.indexOf("YEAR") != -1)
+                              && columnTypeName.indexOf("YEAR") != -1)
                      {
                         Object yearContent = dbResultSet.getObject(i);
                         
@@ -408,10 +412,10 @@ public class CSVQueryDataDumpThread implements Runnable
                      }
                      
                      // Format Date & Timestamp Fields as Needed.
-                     else if (columnType.equals("DATE") || columnType.indexOf("DATETIME") != -1
-                              || (columnType.indexOf("TIMESTAMP") != -1 && columnClass.indexOf("Array") == -1))
+                     else if (columnTypeName.equals("DATE") || columnTypeName.indexOf("DATETIME") != -1
+                              || (columnTypeName.indexOf("TIMESTAMP") != -1 && columnClass.indexOf("Array") == -1))
                      {
-                        if (columnType.equals("DATE"))
+                        if (columnTypeName.equals("DATE"))
                         {
                            Object date = dbResultSet.getDate(i);
                            if (date != null)
@@ -422,7 +426,7 @@ public class CSVQueryDataDumpThread implements Runnable
                         }
                         else
                         {  
-                           if (columnType.equals("DATETIMEOFFSET"))
+                           if (columnTypeName.equals("DATETIMEOFFSET"))
                            {
                               String dateTime = dbResultSet.getString(i);
                               String date;
@@ -442,7 +446,7 @@ public class CSVQueryDataDumpThread implements Runnable
                               else
                                  fieldContent = "NULL";
                            }
-                           else if (columnType.indexOf("DATETIME") != -1 || columnType.equals("TIMESTAMP"))
+                           else if (columnTypeName.indexOf("DATETIME") != -1 || columnTypeName.equals("TIMESTAMP"))
                            {
                               Object dateTime = dbResultSet.getTimestamp(i);
                               
@@ -453,9 +457,9 @@ public class CSVQueryDataDumpThread implements Runnable
                               else
                                  fieldContent = "NULL";
                            }
-                           else if (columnType.equals("TIMESTAMPTZ")
-                                    || columnType.equals("TIMESTAMP WITH TIME ZONE")
-                                    || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+                           else if (columnTypeName.equals("TIMESTAMPTZ")
+                                    || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                                    || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                            {
                               Object dateTime = dbResultSet.getTimestamp(i);
                               
@@ -585,123 +589,6 @@ public class CSVQueryDataDumpThread implements Runnable
       
       if (!argConnection)
          ConnectionManager.closeConnection(db_Connection, "CSVQueryDataDumpThread run()");
-   }
-   
-   //==============================================================
-   // Class method to obtain the column names from the table.
-   // Additional information about the column, size & type, are
-   // also stored away for future use.
-   //==============================================================
-
-   private void getColumnNames(Connection dbConnection, String query) throws SQLException
-   {
-      // Method Instances
-      Statement sqlStatement;
-      ResultSet db_resultSet;
-      ResultSetMetaData tableMetaData;
-
-      String colNameString, columnClass, columnType;
-      Integer columnSize;
-
-      // Connecting to the data base, to obtain
-      // meta data, and column names.
-      sqlStatement = null;
-      db_resultSet = null;
-      
-      try
-      {
-         sqlStatement = dbConnection.createStatement();
-         sqlStatement.setMaxRows(1);
-         // System.out.println(query);
-
-         // ********************************************************
-
-         db_resultSet = sqlStatement.executeQuery(query);
-         tableMetaData = db_resultSet.getMetaData();
-
-         // Column Names, class, type, and size collection.
-
-         for (int i = 1; i < tableMetaData.getColumnCount() + 1; i++)
-         {
-            colNameString = tableMetaData.getColumnLabel(i);
-
-            // Additional Information about each column.
-            columnClass = tableMetaData.getColumnClassName(i);
-            columnType = tableMetaData.getColumnTypeName(i);
-            columnSize = Integer.valueOf(tableMetaData.getColumnDisplaySize(i));
-
-            // System.out.println(i + " " + colNameString + " " +
-            //                    columnClass + " " + columnType + " " +
-            //                    columnSize);
-
-            // This going to be a problem so skip this column.
-            // NOT TESTED. This is still problably not going to
-            // help. Bound to crash in loadTable().
-
-            if (columnClass == null && columnType == null)
-               continue;
-
-            // Handle some Oracle data types that have a null
-            // class type and possibly others.
-
-            if (columnClass == null)
-            {
-               if (columnType.equals("BINARY_FLOAT")
-                   && dataSourceType.equals(ConnectionManager.ORACLE))
-               {
-                  columnClass = "java.lang.Float";
-                  columnType = "FLOAT";
-               }
-               else if (columnType.equals("BINARY_DOUBLE")
-                        && dataSourceType.equals(ConnectionManager.ORACLE))
-               {
-                  columnClass = "java.lang.Double";
-                  columnType = "DOUBLE";
-               }
-               else
-                  columnClass = columnType;
-            }
-
-            columnNameFields.add(colNameString);
-            columnClassHashMap.put(colNameString, columnClass);
-            columnTypeHashMap.put(colNameString, columnType.toUpperCase(Locale.ENGLISH));
-            columnSizeHashMap.put(colNameString, columnSize);
-         }
-      }
-      catch (SQLException e)
-      {
-         String errorString = "CSVQueryDataDump.getColumnNames() SQLException: " + e.getMessage()
-                              + " " + "SQLState: " + e.getSQLState() + " " + "VendorError: "
-                              + e.getErrorCode();
-         JOptionPane.showMessageDialog(null, errorString, "Query Failure", JOptionPane.ERROR_MESSAGE);
-         return;
-      }
-      finally
-      {
-         try
-         {
-            if (db_resultSet != null)
-               db_resultSet.close();
-         }
-         catch (SQLException sqle)
-         {
-            ConnectionManager.displaySQLErrors(sqle,
-               "CSVQueryDataDumpThread getColumnNames() failed closing result set");
-         }
-         finally
-         {
-            try
-            {
-               if (sqlStatement != null)
-                  sqlStatement.close();
-            }
-            catch (SQLException sqle)
-            {
-               ConnectionManager.displaySQLErrors(sqle,
-                  "CSVQueryDataDumpThread getColumnNames() failed closing sql statement");
-            }
-         }
-      }
    }
    
    //==============================================================
