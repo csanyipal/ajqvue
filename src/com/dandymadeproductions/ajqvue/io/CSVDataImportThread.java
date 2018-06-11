@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 06/04/2018
+// Version 1.5 06/11/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,7 @@
 //             to columnTypeNameHashMap, & columnType to columnTypeName. Code
 //             Formatting Changes for Instances.
 //         1.4 Method importCSVFile() Use of Utils.isBlob().
+//         1.5 Method importCSVFile() Corrected Quoting, Not Utils.isNumerics().
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -76,7 +77,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * address the ability to cancel the import.
  * 
  * @author Dana M. Proctor
- * @version 1.4 06/04/2018
+ * @version 1.5 06/11/2018
  */
 
 public class CSVDataImportThread implements Runnable
@@ -527,7 +528,7 @@ public class CSVDataImportThread implements Runnable
                      else
                      {
                         // Don't Quote Numeric Values.
-                        if (Utils.isNumeric(columnClass, columnTypeName)) 
+                        if (!Utils.isNumeric(columnClass, columnTypeName)) 
                            lineContent[i] = "'" + lineContent[i] + "'";
                      }
 
