@@ -10,7 +10,7 @@
 //                     << PluginLoader.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
+// Copyright (C) 2016-2018 Dana M. Proctor
 // Version 1.4 02/02/2016
 //
 // This program is free software; you can redistribute it and/or
