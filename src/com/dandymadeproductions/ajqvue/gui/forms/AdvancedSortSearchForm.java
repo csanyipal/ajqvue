@@ -9,8 +9,8 @@
 //              << AdvancedSorSearchForm.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 06/11/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,10 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/18/2016 Production AdvancedSortSearchForm Class.
+//         1.1 06/11/2018 Changed Class Instance columnTypesHashMap to columnType
+//                        NameHashMap. Code Formatting Instances, One per Line.
+//                        Method getAdvancedSortSearchSQL() Replaced columnTypeString
+//                        to columnTypeNameString & Used Utils.isNumerics().
 //                      
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -75,12 +79,12 @@ import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
 
 /**
- *    The AdvancedSortSearchForm class provides a generic panel that is used to
- * create an advanced sort/search query for the calling TableTabPanel's database
- * table.
+ *    The AdvancedSortSearchForm class provides a generic panel
+ * that is used to create an advanced sort/search query for the
+ * calling TableTabPanel's database table.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/11/2018
  */
 
 public class AdvancedSortSearchForm extends JFrame implements ActionListener
@@ -89,10 +93,12 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
    private static final long serialVersionUID = 1762720065854166053L;
 
    private String sqlTable;
-   private String dataSourceType, identifierQuoteString;
+   private String dataSourceType;
+   private String identifierQuoteString;
+   
    private HashMap<String, String> columnNamesHashMap;
    private HashMap<String, String> columnClassHashMap;
-   private HashMap<String, String> columnTypesHashMap;
+   private HashMap<String, String> columnTypeNameHashMap;
    private ArrayList<String> comboBoxColumnNames;
    private AResourceBundle resourceBundle;
 
@@ -126,20 +132,31 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
    public AdvancedSortSearchForm(String table, AResourceBundle resourceBundle,
                                     HashMap<String, String> columnNamesHashMap,
                                     HashMap<String, String> columnClassHashMap,
-                                    HashMap<String, String> columnTypesHashMap,
+                                    HashMap<String, String> columnTypeNameHashMap,
                                     ArrayList<String> columnNames)
    {
       sqlTable = table;
       this.resourceBundle = resourceBundle;
       this.columnNamesHashMap = columnNamesHashMap;
       this.columnClassHashMap = columnClassHashMap;
-      this.columnTypesHashMap = columnTypesHashMap;
+      this.columnTypeNameHashMap = columnTypeNameHashMap;
       
       // Constructor Instances
-      JPanel mainPanel, formPanel, northPanel, selectTypePanel, aggregatePanel;
-      JPanel helpPanel, southPanel, actionButtonPanel, clearPanel;
-      JLabel selectTypeLabel, aggregateLabel;
+      JPanel mainPanel;
+      JPanel formPanel;
+      JPanel northPanel;
+      JPanel selectTypePanel;
+      JPanel aggregatePanel;
+      JPanel helpPanel;
+      JPanel southPanel;
+      JPanel actionButtonPanel;
+      JPanel clearPanel;
+      
+      JLabel selectTypeLabel;
+      JLabel aggregateLabel;
+      
       Object[] aggregateFunctions = {"", "Avg", "Count", "First", "Last", "Max", "Min", "Sum"};   
+      
       String resource, iconsDirectory;
       ImageIcon questionIcon;
       ImageIcon clearIcon;
@@ -439,12 +456,20 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
    private void createSortSearchInterface(AResourceBundle resourceBundle)
    {
       // Method Instance
-      JPanel sortPanel, groupPanel, searchPanel;
-      String resourceSortBy, resourceOrderASC, resourceOrderDESC, resourceThen,
-             resourceGroupBy, resourceSearch;
+      JPanel sortPanel;
+      JPanel groupPanel;
+      JPanel searchPanel;
+      String resourceSortBy;
+      String resourceOrderASC;
+      String resourceOrderDESC;
+      String resourceThen;
+      String resourceGroupBy;
+      String resourceSearch;
       
-      JLabel[] sortByLabel, sortThenLabel; 
-      JLabel[] groupByLabel, groupThenLabel;
+      JLabel[] sortByLabel;
+      JLabel[] sortThenLabel; 
+      JLabel[] groupByLabel;
+      JLabel[] groupThenLabel;
       JLabel[] searchLabel;
       JComponent swapEndComponent;
 
@@ -737,11 +762,20 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
    {
       // Method Instances
       StringBuffer sqlStatementString;
-      String aggregateFunctionString, aggregateField;
-      String whereString, unionString, orderString, ascDescString;
-      String columnNameString, columnClassString, columnTypeString;
-      String operatorString, searchString;
-      boolean notFieldSort, notFieldGroup;
+      String aggregateFunctionString;
+      String aggregateField;
+      String whereString;
+      String unionString;
+      String orderString;
+      String ascDescString;
+      String columnNameString;
+      String columnClassString;
+      String columnTypeNameString;
+      String operatorString;
+      String searchString;
+      
+      boolean notFieldSort;
+      boolean notFieldGroup;
 
       sqlStatementString = new StringBuffer();
       sqlStatementString.append("SELECT ");
@@ -778,7 +812,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
       {
          columnNameString = columnNamesHashMap.get(searchComboBox[i].getSelectedItem());
          columnClassString = columnClassHashMap.get(searchComboBox[i].getSelectedItem());
-         columnTypeString = columnTypesHashMap.get(searchComboBox[i].getSelectedItem());
+         columnTypeNameString = columnTypeNameHashMap.get(searchComboBox[i].getSelectedItem());
          operatorString = (String) operatorComboBox[i].getSelectedItem();
          searchString = searchTextField[i].getText();
 
@@ -800,7 +834,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
                                             + " " + searchString + " ");
                else
                {
-                  if (columnTypeString.equals("DATE"))
+                  if (columnTypeNameString.equals("DATE"))
                   {
                      if (dataSourceType.equals(ConnectionManager.ORACLE))
                      {
@@ -820,7 +854,8 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
                                                   + searchString + "' ");
                      }
                   }
-                  else if (columnTypeString.equals("DATETIME") || columnTypeString.indexOf("TIMESTAMP") != -1)
+                  else if (columnTypeNameString.equals("DATETIME")
+                           || columnTypeNameString.indexOf("TIMESTAMP") != -1)
                   {
                      if (searchString.indexOf(" ") != -1)
                         searchString = Utils.processDateFormatSearch(
@@ -830,7 +865,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
                         searchString = Utils.processDateFormatSearch(searchString);
                      
                      if (dataSourceType.equals(ConnectionManager.ORACLE) 
-                           && columnTypeString.indexOf("TIMESTAMP") != -1)
+                           && columnTypeNameString.indexOf("TIMESTAMP") != -1)
                      {
                         sqlStatementString.append(whereString + identifierQuoteString + columnNameString
                                                   + identifierQuoteString + " " + operatorString
@@ -851,7 +886,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
                   }
                   else if ((dataSourceType.equals(ConnectionManager.MYSQL)
                             || dataSourceType.equals(ConnectionManager.MARIADB))
-                           && columnTypeString.equals("BIT"))
+                           && columnTypeNameString.equals("BIT"))
                   {
                      sqlStatementString.append(whereString + identifierQuoteString + columnNameString
                                                + identifierQuoteString + " " + operatorString + " B'"
@@ -862,10 +897,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
                      // Character data gets single quotes for some databases,
                      // not numbers though.
                           
-                     if ((dataSourceType.equals(ConnectionManager.MSACCESS)
-                          || dataSourceType.indexOf(ConnectionManager.HSQL) != -1
-                          || dataSourceType.equals(ConnectionManager.DERBY))
-                         && columnClassString.toLowerCase(Locale.ENGLISH).indexOf("string") == -1)
+                     if (Utils.isNumeric(columnClassString, columnTypeNameString))
                         sqlStatementString.append(whereString + identifierQuoteString + columnNameString
                                                   + identifierQuoteString + " " + operatorString + " "
                                                   + searchString + " ");
@@ -971,7 +1003,6 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
       }
 
       // Return the resultant query.
-
       // System.out.println(sqlStatementString.toString());
       return sqlStatementString;
       
