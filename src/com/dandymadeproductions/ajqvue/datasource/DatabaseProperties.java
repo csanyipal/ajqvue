@@ -7,8 +7,8 @@
 //                << DatabaseProperties.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.5 08/25/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.6 06/11/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -38,6 +38,7 @@
 //         1.4 Method init() Removed debug Output for db.
 //         1.5 Reverted v1.3 For Just HSQL, Multiple Databases Tag
 //             Properties on URL Connection.
+//         1.6 Updated Copyright.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -67,7 +68,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * for the storage of database connection properties.
  * 
  * @author Dana M. Proctor
- * @version 1.5 08/25/2017
+ * @version 1.6 06/11/2018
  */
 
 public class DatabaseProperties

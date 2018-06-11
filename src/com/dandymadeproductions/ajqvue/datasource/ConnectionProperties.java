@@ -7,8 +7,8 @@
 //                << ConnectionProperties.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.5 12/15/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.6 06/11/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -41,6 +41,7 @@
 //             to Clarify These Are Additional Parameters Passed With the
 //             Database String. Method toString() Corrected to Only Output
 //             Properties, connectProperties if Not Just user & password.
+//         1.6 Updated Copyright.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -57,7 +58,7 @@ import java.util.Properties;
  * connection properties storage.
  * 
  * @author Dana M. Proctor
- * @version 1.5 12/15/2017
+ * @version 1.6 06/11/2018
  */
 
 public class ConnectionProperties

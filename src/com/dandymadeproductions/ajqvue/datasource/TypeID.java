@@ -8,8 +8,8 @@
 //                        << TypeID.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/17/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 06/11/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 Production TypeID Class.
+//         1.1 Updated Copyright.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -46,7 +47,7 @@ import java.util.Locale;
  * types that follows a prescribe naming scheme.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/17/2016
+ * @version 1.1 06/11/2018
  */
 
 public class TypeID
