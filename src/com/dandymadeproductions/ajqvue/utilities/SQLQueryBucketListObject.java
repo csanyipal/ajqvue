@@ -8,7 +8,7 @@
 //
 //=================================================================
 // 
-// Copyright (C) 2016-2017 Dana M. Proctor
+// Copyright (C) 2016-2018 Dana M. Proctor
 // All rights reserved.
 // Version 1.2 06/10/2017
 //
