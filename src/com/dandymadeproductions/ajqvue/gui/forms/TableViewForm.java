@@ -9,8 +9,8 @@
 //                 << TableViewForm.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.1 07/22/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.2 06/12/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,9 +32,14 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/18/2016 Production TableViewForm Class.
-//         1.1 07/22/2017 Constructor & Method setFormField() Inclusion
-//                        of SQLite TEXT Type Fields to be Presented as
-//                        Button.
+//         1.1 07/22/2017 Constructor & Method setFormField() Inclusion of SQLite
+//                        TEXT Type Fields to be Presented as Button.
+//         1.2 06/12/2018 Code Formatting for Instances, One per Line. Class Instance
+//                        fieldTypeHashMap Changed to fieldTypeNameHashMap. Constructor
+//                        Instance columnType Changed to columnTypeName, & Use of Utils
+//                        isBlob()/isText(). Method setFormField() Instance columnType
+//                        Changed to columnTypeName & Added columnSize. Same Method Used
+//                        Utils.isBlob() & isText().
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -81,7 +86,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * in the TableTabPanel summary table.
  * 
  * @author Dana M. Proctor
- * @version 1.1 07/22/2017
+ * @version 1.2 06/12/2018
  */
 
 public class TableViewForm extends JPanel implements ActionListener, KeyListener
@@ -91,10 +96,14 @@ public class TableViewForm extends JPanel implements ActionListener, KeyListener
 
    private HashMap<String, JComponent> fieldHashMap;
    private HashMap<JButton, Object> blobBytesHashMap;
-   private HashMap<String, String> fieldTypeHashMap;
+   private HashMap<String, String> fieldTypeNameHashMap;
    private HashMap<String, String> fieldClassHashMap;
    private HashMap<String, Integer> fieldSizeHashMap;
-   private JButton previousViewButton, closeViewButton, nextViewButton;
+   
+   private JButton previousViewButton;
+   private JButton closeViewButton;
+   private JButton nextViewButton;
+   
    private AResourceBundle resourceBundle;
 
    //==============================================================
@@ -103,7 +112,7 @@ public class TableViewForm extends JPanel implements ActionListener, KeyListener
 
    public TableViewForm(ArrayList<String> tableColumnNames,
                            HashMap<String, String> tableColumnClass,
-                           HashMap<String, String> tableColumnType,
+                           HashMap<String, String> tableColumnTypeName,
                            HashMap<String, Integer> tableColumnSize,
                            JButton previousViewButton, JButton closeViewButton,
                            JButton nextViewButton)
@@ -111,7 +120,7 @@ public class TableViewForm extends JPanel implements ActionListener, KeyListener
       this.previousViewButton = previousViewButton;
       this.closeViewButton = closeViewButton;
       this.nextViewButton = nextViewButton;
-      fieldTypeHashMap = tableColumnType;
+      fieldTypeNameHashMap = tableColumnTypeName;
       fieldClassHashMap = tableColumnClass;
       fieldSizeHashMap = tableColumnSize;
 
@@ -122,7 +131,10 @@ public class TableViewForm extends JPanel implements ActionListener, KeyListener
       Iterator<String> columnNamesIterator;
       fieldHashMap = new HashMap <String, JComponent>();
       blobBytesHashMap = new HashMap <JButton, Object>();
-      String itemName, columnClass, columnType;
+      String itemName;
+      String columnClass;
+      String columnTypeName;
+      int columnSize;
       Object currentField;
       resourceBundle = Ajqvue.getResourceBundle();
 
@@ -150,8 +162,9 @@ public class TableViewForm extends JPanel implements ActionListener, KeyListener
       {
          itemName = columnNamesIterator.next();
          columnClass = fieldClassHashMap.get(itemName);
-         columnType = fieldTypeHashMap.get(itemName);
-         // System.out.println(x + " " + y + " " + itemName + " " + columnClass + " " + columnType);
+         columnTypeName = fieldTypeNameHashMap.get(itemName);
+         columnSize = fieldSizeHashMap.get(itemName);
+         // System.out.println(x + " " + y + " " + itemName + " " + columnClass + " " + columnTypeName);
 
          // =================================
          // Labels
@@ -171,30 +184,20 @@ public class TableViewForm extends JPanel implements ActionListener, KeyListener
          // Buttons & TextFields
          // =====================================
 
-         if ((columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1)
-             || (columnType.indexOf("BYTEA") != -1)
-             || (columnType.indexOf("BINARY") != -1)
-             || (columnType.indexOf("BIT DATA") != -1)
-             || (columnType.indexOf("IMAGE") != -1)
-             || (columnType.indexOf("RAW") != -1)
-             || (columnType.indexOf("CLOB") != -1))
+         if (Utils.isBlob(columnClass, columnTypeName))
          {
             currentField = new JButton();
             ((JButton) currentField).addActionListener(this);
          }
 
-         else if ((columnClass.indexOf("String") != -1 &&
-                  !columnType.equals("CHAR") && (fieldSizeHashMap.get(itemName)).intValue() > 255)
-                  || (columnClass.indexOf("Object") != -1 &&
-                      columnType.equals("TEXT") && (fieldSizeHashMap.get(itemName)).intValue() > 255)
-                  || (columnClass.indexOf("String") != -1 && columnType.equals("LONG")))
+         else if (Utils.isText(columnClass, columnTypeName, true, columnSize))
          {
             currentField = new JButton();
             ((JButton) currentField).addActionListener(this);
          }
          else if ((columnClass.indexOf("Object") != -1 ||
                    columnClass.indexOf("Array") != -1) &&
-                  columnType.indexOf("_") != -1)
+                  columnTypeName.indexOf("_") != -1)
          {
             currentField = new JButton();
             ((JButton) currentField).addActionListener(this);
@@ -499,34 +502,26 @@ public class TableViewForm extends JPanel implements ActionListener, KeyListener
    public void setFormField(Object itemName, Object content)
    {
       // Method Instances.
-      String columnClass, columnType;
+      String columnClass;
+      String columnTypeName;
+      Integer columnSize;
 
       columnClass = fieldClassHashMap.get(itemName);
-      columnType = fieldTypeHashMap.get(itemName);
+      columnTypeName = fieldTypeNameHashMap.get(itemName);
+      columnSize = fieldSizeHashMap.get(itemName);
 
       // Binary Button, Note all data with buttons processed
       // the same just grouping for clarity.
-      if ((columnClass.indexOf("String") == -1 && columnType.indexOf("BLOB") != -1)
-          || (columnClass.indexOf("BLOB") != -1 && columnType.indexOf("BLOB") != -1)
-          || (columnType.indexOf("BYTEA") != -1)
-          || (columnType.indexOf("BINARY") != -1)
-          || (columnType.indexOf("BIT DATA") != -1)
-          || (columnType.indexOf("IMAGE") != -1)
-          || (columnType.indexOf("RAW") != -1) || (columnType.indexOf("CLOB") != -1))
-
+      if (Utils.isBlob(columnClass, columnTypeName))
          ((JButton) fieldHashMap.get(itemName)).setText((String) content);
 
       // Text Button, TEXT, MEDIUMTEXT, & LONGTEXT
-      else if ((columnClass.indexOf("String") != -1 && !columnType.equals("CHAR") &&
-                (fieldSizeHashMap.get(itemName)).intValue() > 255)
-               || (columnClass.indexOf("Object") != -1 && columnType.equals("TEXT") &&
-                   (fieldSizeHashMap.get(itemName)).intValue() > 255)
-               || (columnClass.indexOf("String") != -1 && columnType.equals("LONG")))
+      else if (Utils.isText(columnClass, columnTypeName, true, columnSize))
          ((JButton) fieldHashMap.get(itemName)).setText((String) content);
 
       // Array Button
       else if ((columnClass.indexOf("Object") != -1 || columnClass.indexOf("Array") != -1)
-               && columnType.indexOf("_") != -1)
+               && columnTypeName.indexOf("_") != -1)
          ((JButton) fieldHashMap.get(itemName)).setText((String) content);
 
       // Standard TextField
