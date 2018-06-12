@@ -9,8 +9,8 @@
 //                      << UpdateForm.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.0 09/18/2016
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.1 06/12/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,11 @@
 // also be included with the original copyright author.
 //=================================================================
 // Version 1.0 09/18/2018 Production UpdateForm Class.
+//         1.1 06/12/2018 Source Code Formatting for Instances, One per Line.
+//                        Class Instannce columnTypeHashMap Changed to columnType
+//                        NameHashMap. Method updateTable() Changed Instance
+//                        columnType to columnTypeName. Method getWhereSQLExpression()
+//                        Changed Instance columnTypeString to columnTypeNameString.
 //                        
 //=================================================================
 
@@ -84,11 +89,12 @@ import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
 
 /**
- *    This class provides a generic form that is used by each TableTabPanel to
- * execute a SQL update statement on the current table.
+ *    This class provides a generic form that is used by each
+ * TableTabPanel to execute a SQL update statement on the current
+ * table.
  * 
  * @author Dana M. Proctor
- * @version 1.0 09/18/2016
+ * @version 1.1 06/12/2018
  */
 
 public class UpdateForm extends JFrame implements ActionListener
@@ -101,7 +107,7 @@ public class UpdateForm extends JFrame implements ActionListener
    private String identifierQuoteString;
    private HashMap<String, String> columnNamesHashMap;
    private HashMap<String, String> columnClassHashMap;
-   private HashMap<String, String> columnTypeHashMap;
+   private HashMap<String, String> columnTypeNameHashMap;
    private HashMap<String, Integer> columnSizeHashMap;
    private ArrayList<String> updateComboBoxColumnNames;
    private ArrayList<String> comboBoxColumnNames;
@@ -122,12 +128,17 @@ public class UpdateForm extends JFrame implements ActionListener
    private JCheckBox quoteCheckBox;
 
    private static final int updateFormExpressionNumber = 5;
-   private JComboBox<Object>[] whereComboBox, operatorComboBox, andOrComboBox;
+   private JComboBox<Object>[] whereComboBox;
+   private JComboBox<Object>[] operatorComboBox;
+   private JComboBox<Object>[] andOrComboBox;
    private JTextField[] whereTextField;
    private ArrayList<JComponent> stateComponents;
 
-   private JButton updateButton, closeButton, clearButton;
-   private JButton findButton, disposeButton;
+   private JButton updateButton;
+   private JButton closeButton;
+   private JButton clearButton;
+   private JButton findButton;
+   private JButton disposeButton;
 
    private ImageIcon deleteDataIcon;
 
@@ -139,23 +150,32 @@ public class UpdateForm extends JFrame implements ActionListener
    public UpdateForm(String table, AResourceBundle resourceBundle,
                         HashMap<String, String> columnNamesHashMap,
                         HashMap<String, String> columnClassHashMap,
-                        HashMap<String, String> columnTypeHashMap,
+                        HashMap<String, String> columnTypeNameHashMap,
                         HashMap<String, Integer> columnSizeHashMap,
                         ArrayList<String> columnNames)
    {
       sqlTable = table;
       this.columnNamesHashMap = columnNamesHashMap;
       this.columnClassHashMap = columnClassHashMap;
-      this.columnTypeHashMap = columnTypeHashMap;
+      this.columnTypeNameHashMap = columnTypeNameHashMap;
       this.columnSizeHashMap = columnSizeHashMap;
       this.resourceBundle = resourceBundle;
       
       // Constructor Instances
-      ImageIcon statusIdleIcon, statusWorkingIcon;
-      JPanel mainPanel, formPanel;
-      JPanel northPanel, statusPanel, optionsPanel, helpPanel;
-      JPanel southPanel, actionButtonPanel, clearPanel;
-      String resource, iconsDirectory;
+      ImageIcon statusIdleIcon;
+      ImageIcon statusWorkingIcon;
+      JPanel mainPanel;
+      JPanel formPanel;
+      JPanel northPanel;
+      JPanel statusPanel;
+      JPanel optionsPanel;
+      JPanel helpPanel;
+      JPanel southPanel;
+      JPanel actionButtonPanel;
+      JPanel clearPanel;
+      
+      String resource;
+      String iconsDirectory;
       ImageIcon questionIcon;
       ImageIcon clearIcon;
 
@@ -487,12 +507,14 @@ public class UpdateForm extends JFrame implements ActionListener
    private void createUpdateWhereInterface()
    {
       // Method Instance
-      JPanel updatePanel, wherePanel;
-      String resource, resourceWhere;
+      JPanel updatePanel;
+      JPanel wherePanel;
+      String resource;
+      String resourceWhere;
       
-      JLabel setLabel, withLabel;
+      JLabel setLabel;
+      JLabel withLabel;
       JLabel[] whereLabel;
-      //JLabel whereLabel1, whereLabel2, whereLabel3, whereLabel4, whereLabel5;
       JComponent swapEndComponent;
 
       Object[] whereOperators;
@@ -693,17 +715,29 @@ public class UpdateForm extends JFrame implements ActionListener
    private boolean updateTable()
    {
       // Method Instances.
-      String columnName, columnClass, columnType;
+      String columnName;
+      String columnClass;
+      String columnTypeName;
       String sqlStatementString;
       Statement sqlStatement;
       ResultSet db_resultSet;
 
       InputDialog updateDialog;
-      int updateRowCount, columnSize;
-      String updateTextString, updateString;
-      String dateString, timeString;
-      String resourceMessage1, resourceMessage2, resourceTitle, resourceOK, resourceCancel;
-      boolean tableUpdated, tryingUpdate;
+      int updateRowCount;
+      int columnSize;
+      String updateTextString;
+      String updateString;
+      String dateString;
+      String timeString;
+      
+      String resourceMessage1;
+      String resourceMessage2;
+      String resourceTitle;
+      String resourceOK;
+      String resourceCancel;
+      
+      boolean tableUpdated;
+      boolean tryingUpdate;
       boolean quoteCheckBoxState;
 
       // Obtain connection to database & setup.
@@ -743,7 +777,8 @@ public class UpdateForm extends JFrame implements ActionListener
          if (updateRowCount != 0)
          {
             JLabel message;
-            String messageUpdate, messageRows; 
+            String messageUpdate;
+            String messageRows; 
             
             messageUpdate = resourceBundle.getResourceString("UpdateForm.dialogmessage.Update",
                                                                 "Update");
@@ -788,7 +823,7 @@ public class UpdateForm extends JFrame implements ActionListener
                updateTextString = updateColumnToTextField.getText();
                columnName = (String) updateColumnComboBox.getSelectedItem();
                columnClass = columnClassHashMap.get(columnName);
-               columnType = columnTypeHashMap.get(columnName);
+               columnTypeName = columnTypeNameHashMap.get(columnName);
                columnSize = (columnSizeHashMap.get(columnName)).intValue();
                // System.out.println(updateTextString + " " + columnName + " " + columnClass + " " + columnType
                //                   + " " + columnSize);
@@ -817,7 +852,7 @@ public class UpdateForm extends JFrame implements ActionListener
                      try
                      {
                         // Date
-                        if (columnType.equals("DATE"))
+                        if (columnTypeName.equals("DATE"))
                         {
                            Date dateValue;
                            updateTextString = updateTextString.trim();
@@ -843,7 +878,7 @@ public class UpdateForm extends JFrame implements ActionListener
                            }
                         }
                         // Time
-                        else if (columnType.equals("TIME") || columnType.equals("TIMETZ"))
+                        else if (columnTypeName.equals("TIME") || columnTypeName.equals("TIMETZ"))
                         {
                            Time timeValue;
                            updateTextString = updateTextString.trim();
@@ -857,7 +892,7 @@ public class UpdateForm extends JFrame implements ActionListener
                            updateString = timeValue.toString();
                         }
                         // DateTime
-                        else if (columnType.equals("DATETIME"))
+                        else if (columnTypeName.equals("DATETIME"))
                         {
                            java.sql.Timestamp dateTimeValue;
                            dateString = "";
@@ -881,13 +916,13 @@ public class UpdateForm extends JFrame implements ActionListener
                               updateString = updateString.substring(0, updateString.indexOf("."));
                         }
                         // Timestamp
-                        else if (columnType.equals("TIMESTAMP") || columnType.equals("TIMESTAMPTZ")
-                                 || columnType.equals("TIMESTAMP WITH TIME ZONE")
-                                 || columnType.equals("TIMESTAMPLTZ")
-                                 || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+                        else if (columnTypeName.equals("TIMESTAMP") || columnTypeName.equals("TIMESTAMPTZ")
+                                 || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                                 || columnTypeName.equals("TIMESTAMPLTZ")
+                                 || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                         {
-                           if (columnType.equals("TIMESTAMPLTZ")
-                               || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+                           if (columnTypeName.equals("TIMESTAMPLTZ")
+                               || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                               Utils.setLocalTimeZone(sqlStatement);
 
                            SimpleDateFormat timeStampFormat;
@@ -897,7 +932,7 @@ public class UpdateForm extends JFrame implements ActionListener
                            try
                            {
                               // Create a Timestamp Format.
-                              if (columnType.equals("TIMESTAMP"))
+                              if (columnTypeName.equals("TIMESTAMP"))
                               {
                                  if (columnSize == 2)
                                     timeStampFormat = new SimpleDateFormat("yy");
@@ -918,8 +953,8 @@ public class UpdateForm extends JFrame implements ActionListener
                               }
                               else
                               {
-                                 if (columnType.equals("TIMESTAMPLTZ")
-                                     || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+                                 if (columnTypeName.equals("TIMESTAMPLTZ")
+                                     || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                                     timeStampFormat = new SimpleDateFormat(
                                        DBTablesPanel.getGeneralDBProperties().getViewDateFormat() + " HH:mm:ss Z");
                                  else
@@ -928,7 +963,7 @@ public class UpdateForm extends JFrame implements ActionListener
                               }
 
                               // Parse the TimeStamp Format.
-                              if (columnType.equals("TIMESTAMPLTZ"))
+                              if (columnTypeName.equals("TIMESTAMPLTZ"))
                               {
                                  dateString = updateTextString.trim();
                                  dateString = dateString.substring(0, dateString.lastIndexOf(':'))
@@ -972,7 +1007,7 @@ public class UpdateForm extends JFrame implements ActionListener
                            "Alert");
                         
                         JOptionPane.showMessageDialog(null, resourceMessage1 + " " + columnName
-                                                      + ", " + resourceMessage2 + ": " + columnType,
+                                                      + ", " + resourceMessage2 + ": " + columnTypeName,
                                                       resourceTitle, JOptionPane.ERROR_MESSAGE);
                         dbConnection.setAutoCommit(true);
                         ConnectionManager.closeConnection(dbConnection,
@@ -981,7 +1016,7 @@ public class UpdateForm extends JFrame implements ActionListener
                      }
                   }
                   // Bit Types
-                  else if (columnType.equals("BIT"))
+                  else if (columnTypeName.equals("BIT"))
                   {
                      if (dataSourceType.equals(ConnectionManager.MYSQL)
                          || dataSourceType.equals(ConnectionManager.MARIADB))
@@ -1078,8 +1113,11 @@ public class UpdateForm extends JFrame implements ActionListener
       // Method Instances
       StringBuffer sqlStatementString;
       String whereString;
-      String columnNameString, columnClassString, columnTypeString;
-      String operatorString, tempSearchString;
+      String columnNameString;
+      String columnClassString;
+      String columnTypeNameString;
+      String operatorString;
+      String tempSearchString;
       String unionString;
 
       sqlStatementString = new StringBuffer();
@@ -1094,7 +1132,7 @@ public class UpdateForm extends JFrame implements ActionListener
       {
          columnNameString = columnNamesHashMap.get(whereComboBox[i].getSelectedItem());
          columnClassString = columnClassHashMap.get(whereComboBox[i].getSelectedItem());
-         columnTypeString = columnTypeHashMap.get(whereComboBox[i].getSelectedItem());
+         columnTypeNameString = columnTypeNameHashMap.get(whereComboBox[i].getSelectedItem());
          operatorString = (String) operatorComboBox[i].getSelectedItem();
          tempSearchString = whereTextField[i].getText();
 
@@ -1117,7 +1155,7 @@ public class UpdateForm extends JFrame implements ActionListener
                                             + " " + tempSearchString + " ");
                else
                {
-                  if (columnTypeString.equals("DATE"))
+                  if (columnTypeNameString.equals("DATE"))
                   {
                      if (dataSourceType.equals(ConnectionManager.ORACLE))
                      {
@@ -1137,7 +1175,8 @@ public class UpdateForm extends JFrame implements ActionListener
                                                   + tempSearchString + "' ");
                      }
                   }
-                  else if (columnTypeString.equals("DATETIME") || columnTypeString.indexOf("TIMESTAMP") != -1)
+                  else if (columnTypeNameString.equals("DATETIME")
+                           || columnTypeNameString.indexOf("TIMESTAMP") != -1)
                   {
                      if (tempSearchString.indexOf(" ") != -1)
                         tempSearchString = Utils.processDateFormatSearch(
@@ -1147,7 +1186,7 @@ public class UpdateForm extends JFrame implements ActionListener
                         tempSearchString = Utils.processDateFormatSearch(tempSearchString);
                      
                      if (dataSourceType.equals(ConnectionManager.ORACLE) 
-                           && columnTypeString.indexOf("TIMESTAMP") != -1)
+                           && columnTypeNameString.indexOf("TIMESTAMP") != -1)
                      {
                         sqlStatementString.append(whereString + identifierQuoteString + columnNameString
                                                  + identifierQuoteString + " " + operatorString
