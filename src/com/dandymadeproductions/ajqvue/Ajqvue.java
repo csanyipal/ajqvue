@@ -14,8 +14,8 @@
 //                  << Ajqvue.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
-// Version 1.15 09/02/2017
+// Copyright (C) 2016-2018 Dana M. Proctor
+// Version 1.16 06/12/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -48,6 +48,9 @@
 //         1.14 06/30/2017 Updated VERSION. Class Method getVersion() Just Returned Clone
 //                         of VERSION.
 //         1.15 08/31/2017 Ajqvue Release v1.15. Updated VERSION.
+//         1.16 06/12/2018 Incremental Release Update to Reflect Current Year Changes,
+//                         Many Core Code Cleanup and Package Changes, utils.db. Updated
+//                         VERSION.
 //                              
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -86,7 +89,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * Arguments -debug, -lang='locale'
  * 
  * @author Dana M. Proctor
- * @version 1.15 09/02/2017
+ * @version 1.16 06/12/2018
  */
 
 public class Ajqvue implements ActionListener
@@ -107,7 +110,7 @@ public class Ajqvue implements ActionListener
    private static AResourceBundle resourceBundle;
 
    // String for Information About the Ajqvue.
-   private static String[] VERSION = {"Ajqvue", "1.15", "Build ID: 20170902"};
+   private static String[] VERSION = {"Ajqvue", "1.16", "Build ID: 20180612"};
    private static final String WEBSITE = "http://ajqvue.com";
    
    private static GeneralProperties generalProperties = new GeneralProperties();
