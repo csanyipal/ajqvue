@@ -9,7 +9,7 @@
 //                    << SnowFlake.java >>
 //
 //=================================================================
-// Copyright (C) 2016-2017 Dana M. Proctor
+// Copyright (C) 2016-2018 Dana M. Proctor
 // Version 1.1 09/02/2017
 //
 // This program is free software; you can redistribute it and/or
