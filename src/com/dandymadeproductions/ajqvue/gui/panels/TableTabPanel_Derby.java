@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.2 06/06/2018
+// Version 1.3 06/15/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -41,6 +41,10 @@
 //                        & editSelectedItem() Changed Class Instance columnType to
 //                        columnTypeName. Changed to TableTabPanel Instance columnType
 //                        NameHashMap.
+//         1.3 06/15/2018 Method getColumnNames() Added Instance columnSQLType & Used to
+//                        Store Value in columnSQLTypeHashMap. Method loadTable() Added
+//                        Instance columnSQLType. Method viewSelectedItem() Corrected
+//                        System.out to type name.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -73,7 +77,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * also provides the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.2 06/06/2018
+ * @version 1.3 06/15/2018
  */
 
 public class TableTabPanel_Derby extends TableTabPanel
@@ -110,6 +114,7 @@ public class TableTabPanel_Derby extends TableTabPanel
       String colNameString;
       String comboBoxNameString;
       String columnClass;
+      Integer columnSQLType;
       String columnTypeName;
       Integer columnSize;
 
@@ -186,13 +191,14 @@ public class TableTabPanel_Derby extends TableTabPanel
             colNameString = tableMetaData.getColumnName(i);
             comboBoxNameString = parseColumnNameField(colNameString);
             columnClass = tableMetaData.getColumnClassName(i);
+            columnSQLType = tableMetaData.getColumnType(i);
             columnTypeName = tableMetaData.getColumnTypeName(i);
             columnSize = Integer.valueOf(tableMetaData.getColumnDisplaySize(i));
 
             // System.out.println(i + " " + colNameString + " " +
-            //                   comboBoxNameString + " " +
-            //                   columnClass + " " + columnTypeName + " " +
-            //                   columnSize);
+            //                    comboBoxNameString + " " +
+            //                    columnClass + " " + columnSQLType + " " +
+            //                    columnTypeName + " " + columnSize);
 
             // This going to be a problem so skip this column.
 
@@ -206,6 +212,7 @@ public class TableTabPanel_Derby extends TableTabPanel
 
             columnNamesHashMap.put(comboBoxNameString, colNameString);
             columnClassHashMap.put(comboBoxNameString, columnClass);
+            columnSQLTypeHashMap.put(comboBoxNameString, columnSQLType);
             columnTypeNameHashMap.put(comboBoxNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
             columnSizeHashMap.put(comboBoxNameString, columnSize);
             if (comboBoxNameString.length() < 5)
@@ -347,6 +354,7 @@ public class TableTabPanel_Derby extends TableTabPanel
       String lobLessFieldsString;
       String columnName;
       String columnClass;
+      int columnSQLType;
       String columnTypeName;
       Integer keyLength;
       int columnSize, preferredColumnSize;
@@ -519,15 +527,16 @@ public class TableTabPanel_Derby extends TableTabPanel
                String currentHeading = headings.next();
                columnName = columnNamesHashMap.get(currentHeading);
                columnClass = columnClassHashMap.get(currentHeading);
+               columnSQLType = columnSQLTypeHashMap.get(currentHeading);
                columnTypeName = columnTypeNameHashMap.get(currentHeading);
                columnSize = (columnSizeHashMap.get(currentHeading)).intValue();
                keyLength = keyLengthHashMap.get(columnName);
                preferredColumnSize = (preferredColumnSizeHashMap.get(currentHeading)).intValue();
 
                // System.out.println(i + " " + j + " " + currentHeading + " " +
-               // columnName + " " + columnClass + " " +
-               // columnTypeName + " " + columnSize + " " +
-               // preferredColumnSize + " " + keyLength);
+               //                    columnName + " " + columnClass + " " +
+               //                    columnSQLType + " " + columnTypeName + " "
+               //                    + columnSize + " " + preferredColumnSize + " " + keyLength);
 
                // Storing data appropriately. If you have some date
                // or other formating, for a field here is where you
@@ -852,7 +861,8 @@ public class TableTabPanel_Derby extends TableTabPanel
                currentColumnTypeName = columnTypeNameHashMap.get(listTable.getColumnName(i));
                
                // System.out.println("field:" + currentDB_ColumnName + " class:" + currentColumnClass
-               //                     + " type:" + currentColumnTypeName + " value:" + currentContentData);
+               //                      + " type name:" + currentColumnTypeName + " value:"
+               //                      + currentContentData);
                
                // Skip Blob, Bit Data, & Clob Unless NULL.
                if ((currentColumnTypeName.equals("BLOB"))
