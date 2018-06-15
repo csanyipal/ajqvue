@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 06/06/2018
+// Version 1.4 06/15/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -43,6 +43,8 @@
 //         1.3 Organized Imports. Changed Class Instance columnTypeHashMap to column
 //             TypeNameHashMap & Associated Getter. Method deleteSelectedItem() Changed
 //             currentColumnType Instance to currentColumnTypeName.
+//         1.4 Added Class Instance columnSQLTypeHashMap & Associated Getter, Meets
+//             TableTabInterface Requirements.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -132,7 +134,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * access, while maintaining limited extensions.
  * 
  * @author Dana M. Proctor
- * @version 1.3 06/06/2018
+ * @version 1.4 06/15/2018
  */
 
 public abstract class TableTabPanel extends JPanel implements TableTabInterface, ActionListener,
@@ -205,6 +207,7 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    protected LinkedList<String> stateHistory = new LinkedList <String>();
    protected HashMap<String, String> columnNamesHashMap;
    protected HashMap<String, String> columnClassHashMap;
+   protected HashMap<String, Integer> columnSQLTypeHashMap;
    protected HashMap<String, String> columnTypeNameHashMap;
    protected HashMap<String, Integer> columnSizeHashMap;
    protected HashMap<String, Integer> preferredColumnSizeHashMap;
@@ -2527,6 +2530,16 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    public HashMap<String, String> getColumnClassHashMap()
    {
       return columnClassHashMap;
+   }
+   
+   //==============================================================
+   // Class method to allow classes to obtain the columnSQLType
+   // HashMap.
+   //==============================================================
+
+   public HashMap<String, Integer> getColumnSQLTypeHashMap()
+   {
+      return columnSQLTypeHashMap;
    }
 
    //==============================================================
