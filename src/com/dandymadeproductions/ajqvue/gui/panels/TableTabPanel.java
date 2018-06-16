@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 06/15/2018
+// Version 1.5 06/16/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -45,6 +45,8 @@
 //             currentColumnType Instance to currentColumnTypeName.
 //         1.4 Added Class Instance columnSQLTypeHashMap & Associated Getter, Meets
 //             TableTabInterface Requirements.
+//         1.5 Corrected to Properly Instantiate Class Instance columnSQLTypeHashMap.
+//             Code Formatting Changes for Instances, One per Line.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -134,7 +136,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * access, while maintaining limited extensions.
  * 
  * @author Dana M. Proctor
- * @version 1.4 06/15/2018
+ * @version 1.5 06/16/2018
  */
 
 public abstract class TableTabPanel extends JPanel implements TableTabInterface, ActionListener,
@@ -167,23 +169,46 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    protected String sqlTableFieldsString;
    protected StringBuffer sqlTableStatement;
    protected String identifierQuoteString;
-   protected ArrayList<String> fields, formFields, viewFormFields, comboBoxFields;
-   protected ArrayList<String> currentTableHeadings, allTableHeadings;
-   protected ArrayList<String> primaryKeys, foreignKeys, exportedKeys;
+   protected ArrayList<String> fields;
+   protected ArrayList<String> formFields;
+   protected ArrayList<String> viewFormFields;
+   protected ArrayList<String> comboBoxFields;
+   protected ArrayList<String> currentTableHeadings;
+   protected ArrayList<String> allTableHeadings;
+   protected ArrayList<String> primaryKeys;
+   protected ArrayList<String> foreignKeys;
+   protected ArrayList<String> exportedKeys;
    private AResourceBundle resourceBundle;
 
-   private ImageIcon previousStateIcon, nextStateIcon;
-   private ImageIcon ascUpIcon, ascDownIcon, descUpIcon, descDownIcon;
-   private ImageIcon searchIcon, removeIcon, updateIcon, advancedSortSearchIcon;
-   private ImageIcon previousViewIcon, nextViewIcon, refreshIcon;
-   private ImageIcon previousTableRowsIcon, nextTableRowsIcon;
+   private ImageIcon previousStateIcon;
+   private ImageIcon nextStateIcon;
+   
+   private ImageIcon ascUpIcon;
+   private ImageIcon ascDownIcon;
+   private ImageIcon descUpIcon;
+   private ImageIcon descDownIcon;
+   
+   private ImageIcon searchIcon;
+   private ImageIcon removeIcon;
+   private ImageIcon updateIcon;
+   private ImageIcon advancedSortSearchIcon;
+   
+   private ImageIcon previousViewIcon;
+   private ImageIcon nextViewIcon;
+   private ImageIcon refreshIcon;
+   private ImageIcon previousTableRowsIcon;
+   private ImageIcon nextTableRowsIcon;
    private ImageIcon deleteDataIcon;
 
-   private JButton previousStateButton , nextStateButton;
-   private JButton searchButton, clearSearchTextFieldButton;
+   private JButton previousStateButton;
+   private JButton nextStateButton;
+   private JButton searchButton;
+   private JButton clearSearchTextFieldButton;
    protected String ascDescString;
-   private  JRadioButton ascSortRadioButton, descSortRadioButton;
-   protected JComboBox<Object> sortComboBox, searchComboBox;
+   private JRadioButton ascSortRadioButton;
+   private JRadioButton descSortRadioButton;
+   protected JComboBox<Object> sortComboBox;
+   protected JComboBox<Object> searchComboBox;
    protected JTextField searchTextField;
    protected MouseListener summaryTablePopupListener;
 
@@ -220,9 +245,15 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    
    private JLabel rowsLabel;
    protected JButton refreshButton;
-   private JButton previousTableRowsButton, nextTableRowsButton;
-   private JButton viewButton, addButton, editButton, deleteButton, deleteAllButton;
-   private JButton previousViewButton, nextViewButton;
+   private JButton previousTableRowsButton;
+   private JButton nextTableRowsButton;
+   private JButton viewButton;
+   private JButton addButton;
+   private JButton editButton;
+   private JButton deleteButton;
+   private JButton deleteAllButton;
+   private JButton previousViewButton;
+   private JButton nextViewButton;
    private JButton closeViewButton;
 
    //==============================================================
@@ -281,6 +312,7 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
       
       columnNamesHashMap = new HashMap <String, String>();
       columnClassHashMap = new HashMap <String, String>();
+      columnSQLTypeHashMap = new HashMap<String, Integer>();
       columnTypeNameHashMap = new HashMap <String, String>();
       columnSizeHashMap = new HashMap <String, Integer>();
       preferredColumnSizeHashMap = new HashMap <String, Integer>();
@@ -889,7 +921,9 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    {
       // Method Instances
       TableFieldSelectionPreferencesPanel tableFieldPreferences;
-      String resource, resourceOK, resourceCancel;
+      String resource;
+      String resourceOK;
+      String resourceCancel;
       InputDialog selectFieldsDialog;
       
       resource = resourceBundle.getResourceString("TableTabPanel.dialogtitle.SelectSummaryTableFields",
@@ -978,7 +1012,8 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    private void executeActions()
    {
       // Method Instances.
-      Object id, columnName;
+      Object id;
+      Object columnName;
       int primaryKeyColumn = 0;
 
       // Button Actions
@@ -2777,8 +2812,10 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
       // Method Instances
       String delimiter;
       String[] tableStates;
-      String resourceTitle, resourceMessage;
-      int comboBoxItemCount, stateIndex;
+      String resourceTitle;
+      String resourceMessage;
+      int comboBoxItemCount;
+      int stateIndex;
 
       // Setting up and beginning setting the state.
 
