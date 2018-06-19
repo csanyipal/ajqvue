@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 06/16/2018
+// Version 1.6 06/19/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -47,6 +47,8 @@
 //             TableTabInterface Requirements.
 //         1.5 Corrected to Properly Instantiate Class Instance columnSQLTypeHashMap.
 //             Code Formatting Changes for Instances, One per Line.
+//         1.6 Added Methods getColumnEnum/SetHashMap() to Implmented TableTabInterface
+//             Requirements.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -136,7 +138,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * access, while maintaining limited extensions.
  * 
  * @author Dana M. Proctor
- * @version 1.5 06/16/2018
+ * @version 1.6 06/19/2018
  */
 
 public abstract class TableTabPanel extends JPanel implements TableTabInterface, ActionListener,
@@ -2593,6 +2595,24 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    public HashMap<String, Integer> getColumnSizeHashMap()
    {
       return columnSizeHashMap;
+   }
+   
+   //==============================================================
+   // Class method to allow classes to obtain the columnEnumHashMap.
+   //==============================================================
+
+   public HashMap<String, String> getColumnEnumHashMap()
+   {
+      return columnEnumHashMap;
+   }
+   
+   //==============================================================
+   // Class method to allow classes to obtain the columnSetHashMap.
+   //==============================================================
+
+   public HashMap<String, String> getColumnSetHashMap()
+   {
+      return columnSetHashMap;
    }
 
    //==============================================================
