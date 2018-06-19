@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 06/15/2018
+// Version 1.4 06/19/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,6 +34,7 @@
 //         1.1 Changed Interface getColumnTypeHashMap() to getColumnTypeNameHashMap().
 //         1.2 Added Interface HashMap<String, Integer> getColumnTypeHashMap().
 //         1.3 Changed Interface getColumnTypeHashMap() to getColumnSQLTypeHashMap().
+//         1.4 Comment Changes & Added Interfaces getColumnEnum/SetHashMap().
 //
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -56,7 +57,7 @@ import javax.swing.JTable;
  * application with other classes.
  * 
  * @author Dana M. Proctor
- * @version 1.3 06/15/2018
+ * @version 1.4 06/19/2018
  */
 
 interface TableTabInterface
@@ -239,26 +240,28 @@ interface TableTabInterface
    HashMap<String, String> getAutoIncrementHashMap();
 
    //==============================================================
-   // Class method to allow classes to obtain the columnNamesHashMap.
+   // Class method to allow classes to obtain the column Names
+   // HashMap.
    //==============================================================
 
    HashMap<String, String> getColumnNamesHashMap();
 
    //==============================================================
-   // Class method to allow classes to obtain the columnClassHashMap.
+   // Class method to allow classes to obtain the column Class
+   // HashMap.
    //==============================================================
 
    HashMap<String, String> getColumnClassHashMap();
    
    //==============================================================
-   // Class method to allow classes to obtain the columnType
+   // Class method to allow classes to obtain the column SQL Type
    // HashMap.
    //==============================================================
 
    HashMap<String, Integer> getColumnSQLTypeHashMap();
 
    //==============================================================
-   // Class method to allow classes to obtain the columnTypeName
+   // Class method to allow classes to obtain the column Type Name
    // HashMap.
    //==============================================================
 
@@ -269,6 +272,20 @@ interface TableTabInterface
    //==============================================================
 
    HashMap<String, Integer> getColumnSizeHashMap();
+   
+   //==============================================================
+   // Class method to allow classes to obtain the column Enum
+   // HashMap.
+   //==============================================================
+
+   HashMap<String, String> getColumnEnumHashMap();
+   
+   //==============================================================
+   // Class method to allow classes to obtain the column Set
+   // HashMap.
+   //==============================================================
+
+   HashMap<String, String> getColumnSetHashMap();
 
    //==============================================================
    // Class method to allow classes to obtain the table's state.
