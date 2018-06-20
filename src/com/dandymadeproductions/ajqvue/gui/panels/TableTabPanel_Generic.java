@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 06/15/2018
+// Version 1.6 06/20/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -48,6 +48,8 @@
 //             Store Value in columnSQLTypeHashMap. Method loadTable() Added
 //             Instance columnSQLType. Method viewSelectedItem() Corrected
 //             System.out to type name.
+//         1.6 Methods addItem() & editSelectedItem() Change in Arguments for
+//             TableEntryForm to Meet New Constructor Requirments.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -80,7 +82,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.5 06/15/2018
+ * @version 1.6 06/20/2018
  */
 
 public class TableTabPanel_Generic extends TableTabPanel
@@ -1157,11 +1159,7 @@ public class TableTabPanel_Generic extends TableTabPanel
 
       // Showing the Table Entry Form
       TableEntryForm addForm = new TableEntryForm("Add Table Entry: ", true, schemaTableName,
-                                                  -1, null, primaryKeys, autoIncrementHashMap, null,
-                                                  formFields, tableViewForm, columnNamesHashMap,
-                                                  columnClassHashMap, columnTypeNameHashMap,
-                                                  columnSizeHashMap, columnEnumHashMap,
-                                                  columnSetHashMap);
+                                                  -1, this, formFields, tableViewForm);
 
       // Doing some sizing of the height based on the number
       // of fields in the table. The entry form will though
@@ -1305,12 +1303,7 @@ public class TableTabPanel_Generic extends TableTabPanel
 
       // Showing the edit form and trying to size appropriately.
       TableEntryForm editForm = new TableEntryForm("Edit Table Entry: ", false, schemaTableName,
-                                                   rowToEdit, this, primaryKeys,
-                                                   autoIncrementHashMap, id,
-                                                   formFields, tableViewForm, columnNamesHashMap,
-                                                   columnClassHashMap, columnTypeNameHashMap,
-                                                   columnSizeHashMap, columnEnumHashMap,
-                                                   columnSetHashMap);
+                                                   rowToEdit, this, formFields, tableViewForm);
 
       if ((((formFields.size() / 2) + 1) * 35) > 400)
       {
