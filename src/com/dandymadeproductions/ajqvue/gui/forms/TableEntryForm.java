@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 06/03/2018
+// Version 1.5 06/20/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -47,6 +47,13 @@
 //                        setFormField() Used Utils.isBlob() & Utils.isText().
 //                        Method createFunctionSQLStatement() Used Utils.isBlob(),
 //                        Utils.isNumeric(), & Utils.isText()
+//         1.5 06/20/2018 Changed Constructor Arguments to Simply With Most Now
+//                        Derived From selectedTableTabPanel, Removed Argument
+//                        id. Added Class Instances columnSQLTypeHashMap & column
+//                        SetHashMap. Method addUpdateTableEntry() Added Class
+//                        Instance columnSQLType, Use of isNumeric(), & Change
+//                        in Processing for SQLite Date Types to Detect TEXT
+//                        Content.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -75,6 +82,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
+import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -119,7 +127,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 1.4 06/03/2018
+ * @version 1.5 06/20/2018
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -132,9 +140,11 @@ public class TableEntryForm extends JFrame implements ActionListener
    private HashMap<String, JComponent> fieldHashMap;
    private HashMap<String, String> columnNamesHashMap;
    private HashMap<String, String> columnClassHashMap;
+   private HashMap<String, Integer> columnSQLTypeHashMap;
    private HashMap<String, String> columnTypeNameHashMap;
    private HashMap<String, Integer> columnSizeHashMap;
    private HashMap<String, String> columnEnumHashMap;
+   private HashMap<String, String> columnSetHashMap;
    private HashMap<JButton, Object> blobBytesHashMap;
    private HashMap<String, JCheckBox> blobRemoveCheckBoxesHashMap;
    private HashMap<JButton, String> calendarButtonHashMap;
@@ -170,31 +180,26 @@ public class TableEntryForm extends JFrame implements ActionListener
 
    @SuppressWarnings("unchecked")
    public TableEntryForm(String title, boolean addItem, String sqlTable, int selectedRow,
-                            TableTabPanel selectedTableTabPanel, ArrayList<String> primaryKeys,
-                            HashMap<String, String> autoIncrementHashMap, Object id,
-                            ArrayList<String> formFields, TableViewForm tableViewForm,
-                            HashMap<String, String> columnNamesHashMap,
-                            HashMap<String, String> columnClassHashMap,
-                            HashMap<String, String> columnTypeNameHashMap,
-                            HashMap<String, Integer> columnSizeHashMap,
-                            HashMap<String, String> columnEnumHashMap,
-                            HashMap<String, String> columnSetHashMap)
+                         TableTabPanel selectedTableTabPanel, ArrayList<String> formFields,
+                         TableViewForm tableViewForm)
    {
+      this.addItem = addItem;
       this.sqlTable = sqlTable;
       this.selectedRow = selectedRow;
       this.selectedTableTabPanel = selectedTableTabPanel;
-      this.primaryKeys = primaryKeys;
-      this.autoIncrementHashMap = autoIncrementHashMap;
       this.formFields = formFields;
       this.tableViewForm = tableViewForm;
-      this.columnNamesHashMap = columnNamesHashMap;
-      this.columnClassHashMap = columnClassHashMap;
-      this.columnTypeNameHashMap = columnTypeNameHashMap;
-      this.columnSizeHashMap = columnSizeHashMap;
-      this.columnEnumHashMap = columnEnumHashMap;
-
-      this.addItem = addItem;
-
+      
+      primaryKeys = selectedTableTabPanel.getPrimaryKeys();
+      autoIncrementHashMap = selectedTableTabPanel.getAutoIncrementHashMap();
+      columnNamesHashMap = selectedTableTabPanel.getColumnNamesHashMap();
+      columnClassHashMap = selectedTableTabPanel.getColumnClassHashMap();
+      columnSQLTypeHashMap = selectedTableTabPanel.getColumnSQLTypeHashMap();
+      columnTypeNameHashMap = selectedTableTabPanel.getColumnTypeNameHashMap();
+      columnSizeHashMap = selectedTableTabPanel.getColumnSizeHashMap();
+      columnEnumHashMap = selectedTableTabPanel.getColumnEnumHashMap();
+      columnSetHashMap = selectedTableTabPanel.getColumnSetHashMap();
+      
       // Constructor Instances
 
       AFocusTraversalPolicy focusSequence;
@@ -949,6 +954,7 @@ public class TableEntryForm extends JFrame implements ActionListener
       String tableName;
       String columnName;
       String columnClass;
+      int columnSQLType;
       String columnTypeName;
       StringBuffer sqlStatementString;
       String sqlFieldNamesString;
@@ -1006,6 +1012,7 @@ public class TableEntryForm extends JFrame implements ActionListener
 
                columnName = columnNamesIterator.next();
                columnClass = columnClassHashMap.get(columnName);
+               columnSQLType = columnSQLTypeHashMap.get(columnName);
                columnTypeName = columnTypeNameHashMap.get(columnName);
                columnSize = (columnSizeHashMap.get(columnName)).intValue();
                isTextField = Utils.isText(columnClass, columnTypeName, true, columnSize);
@@ -1253,6 +1260,7 @@ public class TableEntryForm extends JFrame implements ActionListener
 
                columnName = columnNamesIterator.next();
                columnClass = columnClassHashMap.get(columnName);
+               columnSQLType = columnSQLTypeHashMap.get(columnName);
                columnTypeName = columnTypeNameHashMap.get(columnName);
                columnSize = (columnSizeHashMap.get(columnName)).intValue();
                isTextField = Utils.isText(columnClass, columnTypeName, true, columnSize);
@@ -1603,6 +1611,7 @@ public class TableEntryForm extends JFrame implements ActionListener
 
             columnName = columnNamesIterator.next();
             columnClass = columnClassHashMap.get(columnName);
+            columnSQLType = columnSQLTypeHashMap.get(columnName);
             columnTypeName = columnTypeNameHashMap.get(columnName);
             columnSize = (columnSizeHashMap.get(columnName)).intValue();
             isTextField = Utils.isText(columnClass, columnTypeName, true, columnSize);
@@ -1610,7 +1619,7 @@ public class TableEntryForm extends JFrame implements ActionListener
             isArrayField = (columnClass.indexOf("Array") != -1 || columnClass.indexOf("Object") != -1)
                            && columnTypeName.indexOf("_") != -1;
             // System.out.println(i + " " + columnName + " " + columnClass + " "
-            //                    + columnTypeName);
+            //                    + columnSQLType + " " + columnTypeName);
 
             // Validating input and setting content to fields
 
@@ -1670,11 +1679,7 @@ public class TableEntryForm extends JFrame implements ActionListener
             }
 
             // Numeric Type Fields
-            else if ((columnClass.indexOf("Byte") != -1 && columnTypeName.indexOf("CHAR") == -1)
-                     || columnClass.indexOf("Short") != -1
-                     || columnClass.indexOf("Integer") != -1 || columnClass.indexOf("Long") != -1
-                     || columnClass.indexOf("Float") != -1 || columnClass.indexOf("Double") != -1
-                     || columnClass.indexOf("BigDecimal") != -1)
+            else if (Utils.isNumeric(columnClass, columnTypeName))
             {
                try
                {
@@ -1759,8 +1764,15 @@ public class TableEntryForm extends JFrame implements ActionListener
 
                      dateString = Utils.convertViewDateString_To_DBDateString(
                         dateTimeFormString, DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
-                     dateValue = java.sql.Date.valueOf(dateString);
-                     prepared_sqlStatement.setDate(i++, dateValue);
+                     
+                     if (dataSourceType.equals(ConnectionManager.SQLITE)
+                         && columnSQLType == Types.VARCHAR)
+                        prepared_sqlStatement.setString(i++, dateString);
+                     else
+                     {
+                        dateValue = java.sql.Date.valueOf(dateString);
+                        prepared_sqlStatement.setDate(i++, dateValue);
+                     }
                   }
                   // Time
                   else if (columnTypeName.equals("TIME") || columnTypeName.equals("TIMETZ")
