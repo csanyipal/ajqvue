@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 06/07/2018
+// Version 1.5 06/21/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -47,6 +47,8 @@
 //             columnTypeName. Use of Both isBlob() & isNumerics() in insertReplace
 //             /explicitStatementData(). Corrected in Same Use of dbSchemaTableName
 //             for MSSQL & Derby.
+//         1.5 Methods insertReplace/explicitStatementData() Correction in System.out
+//             for type name:, columnTypeName.
 //             
 //-----------------------------------------------------------------
 //                poisonerbg@users.sourceforge.net
@@ -87,7 +89,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
  * the dump.
  * 
  * @author Borislav Gizdov a.k.a. PoisoneR, Dana Proctor
- * @version 1.3 05/30/2018
+ * @version 1.5 06/21/2018
  */
 
 public class SQLDataDumpThread extends SQLDump implements Runnable
@@ -485,7 +487,7 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
          columnClass = tableColumnClassHashMap.get(field);
          columnTypeName = tableColumnTypeNameHashMap.get(field);
          // System.out.println("field:" + field + " class:" + columnClass +
-         //                   "type:" + columnTypeName);
+         //                    " type name:" + columnTypeName);
 
          // Save the index of autoIncrement entries.
          if (DBTablesPanel.getSelectedTableTabPanel().getAutoIncrementHashMap().containsKey(field))
@@ -1173,7 +1175,7 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
                   columnClass = tableColumnClassHashMap.get(field);
                   columnTypeName = tableColumnTypeNameHashMap.get(field);
                   // System.out.println("field:" + field + " class:" + columnClass
-                  //                   + " type:" + columnTypeName);
+                  //                    + " type name:" + columnTypeName);
 
                   // Setting up WHERE Statement for Update Dump.
                   if (keys.contains(tableColumnNames.get(field)) && updateDump)
