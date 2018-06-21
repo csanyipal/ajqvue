@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.6 06/04/2018
+// Version 1.7 06/21/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -42,6 +42,8 @@
 //             URL, database.
 //         1.6 Method dataExportAction() Changed Instance tableColumnTypeHashMap
 //             to tableColumnTypeNameHashMap.
+//         1.7 Method dataExportAction() Added Class Instance tableColumnSQLType
+//             HashMap, CSVDataDumpThread New Constructor Requirement.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -110,7 +112,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * JMenuBar and JToolBar in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.6 06/04/2018
+ * @version 1.7 06/21/2018
  */
 
 class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
@@ -914,6 +916,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
       ArrayList<String> tableHeadings;
       HashMap<String, String> tableColumnNamesHashMap;
       HashMap<String, String> tableColumnClassHashMap;
+      HashMap<String, Integer> tableColumnSQLTypeHashMap;
       HashMap<String, String> tableColumnTypeNameHashMap;
       HashMap<String, Integer> tableColumnSizeHashMap;
       JTable summaryListTable;
@@ -933,6 +936,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
       tableHeadings = new ArrayList <String>();
       tableColumnNamesHashMap = new HashMap <String, String>();
       tableColumnClassHashMap = new HashMap <String, String>();
+      tableColumnSQLTypeHashMap = new HashMap <String, Integer>();
       tableColumnTypeNameHashMap = new HashMap <String, String>();
       tableColumnSizeHashMap = new HashMap <String, Integer>();
       summaryListTable = null;
@@ -1008,6 +1012,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
             {
                tableColumnNamesHashMap = (DBTablesPanel.getSelectedTableTabPanel()).getColumnNamesHashMap();
                tableColumnClassHashMap = (DBTablesPanel.getSelectedTableTabPanel()).getColumnClassHashMap();
+               tableColumnSQLTypeHashMap = (DBTablesPanel.getSelectedTableTabPanel()).getColumnSQLTypeHashMap();
                tableColumnTypeNameHashMap = (DBTablesPanel.getSelectedTableTabPanel()).getColumnTypeNameHashMap();
                tableColumnSizeHashMap = (DBTablesPanel.getSelectedTableTabPanel()).getColumnSizeHashMap();
             }
@@ -1032,6 +1037,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
                                                                            tableColumnNamesHashMap,
                                                                            useLimit,
                                                                            tableColumnClassHashMap,
+                                                                           tableColumnSQLTypeHashMap,
                                                                            tableColumnTypeNameHashMap,
                                                                            tableColumnSizeHashMap,
                                                                            exportedTable, fileName),
