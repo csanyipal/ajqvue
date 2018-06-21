@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.2 06/04/2018
+// Version 1.3 06/21/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,10 @@
 //                        TypeNameHashMap. Code Formatting for Instances. Method
 //                        run() Changed columnType to columnTypeName. Use of Utils
 //                        isBlob() & isText() For Detecting BLOB & TEXT Fields.
+//         1.3 06/21/2018 Added Class Instance columnSQLTypeHashMap, Also to Constructor
+//                        Arguments. Method run() Added Instance columnSQLType, Detection
+//                        For Date, DateTime, or Timestamp SQLite SQL Type VARCHAR to
+//                        Then Collected via getString().
 //             
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -52,6 +56,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,7 +76,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * is provided to allow the ability to prematurely terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.2 06/04/2018
+ * @version 1.3 06/21/2018
  */
 
 public class CSVDataDumpThread implements Runnable
@@ -83,6 +88,7 @@ public class CSVDataDumpThread implements Runnable
    private ArrayList<String> columnNameFields;
    private HashMap<String, String> tableColumnNamesHashMap;
    private HashMap<String, String> tableColumnClassHashMap;
+   private HashMap<String, Integer> tableColumnSQLTypeHashMap;
    private HashMap<String, String> tableColumnTypeNameHashMap;
    private HashMap<String, Integer> tableColumnSizeHashMap;
 
@@ -93,6 +99,7 @@ public class CSVDataDumpThread implements Runnable
    public CSVDataDumpThread(ArrayList<String> columnNameFields, HashMap<String,
                             String> tableColumnNamesHashMap, boolean limits,
                             HashMap<String, String> tableColumnClassHashMap,
+                            HashMap<String, Integer> tableColumnSQLTypeHashMap,
                             HashMap<String, String> tableColumnTypeNameHashMap,
                             HashMap<String, Integer> tableColumnSizeHashMap,
                             String exportedTable, String fileName)
@@ -101,6 +108,7 @@ public class CSVDataDumpThread implements Runnable
       this.tableColumnNamesHashMap = tableColumnNamesHashMap;
       this.limits = limits;
       this.tableColumnClassHashMap = tableColumnClassHashMap;
+      this.tableColumnSQLTypeHashMap = tableColumnSQLTypeHashMap;
       this.tableColumnTypeNameHashMap = tableColumnTypeNameHashMap;
       this.tableColumnSizeHashMap = tableColumnSizeHashMap;
       this.exportedTable = exportedTable;
@@ -118,6 +126,7 @@ public class CSVDataDumpThread implements Runnable
       FileOutputStream fileStream;
       BufferedOutputStream filebuff;
       ProgressBar dumpProgressBar;
+      
       Iterator<String> columnNamesIterator;
       StringBuffer columnNamesString;
       StringBuffer oracleColumnNamesString;
@@ -125,12 +134,16 @@ public class CSVDataDumpThread implements Runnable
       String schemaTableName;
       String field;
       String firstField;
+      
       String columnClass;
+      Integer columnSQLType;
       String columnTypeName;
+      int columnSize;
+      
       String dataDelimiter;
       String identifierQuoteString;
       String fieldContent;
-      int columnSize;
+      
       int rowsCount;
       int currentTableIncrement;
       int currentRow;
@@ -329,6 +342,7 @@ public class CSVDataDumpThread implements Runnable
                      // Filtering out blob & text data as needed.
                      String currentHeading = columnNamesIterator.next();
                      columnClass = tableColumnClassHashMap.get(currentHeading);
+                     columnSQLType = tableColumnSQLTypeHashMap.get(currentHeading);
                      columnTypeName = tableColumnTypeNameHashMap.get(currentHeading);
                      columnSize = (tableColumnSizeHashMap.get(currentHeading)).intValue();
 
@@ -413,7 +427,14 @@ public class CSVDataDumpThread implements Runnable
                      {
                         if (columnTypeName.equals("DATE"))
                         {
-                           Object date = dbResultSet.getDate(i);
+                           Object date;
+                           
+                           if (dataSourceType.equals(ConnectionManager.SQLITE)
+                               && columnSQLType == Types.VARCHAR)
+                              date = dbResultSet.getString(i);
+                           else
+                              date = dbResultSet.getDate(i);
+                           
                            if (date != null)
                               fieldContent = Utils.convertDBDateString_To_ViewDateString(
                                  date + "", DBTablesPanel.getDataExportProperties().getCSVDateFormat());
@@ -444,7 +465,13 @@ public class CSVDataDumpThread implements Runnable
                            }
                            else if (columnTypeName.indexOf("DATETIME") != -1 || columnTypeName.equals("TIMESTAMP"))
                            {
-                              Object dateTime = dbResultSet.getTimestamp(i);
+                              Object dateTime;
+                              
+                              if (dataSourceType.equals(ConnectionManager.SQLITE)
+                                  && columnSQLType == Types.VARCHAR)
+                                 dateTime = dbResultSet.getString(i);
+                              else
+                                 dateTime = dbResultSet.getTimestamp(i);
                               
                               if (dateTime != null)
                               {
