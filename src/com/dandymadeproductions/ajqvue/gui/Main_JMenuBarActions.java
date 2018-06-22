@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.7 06/21/2018
+// Version 1.8 06/22/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -44,6 +44,8 @@
 //             to tableColumnTypeNameHashMap.
 //         1.7 Method dataExportAction() Added Class Instance tableColumnSQLType
 //             HashMap, CSVDataDumpThread New Constructor Requirement.
+//         1.8 Method dataImportAction() reloadDBTables Checkbox Set True for
+//             SQLite Database Connection.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -112,7 +114,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * JMenuBar and JToolBar in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.7 06/21/2018
+ * @version 1.8 06/22/2018
  */
 
 class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
@@ -795,7 +797,11 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
                resource = resourceBundle.getResourceString(
                                      "Main_JMenuBarActions.checkbox.ReloadDatabaseTables",
                                      "Reload Database Tables?");
-               reloadDBTables = new JCheckBox(resource, false);
+               
+               if (ConnectionManager.getDataSourceType().equals(ConnectionManager.SQLITE))
+                  reloadDBTables = new JCheckBox(resource, true);
+               else
+                  reloadDBTables = new JCheckBox(resource, false);
                
                Object[] content = {message, reloadDBTables};
 
