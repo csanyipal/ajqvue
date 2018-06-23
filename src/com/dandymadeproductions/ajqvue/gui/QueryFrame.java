@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 06/22/2018
+// Version 1.4 06/23/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,7 +37,9 @@
 //                        Change in Fetch Row Size Before Any Tabs Present.
 //         1.2 05/31/2018 Method exportData() Changed Instance tableColumnTypeHashMap
 //                        to tableColumnTypeNameHashMap.
-//         1.3 06/22/2019 Removed QueryTabPanel Option.
+//         1.3 06/22/2018 Removed QueryTabPanel Option.
+//         1.4 06/23/2018 Method exportData() CSVQueryDataDumpThread Constructor
+//                        Argument queryString Removed Semicolons.
 //
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -123,7 +125,7 @@ import com.dandymadeproductions.ajqvue.utilities.TableClearingThread;
  * connection established in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.3 06/22/2018
+ * @version 1.4 06/23/2018
  */
 
 public class QueryFrame extends JFrame implements ActionListener, ChangeListener
@@ -1052,8 +1054,8 @@ public class QueryFrame extends JFrame implements ActionListener, ChangeListener
             if (actionCommand.equals(DATAEXPORT_CSV_QUERY))
             {
                Thread csvQueryDataTableDumpThread = new Thread(
-                  new CSVQueryDataDumpThread(query_dbConnection, queryTextArea.getText(), fileName,
-                                             true, true));
+                  new CSVQueryDataDumpThread(query_dbConnection, queryTextArea.getText().replaceAll(";", ""),
+                                             fileName, true, true));
                
                csvQueryDataTableDumpThread.start();
             }
