@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 06/09/2018
+// Version 1.5 06/23/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -42,6 +42,10 @@
 //             for Instances, One per Line. Added Additional try to Main
 //             executeSQL() for Closing db_resultSet. Added Methods getSQL
 //             ColumnNamesString() & getSQLOracleColumnNamesString().
+//         1.5 Main executeSQL() Changed columnType to columnSQLType. In
+//             Same Method Use of Loading columnSQLTypeHashMap With Results
+//             for typeof() With SQLite Date, Time, Datetime, & Timestamp
+//             columnTypeName. Added Public static Method getTypeof().
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -67,7 +71,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
  * the characteristics of a SQL query.   
  * 
  * @author Dana M. Proctor
- * @version 1.4 06/09/2018
+ * @version 1.5 06/23/2018
  */
 
 public class SQLQuery
@@ -188,8 +192,8 @@ public class SQLQuery
       
       String colNameString;
       String columnClass;
+      int columnSQLType;
       String columnTypeName;
-      int columnType;
       int columnScale;
       int columnPrecision;
       int columnSize;
@@ -242,7 +246,7 @@ public class SQLQuery
                // Fill information instances.
                colNameString = "Result";
                columnClass = "java.lang.String";
-               columnType = Types.VARCHAR;
+               columnSQLType = Types.VARCHAR;
                columnTypeName = "VARCHAR";
                columnScale = 0;
                columnPrecision = 0;
@@ -252,7 +256,7 @@ public class SQLQuery
                
                columnNames.add(colNameString);
                columnClassHashMap.put(colNameString, columnClass);
-               columnSQLTypeHashMap.put(colNameString, Integer.valueOf(Types.VARCHAR));
+               columnSQLTypeHashMap.put(colNameString, columnSQLType);
                columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
                columnScaleHashMap.put(colNameString, Integer.valueOf(columnScale));
                columnPrecisionHashMap.put(colNameString, Integer.valueOf(columnPrecision));
@@ -270,15 +274,15 @@ public class SQLQuery
             tableMetaData = db_resultSet.getMetaData();
             
             // System.out.println("SQLQUERY executeSQL()\n"
-            //                      + "index" + "\t" + "Name" + "\t" + "Class" + "\t"
-            //                      + "Type" + "\t" + "Type Name" + "\t" + "Scale"
-            //                      + "\t" + "Precision" + "\t" + "Size");
+            //                    + "index" + "\t" + "Name" + "\t" + "Class" + "\t"
+            //                    + "Type" + "\t" + "Type Name" + "\t" + "Scale"
+            //                    + "\t" + "Precision" + "\t" + "Size");
 
             for (int i = 1; i < tableMetaData.getColumnCount() + 1; i++)
             {
                colNameString = tableMetaData.getColumnLabel(i);
                columnClass = tableMetaData.getColumnClassName(i);
-               columnType = tableMetaData.getColumnType(i);
+               columnSQLType = tableMetaData.getColumnType(i);
                columnTypeName = tableMetaData.getColumnTypeName(i);
                columnScale = tableMetaData.getScale(i);
                columnPrecision = tableMetaData.getPrecision(i);
@@ -287,9 +291,9 @@ public class SQLQuery
                columnIsAutoIncrement = tableMetaData.isAutoIncrement(i);
                
                // System.out.println(i + "\t" + colNameString + "\t" +
-               //                          columnClass + "\t" + columnType + "\t" +
-               //                          columnTypeName + "\t" + columnScale + "\t" +
-               //                          columnPrecision + "\t" + columnSize);
+               //                    columnClass + "\t" + columnSQLType + "\t" +
+               //                    columnTypeName + "\t" + columnScale + "\t" +
+               //                    columnPrecision + "\t" + columnSize);
 
                // This going to be a problem so skip these columns.
                // NOT TESTED. This is still problably not going to
@@ -306,13 +310,13 @@ public class SQLQuery
                   if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("BINARY_FLOAT"))
                   {
                      columnClass = "java.lang.Float";
-                     columnType = Types.FLOAT;
+                     columnSQLType = Types.FLOAT;
                      columnTypeName = "FLOAT";
                   }
                   else if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("BINARY_DOUBLE"))
                   {
                      columnClass = "java.lang.Double";
-                     columnType = Types.DOUBLE;
+                     columnSQLType = Types.DOUBLE;
                      columnTypeName = "DOUBLE";
                   }
                   else
@@ -321,7 +325,24 @@ public class SQLQuery
 
                columnNames.add(colNameString);
                columnClassHashMap.put(colNameString, columnClass);
-               columnSQLTypeHashMap.put(colNameString, Integer.valueOf(columnType));
+               
+               if (dbConnection.getMetaData().getDatabaseProductName().toUpperCase(Locale.ENGLISH).indexOf(
+                     "SQLITE") != -1
+                   && (columnTypeName.toUpperCase(Locale.ENGLISH).equals("DATE")
+                       || columnTypeName.toUpperCase(Locale.ENGLISH).equals("TIME")
+                       || columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("DATETIME") != -1
+                       || columnTypeName.toUpperCase(Locale.ENGLISH).equals("TIMESTAMP")))
+               {  
+                  int type = getTypeof(dbConnection, sqlString, colNameString);
+                    
+                  if (type == Types.NULL)
+                     columnSQLTypeHashMap.put(colNameString, columnSQLType);
+                  else
+                     columnSQLTypeHashMap.put(colNameString, type);
+               }
+               else
+                  columnSQLTypeHashMap.put(colNameString, columnSQLType);
+               
                columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
                columnScaleHashMap.put(colNameString, Integer.valueOf(columnScale));
                columnPrecisionHashMap.put(colNameString, Integer.valueOf(columnPrecision));
@@ -391,6 +412,73 @@ public class SQLQuery
                sqlStatement.close();
          }   
       }
+   }
+   
+   //==============================================================
+   // Class method to obtain additional information about columns,
+   // via the typeof() function with the SQLite database
+   //==============================================================
+
+   public static int getTypeof(Connection dbConnection, String query, String colNameString)
+   {
+      // Method Instances
+      String sqlStatementString;
+      Statement sqlStatement;
+      ResultSet db_resultSet;
+      
+      String result;
+      int type;
+
+      // Connecting to the data base, to obtain
+      // meta data, and column names.
+      
+      sqlStatement = null;
+      db_resultSet = null;
+      type = Types.NULL;
+      
+      try
+      {
+         sqlStatement = dbConnection.createStatement();
+         sqlStatementString = "SELECT typeof(" + colNameString + ") FROM (" + query.replaceAll(";", "")
+                              + ") LIMIT 1";
+         // System.out.println(sqlStatementString);
+
+         db_resultSet = sqlStatement.executeQuery(sqlStatementString);
+
+         while (db_resultSet.next())
+         {
+            result =  db_resultSet.getString(1);
+            
+            if (result.equalsIgnoreCase("INTEGER"))
+               type =  Types.INTEGER;
+            else if (result.equalsIgnoreCase("TEXT"))
+               type = Types.VARCHAR;
+            else if (result.equalsIgnoreCase("REAL"))
+               type = Types.REAL;
+            else if (result.equalsIgnoreCase("BLOB"))
+               type = Types.BLOB;
+            else
+               type = Types.NULL;
+         }
+      }
+      catch (SQLException e)
+      {
+         ConnectionManager.displaySQLErrors(e, "SQLQuery getTypeof()");
+      }
+      finally
+      {
+         try
+         {
+            if (db_resultSet != null)
+               db_resultSet.close();
+         }
+         catch (SQLException sqle)
+         {
+            ConnectionManager.displaySQLErrors(sqle, "SQLQuery getTypeof()");
+         }
+      }
+      // System.out.println("TableTabPanel_SQLite getTypeof() columnName: " + colNameString + "-" + type);
+      return type;
    }
    
    //==============================================================
