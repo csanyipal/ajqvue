@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.8 06/22/2018
+// Version 1.9 06/24/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -46,6 +46,8 @@
 //             HashMap, CSVDataDumpThread New Constructor Requirement.
 //         1.8 Method dataImportAction() reloadDBTables Checkbox Set True for
 //             SQLite Database Connection.
+//         1.9 Method dataExport() Added tableColumnSQLTypeHashMap as Argument
+//             to SQLDataDumpThread Instantiation.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -114,7 +116,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * JMenuBar and JToolBar in the application.
  * 
  * @author Dana M. Proctor
- * @version 1.8 06/22/2018
+ * @version 1.9 06/24/2018
  */
 
 class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
@@ -1081,6 +1083,7 @@ class Main_JMenuBarActions extends Ajqvue implements MenuActionCommands
                Thread sqlDataDumpThread = new Thread(new SQLDataDumpThread(tableHeadings,
                                                                            tableColumnNamesHashMap, useLimit,
                                                                            tableColumnClassHashMap,
+                                                                           tableColumnSQLTypeHashMap,
                                                                            tableColumnTypeNameHashMap,
                                                                            exportedTable, fileName),
                                                                            "SQLDataDumpThread");
