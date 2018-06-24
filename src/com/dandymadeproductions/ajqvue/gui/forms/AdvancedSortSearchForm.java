@@ -36,6 +36,9 @@
 //                        NameHashMap. Code Formatting Instances, One per Line.
 //                        Method getAdvancedSortSearchSQL() Replaced columnTypeString
 //                        to columnTypeNameString & Used Utils.isNumerics().
+//         1.2 06/24/2019 Added Class Instance columnSQLTypeHashMap, Same as Argument
+//                        in Constructor. Method getAdvancedSortSearchSQL() Added
+//                        Instance columnSQLTypeInt, & Used in Call to isNumeric().
 //                      
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -84,7 +87,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * calling TableTabPanel's database table.
  * 
  * @author Dana M. Proctor
- * @version 1.1 06/11/2018
+ * @version 1.2 06/24/2018
  */
 
 public class AdvancedSortSearchForm extends JFrame implements ActionListener
@@ -98,6 +101,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
    
    private HashMap<String, String> columnNamesHashMap;
    private HashMap<String, String> columnClassHashMap;
+   private HashMap<String, Integer> columnSQLTypeHashMap;
    private HashMap<String, String> columnTypeNameHashMap;
    private ArrayList<String> comboBoxColumnNames;
    private AResourceBundle resourceBundle;
@@ -132,6 +136,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
    public AdvancedSortSearchForm(String table, AResourceBundle resourceBundle,
                                     HashMap<String, String> columnNamesHashMap,
                                     HashMap<String, String> columnClassHashMap,
+                                    HashMap<String, Integer> columnSQLTypeHashMap,
                                     HashMap<String, String> columnTypeNameHashMap,
                                     ArrayList<String> columnNames)
    {
@@ -139,6 +144,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
       this.resourceBundle = resourceBundle;
       this.columnNamesHashMap = columnNamesHashMap;
       this.columnClassHashMap = columnClassHashMap;
+      this.columnSQLTypeHashMap = columnSQLTypeHashMap;
       this.columnTypeNameHashMap = columnTypeNameHashMap;
       
       // Constructor Instances
@@ -770,6 +776,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
       String ascDescString;
       String columnNameString;
       String columnClassString;
+      int columnSQLTypeInt;
       String columnTypeNameString;
       String operatorString;
       String searchString;
@@ -812,6 +819,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
       {
          columnNameString = columnNamesHashMap.get(searchComboBox[i].getSelectedItem());
          columnClassString = columnClassHashMap.get(searchComboBox[i].getSelectedItem());
+         columnSQLTypeInt = columnSQLTypeHashMap.get(searchComboBox[i].getSelectedItem());
          columnTypeNameString = columnTypeNameHashMap.get(searchComboBox[i].getSelectedItem());
          operatorString = (String) operatorComboBox[i].getSelectedItem();
          searchString = searchTextField[i].getText();
@@ -897,7 +905,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
                      // Character data gets single quotes for some databases,
                      // not numbers though.
                           
-                     if (Utils.isNumeric(columnClassString, columnTypeNameString))
+                     if (Utils.isNumeric(columnClassString, columnSQLTypeInt, columnTypeNameString))
                         sqlStatementString.append(whereString + identifierQuoteString + columnNameString
                                                   + identifierQuoteString + " " + operatorString + " "
                                                   + searchString + " ");
