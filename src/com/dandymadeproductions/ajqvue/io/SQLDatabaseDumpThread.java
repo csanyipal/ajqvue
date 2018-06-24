@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.6 06/24/2018
+// Version 1.7 06/24/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -52,6 +52,9 @@
 //         1.6 Added Class Instance tableColumnSQLTypeHashMap, Methods insert
 //             Replace/explicitStatementData() Added Instance columnSQLType,
 //             Change in Call to isNumeric().
+//         1.7 Methods insertReplace/explicitStatementData() Testing System.out
+//             Changes to Include columnSQLType & Detection of Utils.isNumeric()
+//             for Dates to Not Quote.
 //                         
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -101,7 +104,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
  * the ability to prematurely terminate the dump.
  * 
  * @author Dana Proctor
- * @version 1.6 06/24/2018
+ * @version 1.7 06/24/2018
  */
 
 public class SQLDatabaseDumpThread extends SQLDump implements Runnable
@@ -531,7 +534,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
          columnSQLType = tableColumnSQLTypeHashMap.get(field);
          columnTypeName = tableColumnTypeNameHashMap.get(field);
          // System.out.println("field:" + field + " class:" + columnClass +
-         //                   "type:" + columnTypeName);
+         //                    " sql type:" + columnSQLType + "type name:" + columnTypeName);
 
          // Save the index of autoIncrement entries.
          if (currentTableTabPanel.getAutoIncrementHashMap().containsKey(field))
@@ -853,7 +856,12 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                               String dateString = rs.getString(i);
                               
                               if (dateString != null)
-                                 dumpData = dumpData + "'" + addEscapes(dateString) + "', ";
+                              {
+                                 if (numericIndexes.contains(Integer.valueOf(i)))
+                                    dumpData = dumpData + addEscapes(dateString) + ", ";
+                                 else
+                                    dumpData = dumpData + "'" + addEscapes(dateString) + "', ";
+                              }
                               else
                                  dumpData = dumpData + "NULL, ";    
                            }
@@ -1197,7 +1205,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                   columnSQLType = tableColumnSQLTypeHashMap.get(field);
                   columnTypeName = tableColumnTypeNameHashMap.get(field);
                   // System.out.println("field:" + field + " class:" + columnClass
-                  //                   + " type:" + columnTypeName);
+                  //                    + " sql type:" + columnSQLType + " type name:" + columnTypeName);
 
                   // Setting up WHERE Statement for Update Dump.
                   if (keys.contains(tableColumnNames.get(field)) && updateDump)
@@ -1365,7 +1373,12 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                               String dateString = rs.getString(tableColumnNames.get(field));
                               
                               if (dateString != null)
-                                 dumpData = dumpData + "'" + addEscapes(dateString) + "', ";
+                              {
+                                 if (Utils.isNumeric(columnClass, columnSQLType, columnTypeName))
+                                    dumpData = dumpData + addEscapes(dateString) + ", ";
+                                 else
+                                    dumpData = dumpData + "'" + addEscapes(dateString) + "', ";
+                              }
                               else
                                  dumpData = dumpData + "NULL, ";    
                            }
