@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 06/07/2018
+// Version 1.6 06/24/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -49,6 +49,9 @@
 //             of Both isBlob() & isNumerics() in insertReplace/explicitStatementData().
 //         1.5 Corrected in insertReplace/explicitStatementData() Use of dbSchemaTableName
 //             for MSSQL & Derby.
+//         1.6 Added Class Instance tableColumnSQLTypeHashMap, Methods insert
+//             Replace/explicitStatementData() Added Instance columnSQLType,
+//             Change in Call to isNumeric().
 //                         
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -98,7 +101,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
  * the ability to prematurely terminate the dump.
  * 
  * @author Dana Proctor
- * @version 1.4 06/07/2018
+ * @version 1.6 06/24/2018
  */
 
 public class SQLDatabaseDumpThread extends SQLDump implements Runnable
@@ -108,6 +111,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
    private ArrayList<String> columnNameFields;
    private HashMap<String, String> tableColumnNames;
    private HashMap<String, String> tableColumnClassHashMap;
+   private HashMap<String, Integer> tableColumnSQLTypeHashMap;
    private HashMap<String, String> tableColumnTypeNameHashMap;
    private String dataSourceType;
    private String schemaName;
@@ -280,6 +284,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                columnNameFields = currentTableTabPanel.getAllTableHeadings();
                tableColumnNames = currentTableTabPanel.getColumnNamesHashMap();
                tableColumnClassHashMap = currentTableTabPanel.getColumnClassHashMap();
+               tableColumnSQLTypeHashMap = currentTableTabPanel.getColumnSQLTypeHashMap();
                tableColumnTypeNameHashMap = currentTableTabPanel.getColumnTypeNameHashMap();
 
                // Create Table Statements As Needed.
@@ -471,10 +476,13 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       
       String field;
       String columnClass;
+      int columnSQLType;
       String columnTypeName;
+      
       String firstField;
       String sqlFieldValuesString;
       String expressionType;
+      
       int rowsCount;
       int currentTableIncrement;
       int currentRow;
@@ -520,6 +528,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       {
          field = columnNamesIterator.next();
          columnClass = tableColumnClassHashMap.get(field);
+         columnSQLType = tableColumnSQLTypeHashMap.get(field);
          columnTypeName = tableColumnTypeNameHashMap.get(field);
          // System.out.println("field:" + field + " class:" + columnClass +
          //                   "type:" + columnTypeName);
@@ -593,7 +602,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
          }
          
          // Save the index of numeric entries.
-         if (Utils.isNumeric(columnClass, columnTypeName))
+         if (Utils.isNumeric(columnClass, columnSQLType, columnTypeName))
          {
             numericIndexes.add(Integer.valueOf(columnsCount + 1));
          }
@@ -1027,8 +1036,10 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       StringBuffer columnNamesString;
       StringBuffer oracleColumnNamesString;
       Iterator<String> columnNamesIterator;
+      
       String field;
       String columnClass;
+      int columnSQLType;
       String columnTypeName;
       String firstField;
       
@@ -1183,6 +1194,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                {
                   field = (String) columnNamesIterator.next();
                   columnClass = tableColumnClassHashMap.get(field);
+                  columnSQLType = tableColumnSQLTypeHashMap.get(field);
                   columnTypeName = tableColumnTypeNameHashMap.get(field);
                   // System.out.println("field:" + field + " class:" + columnClass
                   //                   + " type:" + columnTypeName);
@@ -1447,7 +1459,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                                             + "', 'YYYY-MM-DD HH24:MI:SS TZH:TZM'), ";
                               
                               // Don't quote numbers.
-                              else if (Utils.isNumeric(columnClass, columnTypeName))
+                              else if (Utils.isNumeric(columnClass, columnSQLType, columnTypeName))
                               {
                                  dumpData = dumpData + contentString + ", ";
                               }
