@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.1 06/04/2018
+// Version 2.2 06/24/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -47,6 +47,7 @@
 //         2.0 Class Method isNumeric() Added COUNTER, BYTE, & CURRENCY.
 //         2.1 Methods isBlob(), isNumeric() & isText() Changed Instance columnType
 //             to columnTypeName. Method isNumeric() Clarified BYTE Condition.
+//         2.2 Method isNumeric() Added Argument columnSQLType & Conditions.
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -69,6 +70,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -121,7 +123,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 2.1 06/04/2018
+ * @version 2.2 06/24/2018
  */
 
 public class Utils extends Ajqvue
@@ -1208,7 +1210,7 @@ public class Utils extends Ajqvue
    //        NUMERIC, MONEY, SMALLMONEY
    //==============================================================
    
-   public static boolean isNumeric(String columnClass, String columnTypeName)
+   public static boolean isNumeric(String columnClass, int columnSQLType, String columnTypeName)
    {
       if (columnTypeName.indexOf("INT") != -1 || columnTypeName.indexOf("SERIAL") != -1
             || columnTypeName.equals("LONG") || columnTypeName.indexOf("DOUBLE") != -1
@@ -1217,7 +1219,12 @@ public class Utils extends Ajqvue
             || columnTypeName.indexOf("MONEY") != -1 || columnTypeName.indexOf("NUMERIC") != -1
             || columnTypeName.indexOf("COUNTER") != -1
             || (columnClass.indexOf("byte") != -1 && columnTypeName.equals("BYTE"))
-            || columnTypeName.equals("CURRENCY"))
+            || columnTypeName.equals("CURRENCY")
+            || columnSQLType == Types.BIGINT || columnSQLType == Types.DECIMAL
+            || columnSQLType == Types.DOUBLE || columnSQLType == Types.FLOAT
+            || columnSQLType == Types.INTEGER || columnSQLType == Types.NUMERIC
+            || columnSQLType == Types.REAL || columnSQLType == Types.SMALLINT
+            || columnSQLType == Types.TINYINT)
       {
          return true;
       }
