@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 06/11/2018
+// Version 1.6 06/24/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -41,6 +41,8 @@
 //             Formatting Changes for Instances.
 //         1.4 Method importCSVFile() Use of Utils.isBlob().
 //         1.5 Method importCSVFile() Corrected Quoting, Not Utils.isNumerics().
+//         1.6 Method importCSVFile() Added Instances columnSQLTypeHashMap &
+//             columnSQLType, Formatted One Instance per Line. 
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -77,7 +79,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * address the ability to cancel the import.
  * 
  * @author Dana M. Proctor
- * @version 1.5 06/11/2018
+ * @version 1.6 06/24/2018
  */
 
 public class CSVDataImportThread implements Runnable
@@ -188,7 +190,8 @@ public class CSVDataImportThread implements Runnable
    {
       // Class Method Instances.
       Statement sqlStatement;
-      StringBuffer sqlFieldNamesString, sqlValuesString;
+      StringBuffer sqlFieldNamesString;
+      StringBuffer sqlValuesString;
       String sqlKeyString;
       StringBuffer sqlStatementString;
 
@@ -196,15 +199,20 @@ public class CSVDataImportThread implements Runnable
       BufferedReader bufferedReader;
 
       String schemaTableName;
-      ArrayList<String> primaryKeys, tableFields, fields;
-      HashMap<String, String> columnTypeNameHashMap;
+      ArrayList<String> primaryKeys;
+      ArrayList<String> tableFields;
+      ArrayList<String> fields;
       HashMap<String, String> columnClassHashMap;
+      HashMap<String, Integer> columnSQLTypeHashMap;
+      HashMap<String, String> columnTypeNameHashMap;
       String catalogSeparator;
       String identifierQuoteString;
 
       String currentLine;
       String columnClass;
+      int columnSQLType;
       String columnTypeName;
+      
       int fileLineLength;
       int fieldNumber;
       int line;
@@ -257,9 +265,10 @@ public class CSVDataImportThread implements Runnable
             identifierQuoteString = ConnectionManager.getIdentifierQuoteString();
             schemaTableName = Utils.getSchemaTableName(importTable);
             primaryKeys = DBTablesPanel.getSelectedTableTabPanel().getPrimaryKeys();
-            columnTypeNameHashMap = DBTablesPanel.getSelectedTableTabPanel().getColumnTypeNameHashMap();
             columnClassHashMap = DBTablesPanel.getSelectedTableTabPanel().getColumnClassHashMap();
-         
+            columnSQLTypeHashMap = DBTablesPanel.getSelectedTableTabPanel().getColumnSQLTypeHashMap();
+            columnTypeNameHashMap = DBTablesPanel.getSelectedTableTabPanel().getColumnTypeNameHashMap();
+            
             argConnection = false;
          }
          else
@@ -288,8 +297,9 @@ public class CSVDataImportThread implements Runnable
             }
             
             primaryKeys = new ArrayList <String>();
-            columnTypeNameHashMap = sqlQuery.getColumnTypeNameHashMap();
             columnClassHashMap = sqlQuery.getColumnClassHashMap();
+            columnSQLTypeHashMap = sqlQuery.getColumnSQLTypeHashMap();
+            columnTypeNameHashMap = sqlQuery.getColumnTypeNameHashMap();
          }
          
          // Disable autocommit and begin the start
@@ -402,9 +412,11 @@ public class CSVDataImportThread implements Runnable
                   for (int i = 0; i < lineContent.length; i++)
                   {
                      columnClass = columnClassHashMap.get(tableFields.get(i));
+                     columnSQLType = columnSQLTypeHashMap.get(tableFields.get(i));
                      columnTypeName = columnTypeNameHashMap.get(tableFields.get(i));
                      // System.out.println("tableField:" + tableFields.get(i) + " ColumnClass: "
-                     //                    + columnClass + " ColumnType: " + columnTypeName
+                     //                    + columnClass + " ColumnSQLType: " + columnSQLType
+                     //                    + " ColumnType: " + columnTypeName
                      //                    + " " + lineContent[i]);
 
                      // Make sure and catch all null default entries first.
@@ -528,7 +540,7 @@ public class CSVDataImportThread implements Runnable
                      else
                      {
                         // Don't Quote Numeric Values.
-                        if (!Utils.isNumeric(columnClass, columnTypeName)) 
+                        if (!Utils.isNumeric(columnClass, columnSQLType, columnTypeName)) 
                            lineContent[i] = "'" + lineContent[i] + "'";
                      }
 
