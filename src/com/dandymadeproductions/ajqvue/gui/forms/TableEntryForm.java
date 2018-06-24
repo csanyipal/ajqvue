@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 06/20/2018
+// Version 1.6 06/24/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -54,6 +54,9 @@
 //                        Instance columnSQLType, Use of isNumeric(), & Change
 //                        in Processing for SQLite Date Types to Detect TEXT
 //                        Content.
+//         1.6 06/24/2018 Method addUpdateTableEntry() Added columnSQLType to
+//                        Utils.isNumeric(). Method createFunctionSQLStatementString()
+//                        Added Instance columnSQLType & Used in Utils.isNumeric().
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -127,7 +130,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 1.5 06/20/2018
+ * @version 1.6 06/24/2018
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -1679,7 +1682,7 @@ public class TableEntryForm extends JFrame implements ActionListener
             }
 
             // Numeric Type Fields
-            else if (Utils.isNumeric(columnClass, columnTypeName))
+            else if (Utils.isNumeric(columnClass, columnSQLType, columnTypeName))
             {
                try
                {
@@ -2312,19 +2315,21 @@ public class TableEntryForm extends JFrame implements ActionListener
    {
       // Class Method Instances
       StringBuffer sqlStatementString;
-      String columnTypeName;
       String columnClass;
+      int columnSQLType;
+      String columnTypeName;
       int columnSize;
       String valueDelimiter;
       
       // Setup to accomodate the non-quoting of number
       // type fields. HSQLDB2 & MS_Access Issue.
       
-      columnTypeName = columnTypeNameHashMap.get(columnName);
       columnClass = columnClassHashMap.get(columnName);
+      columnSQLType = columnSQLTypeHashMap.get(columnName);
+      columnTypeName = columnTypeNameHashMap.get(columnName);
       columnSize = columnSizeHashMap.get(columnName);
       
-      if (Utils.isNumeric(columnClass, columnTypeName))
+      if (Utils.isNumeric(columnClass, columnSQLType, columnTypeName))
          valueDelimiter = "";
       else
          valueDelimiter = "'";
