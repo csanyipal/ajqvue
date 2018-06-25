@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.7 06/24/2018
+// Version 1.8 06/25/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -55,7 +55,10 @@
 //         1.7 Methods insertReplace/explicitStatementData() Testing System.out
 //             Changes to Include columnSQLType & Detection of Utils.isNumeric()
 //             for Dates to Not Quote.
-//             
+//         1.8 Method insertReplaceStatementData() Changed Instance numericIndexes
+//             to notQuotedIndexes. Changed All Reference to Utils.isNumerics() to
+//             Utils.isNotQuoted().
+//
 //-----------------------------------------------------------------
 //                poisonerbg@users.sourceforge.net
 //                danap@dandymadeproductions.com
@@ -95,7 +98,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
  * the dump.
  * 
  * @author Borislav Gizdov a.k.a. PoisoneR, Dana Proctor
- * @version 1.7 06/24/2018
+ * @version 1.8 06/25/2018
  */
 
 public class SQLDataDumpThread extends SQLDump implements Runnable
@@ -441,7 +444,7 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
       ArrayList<Integer> dateIndexes;
       ArrayList<Integer> yearIndexes;
       ArrayList<Integer> arrayIndexes;
-      ArrayList<Integer> numericIndexes;
+      ArrayList<Integer> notQuotedIndexes;
       
       String field;
       String columnClass;
@@ -490,7 +493,7 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
       dateIndexes = new ArrayList <Integer>();
       yearIndexes = new ArrayList <Integer>();
       arrayIndexes = new ArrayList <Integer>();
-      numericIndexes = new ArrayList <Integer>();
+      notQuotedIndexes = new ArrayList <Integer>();
 
       while (columnNamesIterator.hasNext())
       {
@@ -570,9 +573,9 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
          }
          
          // Save the index of numeric entries.
-         if (Utils.isNumeric(columnClass, columnSQLType, columnTypeName))
+         if (Utils.isNotQuoted(columnClass, columnSQLType, columnTypeName))
          {
-            numericIndexes.add(Integer.valueOf(columnsCount + 1));
+            notQuotedIndexes.add(Integer.valueOf(columnsCount + 1));
          }
 
          // Modify Statement as needed for Oracle TIMESTAMPLTZ Fields.
@@ -834,7 +837,7 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
                               
                               if (dateString != null)
                               {
-                                 if (numericIndexes.contains(Integer.valueOf(i)))
+                                 if (notQuotedIndexes.contains(Integer.valueOf(i)))
                                     dumpData = dumpData + addEscapes(dateString) + ", ";
                                  else
                                     dumpData = dumpData + "'" + addEscapes(dateString) + "', ";
@@ -928,7 +931,7 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
                                             + "', 'YYYY-MM-DD HH24:MI:SS TZH:TZM'), ";
                               
                               // Don't Quote Numeric Values.
-                              else if (numericIndexes.contains(Integer.valueOf(i))) 
+                              else if (notQuotedIndexes.contains(Integer.valueOf(i))) 
                                  dumpData = dumpData + contentString + ", ";
                               
                               else 
@@ -1363,7 +1366,7 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
                               
                               if (dateString != null)
                               {
-                                 if (Utils.isNumeric(columnClass, columnSQLType, columnTypeName))
+                                 if (Utils.isNotQuoted(columnClass, columnSQLType, columnTypeName))
                                     dumpData = dumpData + addEscapes(dateString) + ", ";
                                  else
                                     dumpData = dumpData + "'" + addEscapes(dateString) + "', ";
@@ -1461,7 +1464,7 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
                                             + "', 'YYYY-MM-DD HH24:MI:SS TZH:TZM'), ";
                               
                               // Don't quote numbers.
-                              else if (Utils.isNumeric(columnClass, columnSQLType, columnTypeName))
+                              else if (Utils.isNotQuoted(columnClass, columnSQLType, columnTypeName))
                               {
                                  dumpData = dumpData + contentString + ", ";
                               }
