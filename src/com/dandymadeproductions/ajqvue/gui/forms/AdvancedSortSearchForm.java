@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.1 06/11/2018
+// Version 1.3 06/25/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,9 +36,11 @@
 //                        NameHashMap. Code Formatting Instances, One per Line.
 //                        Method getAdvancedSortSearchSQL() Replaced columnTypeString
 //                        to columnTypeNameString & Used Utils.isNumerics().
-//         1.2 06/24/2019 Added Class Instance columnSQLTypeHashMap, Same as Argument
+//         1.2 06/24/2018 Added Class Instance columnSQLTypeHashMap, Same as Argument
 //                        in Constructor. Method getAdvancedSortSearchSQL() Added
 //                        Instance columnSQLTypeInt, & Used in Call to isNumeric().
+//         1.3 06/25/2018 Method getAdvancedSortSearchSQL() Changed isNumeric() to
+//                        isNotQuoted().
 //                      
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -87,7 +89,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * calling TableTabPanel's database table.
  * 
  * @author Dana M. Proctor
- * @version 1.2 06/24/2018
+ * @version 1.3 06/25/2018
  */
 
 public class AdvancedSortSearchForm extends JFrame implements ActionListener
@@ -905,7 +907,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
                      // Character data gets single quotes for some databases,
                      // not numbers though.
                           
-                     if (Utils.isNumeric(columnClassString, columnSQLTypeInt, columnTypeNameString))
+                     if (Utils.isNotQuoted(columnClassString, columnSQLTypeInt, columnTypeNameString))
                         sqlStatementString.append(whereString + identifierQuoteString + columnNameString
                                                   + identifierQuoteString + " " + operatorString + " "
                                                   + searchString + " ");
