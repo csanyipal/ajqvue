@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.2 06/24/2018
+// Version 2.3 06/25/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -48,6 +48,8 @@
 //         2.1 Methods isBlob(), isNumeric() & isText() Changed Instance columnType
 //             to columnTypeName. Method isNumeric() Clarified BYTE Condition.
 //         2.2 Method isNumeric() Added Argument columnSQLType & Conditions.
+//         2.3 Changed isNumeric() Arguments to columnClass & columnTypeName. Added
+//             Method isNotQuoted().
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -123,7 +125,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 2.2 06/24/2018
+ * @version 2.3 06/25/2018
  */
 
 public class Utils extends Ajqvue
@@ -1202,15 +1204,11 @@ public class Utils extends Ajqvue
    }
    
    //==============================================================
-   // Method for determing if the given meta data class and type
-   // can be defined as a number.
-   //
-   // Types: SERIAL, TINYINT, SMALLINT, MEDIUMINT, INTEGER, BIGINT,
-   //        INT, = LONG, DOUBLE, FLOAT, REAL, NUMBER, DECIMAL,
-   //        NUMERIC, MONEY, SMALLMONEY
+   // Method for determing if the given meta data class, sql type,
+   // and type name should not be quoted.
    //==============================================================
    
-   public static boolean isNumeric(String columnClass, int columnSQLType, String columnTypeName)
+   public static boolean isNotQuoted(String columnClass, int columnSQLType, String columnTypeName)
    {
       if (columnTypeName.indexOf("INT") != -1 || columnTypeName.indexOf("SERIAL") != -1
             || columnTypeName.equals("LONG") || columnTypeName.indexOf("DOUBLE") != -1
@@ -1225,6 +1223,32 @@ public class Utils extends Ajqvue
             || columnSQLType == Types.INTEGER || columnSQLType == Types.NUMERIC
             || columnSQLType == Types.REAL || columnSQLType == Types.SMALLINT
             || columnSQLType == Types.TINYINT)
+      {
+         return true;
+      }
+      else
+         return false;
+   }
+   
+   //==============================================================
+   // Method for determing if the given meta data class and type
+   // can be defined as a number.
+   //
+   // Types: SERIAL, TINYINT, SMALLINT, MEDIUMINT, INTEGER, BIGINT,
+   //        INT, = LONG, DOUBLE, FLOAT, REAL, NUMBER, DECIMAL,
+   //        NUMERIC, MONEY, SMALLMONEY
+   //==============================================================
+   
+   public static boolean isNumeric(String columnClass, String columnTypeName)
+   {
+      if (columnTypeName.indexOf("INT") != -1 || columnTypeName.indexOf("SERIAL") != -1
+            || columnTypeName.equals("LONG") || columnTypeName.indexOf("DOUBLE") != -1
+            || columnTypeName.indexOf("FLOAT") != -1 || columnTypeName.indexOf("REAL") != -1
+            || columnTypeName.indexOf("DECIMAL") != -1 || columnTypeName.indexOf("NUMBER") != -1
+            || columnTypeName.indexOf("MONEY") != -1 || columnTypeName.indexOf("NUMERIC") != -1
+            || columnTypeName.indexOf("COUNTER") != -1
+            || (columnClass.indexOf("byte") != -1 && columnTypeName.equals("BYTE"))
+            || columnTypeName.equals("CURRENCY"))
       {
          return true;
       }
