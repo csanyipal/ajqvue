@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.3 06/25/2018
+// Version 2.4 06/26/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -50,6 +50,7 @@
 //         2.2 Method isNumeric() Added Argument columnSQLType & Conditions.
 //         2.3 Changed isNumeric() Arguments to columnClass & columnTypeName. Added
 //             Method isNotQuoted().
+//         2.4 Method isBlob() Corrected Blob columnClass to 'String'.
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -125,7 +126,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 2.3 06/25/2018
+ * @version 2.4 06/26/2018
  */
 
 public class Utils extends Ajqvue
@@ -1192,7 +1193,7 @@ public class Utils extends Ajqvue
       columnClass = columnClass.toLowerCase(Locale.ENGLISH);
       columnTypeName = columnTypeName.toUpperCase(Locale.ENGLISH);
       
-      if ((columnClass.indexOf("string") == -1 && columnTypeName.indexOf("BLOB") != -1)
+      if ((columnClass.indexOf("String") == -1 && columnTypeName.indexOf("BLOB") != -1)
           || (columnTypeName.indexOf("BYTEA") != -1) || (columnTypeName.indexOf("BINARY") != -1)
           || (columnClass.indexOf("byte") != -1 && columnTypeName.indexOf("BIT DATA") != -1)
           || (columnTypeName.indexOf("RAW") != -1) || (columnTypeName.indexOf("IMAGE") != -1))
