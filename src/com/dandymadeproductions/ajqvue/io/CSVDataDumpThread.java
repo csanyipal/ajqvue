@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 06/21/2018
+// Version 1.4 06/26/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -41,6 +41,8 @@
 //                        Arguments. Method run() Added Instance columnSQLType, Detection
 //                        For Date, DateTime, or Timestamp SQLite SQL Type VARCHAR to
 //                        Then Collected via getString().
+//         1.4 06/23/2018 Minor Code Formatting. Method run() Added Conditional for SQLite
+//                        Time Types Processing.
 //             
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -76,7 +78,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * is provided to allow the ability to prematurely terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.3 06/21/2018
+ * @version 1.4 06/26/2018
  */
 
 public class CSVDataDumpThread implements Runnable
@@ -423,7 +425,8 @@ public class CSVDataDumpThread implements Runnable
                      
                      // Format Date & Timestamp Fields as Needed.
                      else if (columnTypeName.equals("DATE") || columnTypeName.indexOf("DATETIME") != -1
-                              || (columnTypeName.indexOf("TIMESTAMP") != -1 && columnClass.indexOf("Array") == -1))
+                              || (columnTypeName.indexOf("TIMESTAMP") != -1
+                                  && columnClass.indexOf("Array") == -1))
                      {
                         if (columnTypeName.equals("DATE"))
                         {
@@ -463,7 +466,8 @@ public class CSVDataDumpThread implements Runnable
                               else
                                  fieldContent = "NULL";
                            }
-                           else if (columnTypeName.indexOf("DATETIME") != -1 || columnTypeName.equals("TIMESTAMP"))
+                           else if (columnTypeName.indexOf("DATETIME") != -1
+                                    || columnTypeName.equals("TIMESTAMP"))
                            {
                               Object dateTime;
                               
@@ -520,6 +524,17 @@ public class CSVDataDumpThread implements Runnable
                            }
                         }
                         dumpData = dumpData + fieldContent + dataDelimiter;  
+                     }
+                     
+                     // SQLite TIME
+                     else if (dataSourceType.equals(ConnectionManager.SQLITE)
+                              && columnTypeName.equals("TIME"))
+                     {
+                        if (columnSQLType == Types.VARCHAR)
+                           dumpData = dumpData + dbResultSet.getString(i).trim() + dataDelimiter;
+                        else
+                           dumpData = dumpData + new SimpleDateFormat("HH:mm:ss").format(
+                              dbResultSet.getTime(i)) + dataDelimiter; 
                      }
                      
                      // All other fields.
