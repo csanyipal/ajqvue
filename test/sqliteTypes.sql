@@ -10,6 +10,7 @@
 --         05/15/2018 Changed Table Name sqlitetypes, to datatypes. Appears
 --                    to be JDBC or SQLite Conflict With the Use of the Name,
 --                    Key Word?
+--         06/26/2018 Added Temporal Types.
 --
 -- danap@dandymadeproductions.com
 -- =============================================================
@@ -26,7 +27,14 @@
    int_type INTEGER,
    real_type REAL,
    text_type TEXT,
-   blob_type BLOB
+   blob_type BLOB,
+   
+-- Temoral type fields.
+
+   date_type DATE,
+   time_type TIME,
+   datetime_type DATETIME,
+   timestamp_type TIMESTAMP 
 );
 
 --
