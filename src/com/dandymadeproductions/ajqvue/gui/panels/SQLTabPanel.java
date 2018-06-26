@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.2 06/01/2018
+// Version 1.3 06/26/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,13 @@
 //                        Debug. Changed getColumnTypeHashMap() Method to be
 //                        Return of <String, Integer>. Added Class Method
 //                        getColumnTypeNameHashMap().
+//         1.3 06/26/2018 Changed Class Instance columnTypeHashMap to columnSQL
+//                        TypeHashMap. Method executeSQL() Changed Instance
+//                        columnType to columnSQLType & Change for SQLite the
+//                        Storage of Field Information for columnClassHashMap
+//                        & columnSQLTypeHashMap. In Same Method Change in
+//                        Processing for Date, Datetime, Time, & Timestamp Types
+//                        for SQLite.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -92,6 +99,7 @@ import com.dandymadeproductions.ajqvue.gui.QueryFrame;
 import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
 import com.dandymadeproductions.ajqvue.utilities.TableSorter;
+import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
 
 /**
  *    The SQLTabPanel class provides the view of resultant data/results
@@ -116,7 +124,7 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
    private ArrayList<String> tableHeadings;
    private HashMap<String, String> columnNamesHashMap;
    private HashMap<String, String> columnClassHashMap;
-   private HashMap<String, Integer> columnTypeHashMap;
+   private HashMap<String, Integer> columnSQLTypeHashMap;
    private HashMap<String, String> columnTypeNameHashMap;
    private HashMap<String, Integer> columnSizeHashMap;
    private HashMap<String, Integer> preferredColumnSizeHashMap;
@@ -153,7 +161,7 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
       tableHeadings = new ArrayList <String>();
       columnNamesHashMap = new HashMap <String, String>();
       columnClassHashMap = new HashMap <String, String>();
-      columnTypeHashMap = new HashMap <String, Integer>();
+      columnSQLTypeHashMap = new HashMap <String, Integer>();
       columnTypeNameHashMap = new HashMap <String, String>();
       columnSizeHashMap = new HashMap <String, Integer>();
       preferredColumnSizeHashMap = new HashMap <String, Integer>();
@@ -267,8 +275,8 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
 
       String colNameString;
       String columnClass;
+      int columnSQLType;
       String columnTypeName;
-      int columnType;
       int columnScale;
       int columnPrecision;
       int columnSize;
@@ -322,14 +330,14 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                // Fill information instances.
                colNameString = "Result";
                columnClass = "java.lang.String";
-               columnType = Types.VARCHAR;
+               columnSQLType = Types.VARCHAR;
                columnTypeName = "VARCHAR";
                columnSize = 30;
                
                tableHeadings.add(colNameString);
                columnNamesHashMap.put(colNameString, colNameString);
                columnClassHashMap.put(colNameString, columnClass);
-               columnTypeHashMap.put(colNameString, columnType);
+               columnSQLTypeHashMap.put(colNameString, columnSQLType);
                columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
                columnSizeHashMap.put(colNameString, Integer.valueOf(columnSize));
                preferredColumnSizeHashMap.put(colNameString,
@@ -362,7 +370,7 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
             {
                colNameString = tableMetaData.getColumnLabel(i);
                columnClass = tableMetaData.getColumnClassName(i);
-               columnType = tableMetaData.getColumnType(i);
+               columnSQLType = tableMetaData.getColumnType(i);
                columnTypeName = tableMetaData.getColumnTypeName(i);
                columnScale = tableMetaData.getScale(i);
                columnPrecision = tableMetaData.getPrecision(i);
@@ -370,7 +378,7 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                
                if (Ajqvue.getDebug())
                   System.out.println(i + "\t" + colNameString + "\t" +
-                                     columnClass + "\t" + columnType + "\t" +
+                                     columnClass + "\t" + columnSQLType + "\t" +
                                      columnTypeName + "\t" + columnScale + "\t" +
                                      columnPrecision + "\t" + columnSize);
 
@@ -406,12 +414,38 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
 
                tableHeadings.add(colNameString);
                columnNamesHashMap.put(colNameString, colNameString);
-               columnClassHashMap.put(colNameString, columnClass);
-               columnTypeHashMap.put(colNameString, columnType);
+               
+               if (dataSourceType.equals(ConnectionManager.SQLITE)
+                     && (columnTypeName.toUpperCase(Locale.ENGLISH).equals("DATE")
+                         || columnTypeName.toUpperCase(Locale.ENGLISH).equals("TIME")
+                         || columnTypeName.toUpperCase(Locale.ENGLISH).indexOf("DATETIME") != -1
+                         || columnTypeName.toUpperCase(Locale.ENGLISH).equals("TIMESTAMP")))
+               {
+                    if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("DATE"))
+                       columnClassHashMap.put(colNameString, "java.sql.Date");
+                    else if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("TIME"))
+                       columnClassHashMap.put(colNameString, "java.sql.Time");
+                    else
+                       columnClassHashMap.put(colNameString, "java.sql.Timestamp");
+                    
+                    int type = SQLQuery.getTypeof(dbConnection, sqlString, colNameString);
+                    
+                    if (type == Types.NULL)
+                       columnSQLTypeHashMap.put(colNameString, columnSQLType);
+                    else
+                       columnSQLTypeHashMap.put(colNameString,
+                          SQLQuery.getTypeof(dbConnection, sqlString, colNameString));
+               }
+               else
+               {
+                  columnClassHashMap.put(colNameString, columnClass);
+                  columnSQLTypeHashMap.put(colNameString, columnSQLType);
+               }
+               
                columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
                columnSizeHashMap.put(colNameString, Integer.valueOf(columnSize));
                preferredColumnSizeHashMap.put(colNameString,
-                                              Integer.valueOf(colNameString.length() * columnSizeScaling));   
+                                              Integer.valueOf(colNameString.length() * columnSizeScaling));
             }
             tableModel.setHeader(tableHeadings.toArray());
             
@@ -428,14 +462,15 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                {
                   colNameString = headings.next();
                   columnClass = columnClassHashMap.get(colNameString);
-                  columnType = columnTypeHashMap.get(colNameString);
+                  columnSQLType = columnSQLTypeHashMap.get(colNameString);
                   columnTypeName = columnTypeNameHashMap.get(colNameString);
                   columnSize = (columnSizeHashMap.get(colNameString)).intValue();
                   preferredColumnSize = (preferredColumnSizeHashMap.get(colNameString)).intValue();
 
-                  // System.out.println(i + " " + j + " " + colNameString + " " +
-                  //                    columnClass + " " + columnType +  " " + columnTypeName + " " +
-                  //                    columnSize + " " + preferredColumnSize);
+                  if (Ajqvue.getDebug())
+                     System.out.println(i + " " + j + " " + colNameString + " " +
+                                        columnClass + " " + columnSQLType +  " " + columnTypeName + " " +
+                                        columnSize + " " + preferredColumnSize);
 
                   // Storing data appropriately. If you have some
                   // date or other formating, here is where you can
@@ -461,11 +496,17 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                         rowData[j++] = "NULL";
                      else
                      {
-                        if (dataSourceType.equals(ConnectionManager.SQLITE))
-                           currentContentData = db_resultSet.getDate(colNameString);
-                        
-                        rowData[j++] = new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties()
-                           .getViewDateFormat()).format(currentContentData);
+                        if (dataSourceType.equals(ConnectionManager.SQLITE)
+                            && columnSQLType == Types.VARCHAR)
+                        {
+                              currentContentData = db_resultSet.getString(colNameString);
+                              rowData[j++] = Utils.convertDBDateString_To_ViewDateString(
+                                 currentContentData + "",
+                                 DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
+                        }
+                        else
+                           rowData[j++] = new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties()
+                              .getViewDateFormat()).format(currentContentData);
                      }
                   }
                   
@@ -501,19 +542,48 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                      if (currentContentData == null)
                         rowData[j++] = "NULL";
                      else
-                        rowData[j++] = new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties()
-                           .getViewDateFormat() + " HH:mm:ss").format(currentContentData);
+                     {
+                        if (dataSourceType.equals(ConnectionManager.SQLITE)
+                            && columnSQLType == Types.VARCHAR)
+                        {
+                           currentContentData = db_resultSet.getString(colNameString);
+                           
+                           String dateString = currentContentData + "";
+                           dateString = dateString.substring(0, (dateString.indexOf(" ")));
+                           dateString = Utils.convertDBDateString_To_ViewDateString(dateString,
+                              DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
+
+                           String timeString = currentContentData + "";
+                           timeString = timeString.substring(timeString.indexOf(" "));
+                           rowData[j++] = dateString + timeString;
+                        }
+                        else
+                           rowData[j++] = new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties()
+                              .getViewDateFormat() + " HH:mm:ss").format(currentContentData);
+                     }
                   }
                   
                   // =============================================
                   // Time
                   else if (columnTypeName.equals("TIME"))
                   {
-                     currentContentData = db_resultSet.getTime(colNameString);
+                     currentContentData = db_resultSet.getObject(colNameString);
                      if (currentContentData == null)
                         rowData[j++] = "NULL";
                      else
-                        rowData[j++] = (new SimpleDateFormat("HH:mm:ss").format(currentContentData));
+                     {
+                        if (dataSourceType.equals(ConnectionManager.SQLITE)
+                            && columnSQLType == Types.VARCHAR)
+                        {
+                           currentContentData = db_resultSet.getString(colNameString);
+                           rowData[j++] = currentContentData;
+                        }
+                        else
+                        {
+                           currentContentData = db_resultSet.getTime(colNameString);
+                           rowData[j++] = (new SimpleDateFormat("HH:mm:ss").format(currentContentData));
+                        }
+                     }
                   }
                   
                   // =============================================
@@ -531,7 +601,7 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                   // Timestamps
                   else if (columnTypeName.equals("TIMESTAMP"))
                   {
-                     currentContentData = db_resultSet.getTimestamp(colNameString);
+                     currentContentData = db_resultSet.getObject(colNameString);
                      // System.out.println(currentContentData);
                      
                      if (currentContentData == null)
@@ -564,9 +634,24 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                         }
                         else if (dataSourceType.equals(ConnectionManager.SQLITE))
                         {
-                           rowData[j++] = (new SimpleDateFormat(
-                              DBTablesPanel.getGeneralDBProperties().getViewDateFormat() + " HH:mm:ss.SSS")
-                                 .format(currentContentData));
+                           if (dataSourceType.equals(ConnectionManager.SQLITE)
+                                 && columnSQLType == Types.VARCHAR)
+                           {
+                                currentContentData = db_resultSet.getString(colNameString);
+                                
+                                String dateString = currentContentData + "";
+                                dateString = dateString.substring(0, (dateString.indexOf(" ")));
+                                dateString = Utils.convertDBDateString_To_ViewDateString(dateString,
+                                   DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
+
+                                String timeString = currentContentData + "";
+                                timeString = timeString.substring(timeString.indexOf(" "));
+                                rowData[j++] = dateString + timeString;
+                           }
+                           else
+                              rowData[j++] = (new SimpleDateFormat(
+                                 DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+                                 + " HH:mm:ss.SSS").format(currentContentData));
                         }
                         else
                            rowData[j++] = (new SimpleDateFormat(
@@ -789,14 +874,14 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
             // Fill information instances.
             colNameString = "Update Count";
             columnClass = "java.lang.String";
-            columnType = Types.VARCHAR;
+            columnSQLType = Types.VARCHAR;
             columnTypeName = "VARCHAR";
             columnSize = 30;
             
             tableHeadings.add(colNameString);
             columnNamesHashMap.put(colNameString, colNameString);
             columnClassHashMap.put(colNameString, columnClass);
-            columnTypeHashMap.put(colNameString, columnType);
+            columnSQLTypeHashMap.put(colNameString, columnSQLType);
             columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
             columnSizeHashMap.put(colNameString, Integer.valueOf(columnSize));
             preferredColumnSizeHashMap.put(colNameString,
@@ -935,9 +1020,9 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
    // Class method to allow classes to obtain the columnTypeHashMap.
    //==============================================================
 
-   public HashMap<String, Integer> getColumnTypeHashMap()
+   public HashMap<String, Integer> getColumnSQLTypeHashMap()
    {
-      return columnTypeHashMap;
+      return columnSQLTypeHashMap;
    }
    
    //==============================================================
