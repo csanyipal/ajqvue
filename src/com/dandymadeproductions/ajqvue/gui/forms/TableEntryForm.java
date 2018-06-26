@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.6 06/24/2018
+// Version 1.7 06/26/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -57,6 +57,11 @@
 //         1.6 06/24/2018 Method addUpdateTableEntry() Added columnSQLType to
 //                        Utils.isNumeric(). Method createFunctionSQLStatementString()
 //                        Added Instance columnSQLType & Used in Utils.isNumeric().
+//         1.7 06/26/2018 Minor Code Formmating Changes. Constructor Use of Utils.isBlob()
+//                        & Utils.isText(). Method addUpdateTableEntry() Change to Use
+//                        Two Argument Utils.isNumeric() & Changed in Processing for
+//                        TIME Types for SQLite, VARCHAR Data. Method createFunctionSQL
+//                        Statement() Changed Utils.isNumeric() to Utils.isNotQuoted().
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -130,7 +135,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 1.6 06/24/2018
+ * @version 1.7 06/26/2018
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -283,6 +288,7 @@ public class TableEntryForm extends JFrame implements ActionListener
          columnName = columnNamesIterator.next();
          columnClass = columnClassHashMap.get(columnName);
          columnTypeName = columnTypeNameHashMap.get(columnName);
+         
          // System.out.println(columnNamesHashMap.get(columnName) + " " +
          //                    columnClassHashMap.get(columnName) + " " +
          //                    columnTypeNameHashMap.get(columnName) + " " +
@@ -374,12 +380,8 @@ public class TableEntryForm extends JFrame implements ActionListener
             formPanel.add((JTextField) currentField);
          }
 
-         // BLOB, BYTEA, BINARY, RAW, CLOB, IMAGE, & BIT DATA Type Fields
-         else if ((columnClass.indexOf("String") == -1 && columnTypeName.indexOf("BLOB") != -1)
-                  || (columnClass.indexOf("BLOB") != -1 && columnTypeName.indexOf("BLOB") != -1)
-                  || (columnTypeName.indexOf("BYTEA") != -1) || (columnTypeName.indexOf("BINARY") != -1)
-                  || (columnTypeName.indexOf("RAW") != -1) || (columnTypeName.indexOf("CLOB") != -1)
-                  || (columnTypeName.indexOf("IMAGE") != -1) || (columnTypeName.indexOf("BIT DATA") != -1))
+         // BLOB, BYTEA, BINARY, RAW, IMAGE, & BIT DATA Type Fields
+         else if (Utils.isBlob(columnClass, columnTypeName))
          {
             // Place the remove checkbox for eliminating
             // existing data as desired during edit.
@@ -405,11 +407,7 @@ public class TableEntryForm extends JFrame implements ActionListener
          }
 
          // TEXT Type Fields
-         else if ((columnClass.indexOf("String") != -1 && !columnTypeName.equals("CHAR")
-                   && ((Integer) columnSizeHashMap.get(columnName)).intValue() > 255)
-                  || (columnClass.indexOf("Object") != -1 && columnTypeName.equals("TEXT")
-                      && ((Integer) columnSizeHashMap.get(columnName)).intValue() > 255) 
-                  || (columnClass.indexOf("String") != -1 && columnTypeName.equals("LONG")))
+         else if (Utils.isText(columnClass, columnTypeName, true, columnSizeHashMap.get(columnName)))
          {
             // Place the remove checkbox for eliminating
             // existing text data as desired during edit.
@@ -461,7 +459,8 @@ public class TableEntryForm extends JFrame implements ActionListener
 
          // TIMESTAMP Type Fields.
          else if (columnTypeName.equals("TIMESTAMP") || columnTypeName.equals("TIMESTAMPTZ")
-                  || columnTypeName.equals("TIMESTAMPLTZ") || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                  || columnTypeName.equals("TIMESTAMPLTZ")
+                  || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
                   || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
          {
             currentField = new JTextField();
@@ -951,7 +950,8 @@ public class TableEntryForm extends JFrame implements ActionListener
       // Method Instances
       Statement sqlStatement;
       PreparedStatement prepared_sqlStatement;
-      Iterator<String> keyIterator, columnNamesIterator;
+      Iterator<String> keyIterator;
+      Iterator<String> columnNamesIterator;
       
       String schemaName;
       String tableName;
@@ -959,6 +959,7 @@ public class TableEntryForm extends JFrame implements ActionListener
       String columnClass;
       int columnSQLType;
       String columnTypeName;
+      
       StringBuffer sqlStatementString;
       String sqlFieldNamesString;
       String sqlValuesString;
@@ -1527,8 +1528,8 @@ public class TableEntryForm extends JFrame implements ActionListener
                         }
                         else
                            currentContentData = "'" + Utils.convertViewDateString_To_DBDateString(
-                              currentContentData + "", DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
-                              + "'";
+                              currentContentData + "",
+                              DBTablesPanel.getGeneralDBProperties().getViewDateFormat()) + "'";
                         
                         sqlStatementString.append(identifierQuoteString + currentKey_ColumnName
                                                   + identifierQuoteString + "="
@@ -1621,6 +1622,7 @@ public class TableEntryForm extends JFrame implements ActionListener
             isBlobField = Utils.isBlob(columnClass, columnTypeName);
             isArrayField = (columnClass.indexOf("Array") != -1 || columnClass.indexOf("Object") != -1)
                            && columnTypeName.indexOf("_") != -1;
+            
             // System.out.println(i + " " + columnName + " " + columnClass + " "
             //                    + columnSQLType + " " + columnTypeName);
 
@@ -1682,7 +1684,7 @@ public class TableEntryForm extends JFrame implements ActionListener
             }
 
             // Numeric Type Fields
-            else if (Utils.isNumeric(columnClass, columnSQLType, columnTypeName))
+            else if (Utils.isNumeric(columnClass, columnTypeName))
             {
                try
                {
@@ -1792,8 +1794,14 @@ public class TableEntryForm extends JFrame implements ActionListener
                         prepared_sqlStatement.setString(i++, dateTimeFormString);
                      else
                      {
-                        timeValue = java.sql.Time.valueOf(dateTimeFormString.substring(0, 8));
-                        prepared_sqlStatement.setTime(i++, timeValue);
+                        if (dataSourceType.equals(ConnectionManager.SQLITE)
+                            && columnSQLType == Types.VARCHAR)
+                             prepared_sqlStatement.setString(i++, dateTimeFormString.substring(0, 8));
+                        else
+                        {
+                           timeValue = java.sql.Time.valueOf(dateTimeFormString.substring(0, 8));
+                           prepared_sqlStatement.setTime(i++, timeValue);
+                        }
                      }
                   }
                   // DateTime
@@ -2329,7 +2337,7 @@ public class TableEntryForm extends JFrame implements ActionListener
       columnTypeName = columnTypeNameHashMap.get(columnName);
       columnSize = columnSizeHashMap.get(columnName);
       
-      if (Utils.isNumeric(columnClass, columnSQLType, columnTypeName))
+      if (Utils.isNotQuoted(columnClass, columnSQLType, columnTypeName))
          valueDelimiter = "";
       else
          valueDelimiter = "'";
