@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.1 06/09/2018
+// Version 1.2 06/26/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,10 @@
 //             columnTypeNameHashMap, & columnSizeHashMap to run(). Used
 //             SQLQuery to Collect Meta Data, Removed getColumnColumnNames().
 //             Minor Changes in run() for useLimitIncrement Queries.
+//         1.2 Method run() Added Instance columnSQLTypeHashMap & column
+//             SQLType. Also in run() Change in Processing for SQLite Date
+//             Fields, Along With Added a Conditional for SQLite Time Types.
+//             Minor Code Formatting Changes.
 //             
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -55,6 +59,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,7 +81,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.1 06/09/2018
+ * @version 1.2 06/26/2018
  */
 
 public class CSVQueryDataDumpThread implements Runnable
@@ -137,15 +142,19 @@ public class CSVQueryDataDumpThread implements Runnable
       ArrayList<String> columnNameFields;
       Iterator<String> columnNamesIterator;
       HashMap<String, String> columnClassHashMap;
+      HashMap<String, Integer> columnSQLTypeHashMap;
       HashMap<String, String> columnTypeNameHashMap;
       HashMap<String, Integer> columnSizeHashMap;
       
       String columnClass;
+      int columnSQLType;
       String columnTypeName;
+      int columnSize;
+      
       String dataDelimiter;
       String identifierQuoteString;
       String fieldContent;
-      int columnSize;
+      
       int rowsCount;
       int currentTableIncrement;
       int currentRow;
@@ -190,6 +199,7 @@ public class CSVQueryDataDumpThread implements Runnable
       // Collect the column information.
       columnNameFields = sqlQuery.getColumnNames();
       columnClassHashMap = sqlQuery.getColumnClassHashMap();
+      columnSQLTypeHashMap = sqlQuery.getColumnSQLTypeHashMap();
       columnTypeNameHashMap = sqlQuery.getColumnTypeNameHashMap();
       columnSizeHashMap = sqlQuery.getColumnSizeHashMap();
       
@@ -330,14 +340,18 @@ public class CSVQueryDataDumpThread implements Runnable
                   columnNamesIterator = columnNameFields.iterator();
                   while (columnNamesIterator.hasNext())
                   {
-                     // Filtering out blob & text data as needed.
                      String currentHeading = columnNamesIterator.next();
                      columnClass = columnClassHashMap.get(currentHeading);
+                     columnSQLType = columnSQLTypeHashMap.get(currentHeading);
                      columnTypeName = columnTypeNameHashMap.get(currentHeading);
                      columnSize = columnSizeHashMap.get(currentHeading).intValue();
+                     
+                     // System.out.println(currentHeading + ":" + columnClass + ":" + columnSQLType + ";"
+                     //                    + columnTypeName);
+                     
+                     // Filtering out blob & text data as needed.
 
                      // Blob/Bytea/Binary/Bit Data/Raw data.
-                     
                      if (Utils.isBlob(columnClass, columnTypeName))
                      {
                         Object binaryContent = dbResultSet.getBytes(i);
@@ -413,11 +427,19 @@ public class CSVQueryDataDumpThread implements Runnable
                      
                      // Format Date & Timestamp Fields as Needed.
                      else if (columnTypeName.equals("DATE") || columnTypeName.indexOf("DATETIME") != -1
-                              || (columnTypeName.indexOf("TIMESTAMP") != -1 && columnClass.indexOf("Array") == -1))
+                              || (columnTypeName.indexOf("TIMESTAMP") != -1
+                                  && columnClass.indexOf("Array") == -1))
                      {
                         if (columnTypeName.equals("DATE"))
                         {
-                           Object date = dbResultSet.getDate(i);
+                           Object date;
+                           
+                           if (dataSourceType.equals(ConnectionManager.SQLITE) 
+                               && columnSQLType == Types.VARCHAR)
+                              date = dbResultSet.getString(i);
+                           else
+                              date = dbResultSet.getDate(i);
+                           
                            if (date != null)
                               fieldContent = Utils.convertDBDateString_To_ViewDateString(
                                  date + "", DBTablesPanel.getDataExportProperties().getCSVDateFormat());
@@ -446,7 +468,8 @@ public class CSVQueryDataDumpThread implements Runnable
                               else
                                  fieldContent = "NULL";
                            }
-                           else if (columnTypeName.indexOf("DATETIME") != -1 || columnTypeName.equals("TIMESTAMP"))
+                           else if (columnTypeName.indexOf("DATETIME") != -1
+                                    || columnTypeName.equals("TIMESTAMP"))
                            {
                               Object dateTime = dbResultSet.getTimestamp(i);
                               
@@ -490,6 +513,17 @@ public class CSVQueryDataDumpThread implements Runnable
                            }
                         }
                         dumpData = dumpData + fieldContent + dataDelimiter;  
+                     }
+                     
+                     // SQLite TIME
+                     else if (dataSourceType.equals(ConnectionManager.SQLITE)
+                              && columnTypeName.equals("TIME"))
+                     {
+                        if (columnSQLType == Types.VARCHAR)
+                           dumpData = dumpData + dbResultSet.getString(i).trim() + dataDelimiter;
+                        else
+                           dumpData = dumpData + new SimpleDateFormat("HH:mm:ss").format(
+                              dbResultSet.getTime(i)) + dataDelimiter; 
                      }
                      
                      // All other fields.
