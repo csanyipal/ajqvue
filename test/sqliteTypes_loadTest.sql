@@ -5,6 +5,8 @@
 -- =============================================================
 -- Version 07/25/2006 Orignal Load Test SQL configuration for
 --                    Tables of SQLite data types.
+--         06/26/2018 Added Tables datestring, timestring, datetimestring,
+--                    and timestampstring.
 --      
 -- danap@dandymadeproductions.com
 -- =============================================================
@@ -55,6 +57,34 @@ CREATE TABLE blob_types (
     blob_type BLOB
 );
 
+CREATE TABLE datestring_types (
+
+--  Table id and creation data entries.
+    data_type_id INTEGER PRIMARY KEY,
+    date_type DATE
+);
+
+CREATE TABLE timestring_types (
+
+--  Table id and creation data entries.
+    data_type_id INTEGER PRIMARY KEY,
+    time_type TIME
+);
+
+CREATE TABLE datetimestring_types (
+
+--  Table id and creation data entries.
+    data_type_id INTEGER PRIMARY KEY,
+    datetime_type DATETIME
+);
+
+CREATE TABLE timestampstring_types (
+
+--  Table id and creation data entries.
+    data_type_id INTEGER PRIMARY KEY,
+    timestamp_type TIMESTAMP
+);
+
 -- #############################################################
 --
 -- INSERT INTO TABLE SECTION
@@ -69,3 +99,11 @@ INSERT INTO real_types (real_type) VALUES (-1.1e-39);
 INSERT INTO blob_types (blob_type) VALUES (x'0500');
 
 INSERT INTO text_types (text_type) VALUES ('text1');
+
+INSERT INTO datestring_types (date_type) VALUES ('2018-01-01');
+
+INSERT INTO timestring_types (time_type) VALUES ('12:01:01');
+
+INSERT INTO datetimestring_types (datetime_type) VALUES ('2018-01-01 12:01:01');
+
+INSERT INTO timestampstring_types (timestamp_type) VALUES ('2018-01-01 12:01:01');
