@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.7 06/24/2018
+// Version 1.8 06/28/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -51,6 +51,7 @@
 //             Requirements.
 //         1.7 Method createAdvancedSortSearchFrame() Added columnSQLTypeHashMap
 //             as Argument to AdvancedSortSearchForm.
+//         1.8 Made Method displayMyDateString() static.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -140,7 +141,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * access, while maintaining limited extensions.
  * 
  * @author Dana M. Proctor
- * @version 1.7 06/24/2018
+ * @version 1.8 06/28/2018
  */
 
 public abstract class TableTabPanel extends JPanel implements TableTabInterface, ActionListener,
@@ -1615,7 +1616,7 @@ public abstract class TableTabPanel extends JPanel implements TableTabInterface,
    // general date view preferences.
    //=============================================================
    
-   protected String displayMyDateString(String javaDateString)
+   protected static String displayMyDateString(String javaDateString)
    {
       return Utils.convertDBDateString_To_ViewDateString(javaDateString,
          DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
