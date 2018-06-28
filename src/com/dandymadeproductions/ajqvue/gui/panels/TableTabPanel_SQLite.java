@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 06/23/2018
+// Version 1.6 06/27/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -66,6 +66,12 @@
 //                        Integer. Method addItem() Change in Arguments for TableEntryForm.
 //                        Method editSelectedItem() Same Changes as viewSelectedItem(), Plus
 //                        TableEntryForm Arguments & Use of Utils.isBlob(), Utils.isText().
+//         1.6 06/27/2018 Added Class Methods getDate(), getTime(), getTimeTZ(), &
+//                        getTimestamp(). Replaced in loadTable(), viewSelectedItem(), &
+//                        editSelectedItem() the Processing of Date, Time, TimeTZ, Datetime,
+//                        & Timestamp Type Fields to the New Methods. Method viewSelected
+//                        Item() Use of Utils.isNotQuoted(). Method addItem() Added Default
+//                        Help Example Entry for Datetime.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -100,7 +106,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.5 06/23/2018
+ * @version 1.6 06/27/2018
  */
 
 public class TableTabPanel_SQLite extends TableTabPanel
@@ -597,65 +603,30 @@ public class TableTabPanel_SQLite extends TableTabPanel
                   // Date
                   else if (columnTypeName.equals("DATE"))
                   {
-                     if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
-                        currentContentData = rs.getDate(columnName);
-                     else
-                        currentContentData = rs.getString(columnName);
-                     
-                     String displayDate = displayMyDateString(currentContentData + "");
-                     tableData[i][j++] = displayDate;
+                     tableData[i][j++] = getDate(rs, columnSQLType, columnName);
                   }
                   
                   // =============================================
                   // Time
                   else if (columnTypeName.equals("TIME"))
                   {
-                     if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
-                     {
-                        currentContentData = rs.getTime(columnName);
-                        tableData[i][j++] = (new SimpleDateFormat("HH:mm:ss").format(currentContentData));
-                     }
-                     else
-                     {
-                        currentContentData = rs.getString(columnName);
-                        tableData[i][j++] = currentContentData;
-                     }
+                     tableData[i][j++] = getTime(rs, columnSQLType, columnName);
                   }
 
                   // =============================================
                   // Time With Time Zone
                   else if (columnTypeName.equals("TIMETZ"))
                   {
-                     currentContentData = rs.getTime(columnName);
-                     tableData[i][j++] = (new SimpleDateFormat("HH:mm:ss z").format(currentContentData));
+                     tableData[i][j++] = getTimeTZ(rs, columnSQLType, columnName);
                   }
                   
                   // =============================================
-                  // Datetime
-                  else if (columnTypeName.equals("DATETIME"))
+                  // Datetime, Timestamp, Timestamp With Time Zone.
+                  else if (columnTypeName.equals("DATETIME")
+                           || columnTypeName.equals("TIMESTAMP")
+                           || columnTypeName.equals("TIMESTAMPTZ"))
                   {
-                     currentContentData = rs.getTimestamp(columnName);
-                     tableData[i][j++] = (new SimpleDateFormat(
-                                           DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                                           + " HH:mm:ss").format(currentContentData));
-                  }
-
-                  // =============================================
-                  // Timestamps
-                  else if (columnTypeName.equals("TIMESTAMP"))
-                  {
-                     currentContentData = rs.getTimestamp(columnName);
-                     tableData[i][j++] = (new SimpleDateFormat(
-                                           DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                                           + " HH:mm:ss.SSS").format(currentContentData));
-                  }
-
-                  else if (columnTypeName.equals("TIMESTAMPTZ"))
-                  {
-                     currentContentData = rs.getTimestamp(columnName);
-                     tableData[i][j++] = (new SimpleDateFormat(
-                                           DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                                           + " HH:mm:ss z").format(currentContentData));
+                     tableData[i][j++] = getTimestamp(rs, columnSQLType, columnTypeName, columnName);
                   }
                   
                   // =============================================
@@ -936,7 +907,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
                      sqlStatementString.append("='" + dateString + "' ");
                   }
                   // Process DateTime
-                  else if (currentColumnTypeName.equals("DATETIME") || currentColumnTypeName.equals("TIMESTAMP"))
+                  else if (currentColumnTypeName.equals("DATETIME")
+                           || currentColumnTypeName.equals("TIMESTAMP"))
                   {
                      String content, dateTimeString;
                      content = (String) currentContentData;
@@ -950,13 +922,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
                   // All Others
                   else
                   {
-                     if (currentColumnClass.indexOf("Integer") != -1
-                           || currentColumnClass.indexOf("Long") != -1
-                           || currentColumnClass.indexOf("Float") != -1
-                           || currentColumnClass.indexOf("Double") != -1
-                           || currentColumnClass.indexOf("Byte") != -1
-                           || currentColumnClass.indexOf("BigDecimal") != -1
-                           || currentColumnClass.indexOf("Short") != -1)
+                     if (Utils.isNotQuoted(currentColumnClass, currentColumnSQLType, currentColumnTypeName))
                         sqlStatementString.append("=" + currentContentData + " ");
                      else
                         sqlStatementString.append("='" + currentContentData + "' ");
@@ -1001,67 +967,33 @@ public class TableTabPanel_SQLite extends TableTabPanel
                // DATE Type Field
                if (currentColumnTypeName.equals("DATE"))
                {
-                  if (currentColumnSQLType == Types.INTEGER)
-                     currentContentData = db_resultSet.getDate(currentDB_ColumnName);
-                  else
-                     currentContentData = db_resultSet.getString(currentDB_ColumnName);
-                  
-                  tableViewForm.setFormField(currentColumnName,
-                     (Object) displayMyDateString(currentContentData + ""));
+                  tableViewForm.setFormField(currentColumnName, getDate(db_resultSet, currentColumnSQLType,
+                                                                        currentDB_ColumnName));
                }
 
-               // DATETIME Type Field
-               else if (currentColumnTypeName.equals("DATETIME"))
-               {
-                  String dateString = currentContentData + "";
-                  dateString = dateString.substring(0, (dateString.indexOf(" ")));
-                  dateString = displayMyDateString(dateString);
-
-                  String timeString = currentContentData + "";
-                  timeString = timeString.substring(timeString.indexOf(" "));
-                  currentContentData = dateString + timeString;
-                  tableViewForm.setFormField(currentColumnName, currentContentData);
-               }
-               
                // Time
                else if (currentColumnTypeName.equals("TIME"))
                {
-                  if (currentColumnSQLType == Types.INTEGER)
-                  {
-                     currentContentData = db_resultSet.getTime(currentDB_ColumnName);
-                     tableViewForm.setFormField(currentColumnName, (new SimpleDateFormat("HH:mm:ss")
-                        .format(currentContentData)));
-                  }
-                  else
-                  {
-                     currentContentData = db_resultSet.getString(currentDB_ColumnName);
-                     tableViewForm.setFormField(currentColumnName, currentContentData);
-                  }
+                  tableViewForm.setFormField(currentColumnName, getTime(db_resultSet, currentColumnSQLType,
+                                                                        currentDB_ColumnName));
                }
 
                // Time With Time Zone
                else if (currentColumnTypeName.equals("TIMETZ"))
                {
-                  currentContentData = db_resultSet.getTime(currentDB_ColumnName);
-                  tableViewForm.setFormField(currentColumnName, (new SimpleDateFormat("HH:mm:ss z")
-                        .format(currentContentData)));
+                  tableViewForm.setFormField(currentColumnName, getTimeTZ(db_resultSet, currentColumnSQLType,
+                                                                          currentDB_ColumnName));
                }
-
-               // Timestamps Type Field
-               else if (currentColumnTypeName.equals("TIMESTAMP"))
+               
+               // DATETIME, & TIMESTAMP Type Fields
+               else if (currentColumnTypeName.equals("DATETIME")
+                        || currentColumnTypeName.equals("TIMESTAMP")
+                        || currentColumnTypeName.equals("TIMESTAMPTZ"))
                {
-                  currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
-                  tableViewForm.setFormField(currentColumnName, (new SimpleDateFormat(
-                     DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                     + " HH:mm:ss.SSS").format(currentContentData)));
-               }
-
-               else if (currentColumnTypeName.equals("TIMESTAMPTZ"))
-               {
-                  currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
-                  tableViewForm.setFormField(currentColumnName,
-                     (new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                        + " HH:mm:ss z").format(currentContentData)));
+                  tableViewForm.setFormField(currentColumnName, getTimestamp(db_resultSet,
+                                                                             currentColumnSQLType,
+                                                                             currentColumnTypeName,
+                                                                             currentDB_ColumnName));
                }
 
                // Blob Type Field
@@ -1201,7 +1133,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
          // DATE Type Field
          if (currentColumnTypeName.equals("DATE"))
          {
-            currentContentData = DBTablesPanel.getGeneralDBProperties().getViewDateFormat();
+            currentContentData = DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+                                 + "";
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
@@ -1209,6 +1142,14 @@ public class TableTabPanel_SQLite extends TableTabPanel
          if (currentColumnTypeName.equals("TIME") || currentColumnTypeName.equals("TIMETZ"))
          {
             currentContentData = "hh:mm:ss";
+            addForm.setFormField(currentColumnName, currentContentData);
+         }
+         
+         // DATETIME Type Field
+         if (currentColumnTypeName.equals("DATETIME"))
+         {
+            currentContentData = DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+                                 + " HH:mm:ss";
             addForm.setFormField(currentColumnName, currentContentData);
          }
 
@@ -1401,15 +1342,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
             else if (currentColumnTypeName.equals("DATE"))
             {
                if (currentContentData != null)
-               {
-                  if (currentColumnSQLType == Types.INTEGER)
-                     currentContentData = db_resultSet.getDate(currentDB_ColumnName);
-                  else
-                     currentContentData = db_resultSet.getString(currentDB_ColumnName);
-                  
-                  editForm.setFormField(currentColumnName,
-                                        (Object) displayMyDateString(currentContentData + ""));
-               }
+                  editForm.setFormField(currentColumnName, getDate(db_resultSet, currentColumnSQLType,
+                                                                   currentDB_ColumnName));
                else
                   editForm.setFormField(currentColumnName,
                                         (Object) DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
@@ -1419,20 +1353,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
             else if (currentColumnTypeName.equals("TIME"))
             {
                if (currentContentData != null)
-               {
-                  if (currentColumnSQLType == Types.INTEGER)
-                  {
-                     currentContentData = db_resultSet.getTime(currentDB_ColumnName);
-                     editForm.setFormField(currentColumnName, ((Object) new SimpleDateFormat("HH:mm:ss")
-                           .format(currentContentData)));
-                  }
-                  else
-                  {
-                     currentContentData = db_resultSet.getString(currentDB_ColumnName);
-                     editForm.setFormField(currentColumnName, ((Object) currentContentData));
-                  }
-                  
-               }
+                  editForm.setFormField(currentColumnName, getTime(db_resultSet, currentColumnSQLType,
+                                                                   currentDB_ColumnName));
                else
                   editForm.setFormField(currentColumnName, (Object) "HH:MM:SS");
 
@@ -1442,48 +1364,27 @@ public class TableTabPanel_SQLite extends TableTabPanel
             else if (currentColumnTypeName.equals("TIMETZ"))
             {
                if (currentContentData != null)
-               {
-                  currentContentData = db_resultSet.getTime(currentDB_ColumnName);
-                  editForm.setFormField(currentColumnName, ((Object) new SimpleDateFormat("HH:mm:ss z")
-                        .format(currentContentData)));
-               }
+                  editForm.setFormField(currentColumnName, getTimeTZ(db_resultSet, currentColumnSQLType,
+                                                                     currentDB_ColumnName));
                else
                   editForm.setFormField(currentColumnName, (Object) "HH:MM:SS");
-
             }
-
-            // Timestamps Type Field
-            else if (currentColumnTypeName.equals("TIMESTAMP"))
+            
+            // Datetime, Timestamps Type Field
+            else if (currentColumnTypeName.equals("DATETIME")
+                     || currentColumnTypeName.equals("TIMESTAMP")
+                     || currentColumnTypeName.equals("TIMESTAMPTZ"))
             {
                if (currentContentData != null)
-               {
-                  currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
-                  // System.out.println(currentContentData);
-                  editForm.setFormField(currentColumnName,
-                     (Object) (new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                                                    + " HH:mm:ss.SSS").format(currentContentData)));
-               }
+                  editForm.setFormField(currentColumnName, getTimestamp(db_resultSet, currentColumnSQLType,
+                                                                        currentColumnTypeName,
+                                                                        currentDB_ColumnName));
                else
                   editForm.setFormField(currentColumnName,
                                         (Object) DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
                                         + " HH:MM:SS");
             }
-
-            else if (currentColumnTypeName.equals("TIMESTAMPTZ"))
-            {
-               if (currentContentData != null)
-               {
-                  currentContentData = db_resultSet.getTimestamp(currentDB_ColumnName);
-                  // System.out.println(currentContentData);
-                  editForm.setFormField(currentColumnName,
-                     (Object) (new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                        + " HH:mm:ss z").format(currentContentData)));
-               }
-               else
-                  editForm.setFormField(currentColumnName,
-                     (Object) DBTablesPanel.getGeneralDBProperties().getViewDateFormat() + " HH:MM:SS");
-            }
-
+            
             // Blob/Bytea Type Field
             else if (Utils.isBlob(currentColumnClass, currentColumnTypeName))
             {
@@ -1564,6 +1465,87 @@ public class TableTabPanel_SQLite extends TableTabPanel
             if (sqlStatement != null)
                sqlStatement.close();
          }
+      }
+   }
+   
+   //==============================================================
+   // Class methods to collect temporal data based on the defined
+   // SQL Type, columnSQLType.
+   //==============================================================
+   
+   public static Object getDate(ResultSet resultSet, int columnSQLType, String columnName)
+         throws SQLException
+   {
+      // Method Instances.
+      Object dateObject;
+      
+      if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
+         dateObject = resultSet.getDate(columnName);
+      else
+         dateObject = resultSet.getString(columnName);
+      
+      return displayMyDateString(dateObject + "");
+   }
+   
+   public static Object getTime(ResultSet resultSet, int columnSQLType, String columnName)
+         throws SQLException
+   {
+      if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
+         return (new SimpleDateFormat("HH:mm:ss").format(resultSet.getTime(columnName)));
+      else
+         return resultSet.getString(columnName);   
+   }
+   
+   public static Object getTimeTZ(ResultSet resultSet, int columnSQLType, String columnName)
+         throws SQLException
+   {
+      if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
+         return (new SimpleDateFormat("HH:mm:ss z").format(resultSet.getTime(columnName)));
+      else
+         return resultSet.getString(columnName);   
+   }
+   
+   public static Object getTimestamp(ResultSet resultSet, int columnSQLType, String columnTypeName,
+                               String columnName) throws SQLException
+   {
+      // Method Instances.
+      Object timestampObject;
+      String dateString;
+      String timeString;
+      
+      if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
+      {
+         timestampObject = resultSet.getTimestamp(columnName);
+         
+         if (columnTypeName.equals("DATETIME"))
+            return (new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+               + " HH:mm:ss").format(timestampObject));
+         else if (columnTypeName.equals("TIMESTAMP"))
+            return (new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+               + " HH:mm:ss.SSS").format(timestampObject));
+         // TIMESTAMPTZ
+         else
+           return (new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+              + " HH:mm:ss z").format(timestampObject));   
+      }
+      else
+      {
+         timestampObject = resultSet.getString(columnName);
+         
+         if (((String) timestampObject).indexOf(" ") != -1)
+         {
+            dateString = timestampObject + "";
+            dateString = dateString.substring(0, (dateString.indexOf(" ")));
+            dateString = displayMyDateString(dateString);
+
+            timeString = timestampObject + "";
+            timeString = timeString.substring(timeString.indexOf(" "));
+            timestampObject = dateString + timeString;
+            
+            return timestampObject;
+         }
+         else
+            throw new SQLException("Timestamp String Invalid Format");  
       }
    }
 }
