@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 06/26/2018
+// Version 1.4 06/27/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -47,6 +47,9 @@
 //                        & columnSQLTypeHashMap. In Same Method Change in
 //                        Processing for Date, Datetime, Time, & Timestamp Types
 //                        for SQLite.
+//         1.4 06/27/2018 Method executeSQL() Replaced Processing SQLite Date,
+//                        Time, TimeTZ, Datetime, & Timestamp Types to Getters
+//                        in TableTabPanel_SQLite.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -106,7 +109,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * from the direct input of SQL commands executed on the database.  
  * 
  * @author Dana M. Proctor
- * @version 1.2 06/01/2018
+ * @version 1.4 06/27/2018
  */
 
 public class SQLTabPanel extends JPanel implements ActionListener, Printable
@@ -496,14 +499,9 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                         rowData[j++] = "NULL";
                      else
                      {
-                        if (dataSourceType.equals(ConnectionManager.SQLITE)
-                            && columnSQLType == Types.VARCHAR)
-                        {
-                              currentContentData = db_resultSet.getString(colNameString);
-                              rowData[j++] = Utils.convertDBDateString_To_ViewDateString(
-                                 currentContentData + "",
-                                 DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
-                        }
+                        if (dataSourceType.equals(ConnectionManager.SQLITE))
+                           rowData[j++] = TableTabPanel_SQLite.getDate(db_resultSet, columnSQLType,
+                                                                       colNameString);
                         else
                            rowData[j++] = new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties()
                               .getViewDateFormat()).format(currentContentData);
@@ -543,20 +541,9 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                         rowData[j++] = "NULL";
                      else
                      {
-                        if (dataSourceType.equals(ConnectionManager.SQLITE)
-                            && columnSQLType == Types.VARCHAR)
-                        {
-                           currentContentData = db_resultSet.getString(colNameString);
-                           
-                           String dateString = currentContentData + "";
-                           dateString = dateString.substring(0, (dateString.indexOf(" ")));
-                           dateString = Utils.convertDBDateString_To_ViewDateString(dateString,
-                              DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
-
-                           String timeString = currentContentData + "";
-                           timeString = timeString.substring(timeString.indexOf(" "));
-                           rowData[j++] = dateString + timeString;
-                        }
+                        if (dataSourceType.equals(ConnectionManager.SQLITE))
+                           rowData[j++] = TableTabPanel_SQLite.getTimestamp(db_resultSet, columnSQLType,
+                                                                            columnTypeName, colNameString);
                         else
                            rowData[j++] = new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties()
                               .getViewDateFormat() + " HH:mm:ss").format(currentContentData);
@@ -572,12 +559,9 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                         rowData[j++] = "NULL";
                      else
                      {
-                        if (dataSourceType.equals(ConnectionManager.SQLITE)
-                            && columnSQLType == Types.VARCHAR)
-                        {
-                           currentContentData = db_resultSet.getString(colNameString);
-                           rowData[j++] = currentContentData;
-                        }
+                        if (dataSourceType.equals(ConnectionManager.SQLITE))
+                           rowData[j++] = TableTabPanel_SQLite.getTime(db_resultSet, columnSQLType,
+                                                                       colNameString);
                         else
                         {
                            currentContentData = db_resultSet.getTime(colNameString);
@@ -594,7 +578,13 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                      if (currentContentData == null)
                         rowData[j++] = "NULL";
                      else
-                        rowData[j++] = (new SimpleDateFormat("HH:mm:ss z").format(currentContentData));
+                     {
+                        if (dataSourceType.equals(ConnectionManager.SQLITE))
+                           rowData[j++] = TableTabPanel_SQLite.getTimeTZ(db_resultSet, columnSQLType,
+                                                                         colNameString);
+                        else
+                           rowData[j++] = (new SimpleDateFormat("HH:mm:ss z").format(currentContentData));
+                     }
                   }
 
                   // =============================================
@@ -633,26 +623,8 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                                     .format(currentContentData));
                         }
                         else if (dataSourceType.equals(ConnectionManager.SQLITE))
-                        {
-                           if (dataSourceType.equals(ConnectionManager.SQLITE)
-                                 && columnSQLType == Types.VARCHAR)
-                           {
-                                currentContentData = db_resultSet.getString(colNameString);
-                                
-                                String dateString = currentContentData + "";
-                                dateString = dateString.substring(0, (dateString.indexOf(" ")));
-                                dateString = Utils.convertDBDateString_To_ViewDateString(dateString,
-                                   DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
-
-                                String timeString = currentContentData + "";
-                                timeString = timeString.substring(timeString.indexOf(" "));
-                                rowData[j++] = dateString + timeString;
-                           }
-                           else
-                              rowData[j++] = (new SimpleDateFormat(
-                                 DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                                 + " HH:mm:ss.SSS").format(currentContentData));
-                        }
+                           rowData[j++] = TableTabPanel_SQLite.getTimestamp(db_resultSet, columnSQLType,
+                                                                            columnTypeName, colNameString);
                         else
                            rowData[j++] = (new SimpleDateFormat(
                               DBTablesPanel.getGeneralDBProperties().getViewDateFormat() + " HH:mm:ss")
@@ -668,8 +640,14 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                      if (currentContentData == null)
                         rowData[j++] = "NULL";
                      else
-                        rowData[j++] = (new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties()
+                     {
+                        if (dataSourceType.equals(ConnectionManager.SQLITE))
+                           rowData[j++] = TableTabPanel_SQLite.getTimestamp(db_resultSet, columnSQLType,
+                                                                            columnTypeName, colNameString);
+                        else
+                           rowData[j++] = (new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties()
                            .getViewDateFormat() + " HH:mm:ss z").format(currentContentData));
+                     }
                   }
 
                   // =============================================
