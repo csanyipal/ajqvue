@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.8 06/25/2018
+// Version 1.9 06/29/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -58,6 +58,10 @@
 //         1.8 Method insertReplaceStatementData() Changed Instance numericIndexes
 //             to notQuotedIndexes. Changed All Reference to Utils.isNumerics() to
 //             Utils.isNotQuoted().
+//         1.9 Method insertReplaceStatementData() Added Instance sqliteStringTime
+//             StampIndexes & Used To Properly Define SQLite Export Option Now().
+//             Same Processing Change in explicitStatementData(). Both of These
+//             Methods Removed Process for SQLite Timestamp to Just Use getString().
 //
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -75,6 +79,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -107,7 +112,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
  * the ability to prematurely terminate the dump.
  * 
  * @author Dana Proctor
- * @version 1.8 06/25/2018
+ * @version 1.9 06/29/2018
  */
 
 public class SQLDatabaseDumpThread extends SQLDump implements Runnable
@@ -473,6 +478,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       ArrayList<Integer> blobFieldIndexes;
       ArrayList<Integer> bitFieldIndexes;
       ArrayList<Integer> timeStampIndexes;
+      ArrayList<Integer> sqliteStringTimeStampIndexes;
       ArrayList<Integer> oracleTimeStamp_TZIndexes;
       ArrayList<Integer> oracleTimeStamp_LTZIndexes;
       ArrayList<Integer> dateIndexes;
@@ -523,6 +529,7 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
       blobFieldIndexes = new ArrayList <Integer>();
       bitFieldIndexes = new ArrayList <Integer>();
       timeStampIndexes = new ArrayList <Integer>();
+      sqliteStringTimeStampIndexes = new ArrayList <Integer>();
       oracleTimeStamp_TZIndexes = new ArrayList <Integer>();
       oracleTimeStamp_LTZIndexes = new ArrayList <Integer>();
       dateIndexes = new ArrayList <Integer>();
@@ -571,6 +578,10 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
          {
             if (!dataSourceType.equals(ConnectionManager.MSSQL))
                timeStampIndexes.add(Integer.valueOf(columnsCount + 1));
+            
+            if (dataSourceType.equals(ConnectionManager.SQLITE)
+                && columnSQLType == Types.VARCHAR)
+                sqliteStringTimeStampIndexes.add(Integer.valueOf(columnsCount + 1));
          }
 
          // Save the index of Oracle TimeStamp(TZ) Fields.
@@ -811,22 +822,17 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                               else if (dataSourceType.equals(ConnectionManager.DERBY))
                                  dumpData = dumpData + "CURRENT_TIMESTAMP, ";
                               else if (dataSourceType.equals(ConnectionManager.SQLITE))
-                                 dumpData = dumpData + "STRFTIME('%Y-%m-%d %H:%M:%S.%f', 'now', 'localtime'), ";
+                              {
+                                 if (sqliteStringTimeStampIndexes.contains(Integer.valueOf(i)))
+                                    dumpData = dumpData + "STRFTIME("
+                                               + "'%Y-%m-%d %H:%M:%f', 'now', 'localtime'), ";
+                                 else
+                                    dumpData = dumpData + "STRFTIME('%s', 'now', 'localtime') * 1000"
+                                               + ", ";
+                              }
                               else
                                  dumpData = dumpData + "NOW(), ";
                            }
-                        }
-                        
-                        // SQLite Timestamp
-                        else if (timeStampIndexes.contains(Integer.valueOf(i))
-                                 && dataSourceType.equals(ConnectionManager.SQLITE))
-                        {
-                           java.sql.Timestamp timestampValue = rs.getTimestamp(i);
-                           
-                           if (timestampValue != null)
-                              dumpData = dumpData + ("'" + timestampValue + "', ");
-                           else
-                              dumpData = dumpData + "NULL, ";
                         }
 
                         // Check for Oracle TimeStamp(TZ)
@@ -1313,7 +1319,8 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                         }
 
                         // Setting TimeStamp Fields
-                        else if (columnTypeName.indexOf("TIMESTAMP") != -1 && sqlDataExportOptions.getTimeStamp())
+                        else if (columnTypeName.indexOf("TIMESTAMP") != -1
+                                 && sqlDataExportOptions.getTimeStamp())
                         {
                            if (columnTypeName.indexOf("_") != -1)
                               dumpData = dumpData + "'{NOW()}'. ";
@@ -1324,25 +1331,19 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                               else if (dataSourceType.equals(ConnectionManager.DERBY))
                                  dumpData = dumpData + "CURRENT_TIMESTAMP, ";
                               else if (dataSourceType.equals(ConnectionManager.SQLITE))
-                                 dumpData = dumpData + "STRFTIME(" +
-                                       "'%Y-%m-%d %H:%M:%S.%f', 'now', 'localtime'), ";
+                              {
+                                 if (columnSQLType == Types.VARCHAR)
+                                    dumpData = dumpData + "STRFTIME("
+                                               + "'%Y-%m-%d %H:%M:%f', 'now', 'localtime'), ";
+                                 else
+                                    dumpData = dumpData + "STRFTIME('%s', 'now', 'localtime') * 1000"
+                                               + ", ";
+                              }
                               else
                                  dumpData = dumpData + "NOW(), ";
                            }
                         }
                         
-                        // Setting SQLite Timestamp
-                        else if (columnTypeName.equals("TIMESTAMP")
-                                 && dataSourceType.equals(ConnectionManager.SQLITE))
-                        {
-                           java.sql.Timestamp timestampValue = rs.getTimestamp(tableColumnNames.get(field));
-                           
-                           if (timestampValue != null)
-                              dumpData = dumpData + ("'" + timestampValue + "', ");
-                           else
-                              dumpData = dumpData + "NULL, ";
-                        }
-
                         // Setting Oracle TimeStamp(TZ)
                         else if ((columnTypeName.equals("TIMESTAMP") || columnTypeName.equals("TIMESTAMPTZ")
                                   || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
