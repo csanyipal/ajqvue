@@ -7,7 +7,10 @@
 --                    Tables of SQLite data types.
 --         06/26/2018 Added Tables datestring, timestring, datetimestring,
 --                    and timestampstring.
---      
+--         06/30/2018 Added DROP TABLE for each of the additional tables
+--                    defined from 06/26/2018 and added fractional seconds
+--                    for timestampstring, timestamp_type, Insert.
+--
 -- danap@dandymadeproductions.com
 -- =============================================================
 
@@ -21,6 +24,11 @@ DROP TABLE IF EXISTS int_types;
 DROP TABLE IF EXISTS real_types;
 DROP TABLE IF EXISTS text_types;
 DROP TABLE IF EXISTS blob_types;
+
+DROP TABLE IF EXISTS datestring_types;
+DROP TABLE IF EXISTS timestring_types;
+DROP TABLE IF EXISTS datetimestring_types;
+DROP TABLE IF EXISTS timestampstring_types;
 
 -- #############################################################
 -- 
@@ -106,4 +114,4 @@ INSERT INTO timestring_types (time_type) VALUES ('12:01:01');
 
 INSERT INTO datetimestring_types (datetime_type) VALUES ('2018-01-01 12:01:01');
 
-INSERT INTO timestampstring_types (timestamp_type) VALUES ('2018-01-01 12:01:01');
+INSERT INTO timestampstring_types (timestamp_type) VALUES ('2018-01-01 12:01:01.001');
