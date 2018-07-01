@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.6 06/27/2018
+// Version 1.7 07/01/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -72,6 +72,11 @@
 //                        & Timestamp Type Fields to the New Methods. Method viewSelected
 //                        Item() Use of Utils.isNotQuoted(). Method addItem() Added Default
 //                        Help Example Entry for Datetime.
+//         1.7 07/01/2018 Method editSelectedItem() Correction for Argument to setFormField(
+//                        Object, Object). Method getDate() Check for Null on dateObject
+//                        Before Call to displayMyDateString(). Methods getTime/TZ() Added
+//                        timeObject Instance. Method getTimestamp() Check for timestampObject
+//                        Null.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -106,7 +111,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.6 06/27/2018
+ * @version 1.7 07/01/2018
  */
 
 public class TableTabPanel_SQLite extends TableTabPanel
@@ -1381,8 +1386,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
                                                                         currentDB_ColumnName));
                else
                   editForm.setFormField(currentColumnName,
-                                        (Object) DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
-                                        + " HH:MM:SS");
+                                        (Object) (DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+                                        + " HH:MM:SS"));
             }
             
             // Blob/Bytea Type Field
@@ -1484,25 +1489,46 @@ public class TableTabPanel_SQLite extends TableTabPanel
       else
          dateObject = resultSet.getString(columnName);
       
-      return displayMyDateString(dateObject + "");
+      if (dateObject != null)
+         return displayMyDateString(dateObject + "");
+      else
+         return null;
    }
    
    public static Object getTime(ResultSet resultSet, int columnSQLType, String columnName)
          throws SQLException
    {
+      Object timeObject;
+      
       if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
-         return (new SimpleDateFormat("HH:mm:ss").format(resultSet.getTime(columnName)));
+      {
+         timeObject = resultSet.getTime(columnName);
+         
+         if (timeObject != null)
+            timeObject = (new SimpleDateFormat("HH:mm:ss").format(timeObject));
+      }
       else
-         return resultSet.getString(columnName);   
+         timeObject = resultSet.getString(columnName);
+      
+      return timeObject;
    }
    
    public static Object getTimeTZ(ResultSet resultSet, int columnSQLType, String columnName)
          throws SQLException
    {
+      Object timeObject;
+      
       if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
-         return (new SimpleDateFormat("HH:mm:ss z").format(resultSet.getTime(columnName)));
+      {
+         timeObject = resultSet.getTime(columnName);
+         
+         if (timeObject != null)
+            timeObject = new SimpleDateFormat("HH:mm:ss z").format(timeObject);
+      }
       else
-         return resultSet.getString(columnName);   
+         timeObject = resultSet.getString(columnName);
+      
+      return timeObject;
    }
    
    public static Object getTimestamp(ResultSet resultSet, int columnSQLType, String columnTypeName,
@@ -1516,6 +1542,9 @@ public class TableTabPanel_SQLite extends TableTabPanel
       if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
       {
          timestampObject = resultSet.getTimestamp(columnName);
+         
+         if (timestampObject == null)
+            return null;
          
          if (columnTypeName.equals("DATETIME"))
             return (new SimpleDateFormat(DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
@@ -1531,6 +1560,9 @@ public class TableTabPanel_SQLite extends TableTabPanel
       else
       {
          timestampObject = resultSet.getString(columnName);
+         
+         if (timestampObject == null)
+            return null;
          
          if (((String) timestampObject).indexOf(" ") != -1)
          {
