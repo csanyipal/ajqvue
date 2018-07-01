@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.7 06/26/2018
+// Version 1.8 07/01/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -62,6 +62,9 @@
 //                        Two Argument Utils.isNumeric() & Changed in Processing for
 //                        TIME Types for SQLite, VARCHAR Data. Method createFunctionSQL
 //                        Statement() Changed Utils.isNumeric() to Utils.isNotQuoted().
+//         1.8 07/01/2018 Method addUpdateTableEntry() Changes for SQLite Processing
+//                        of Timestamp NOW(), Datetime, & Timestamp Fields. Integer
+//                        & Strings.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -135,7 +138,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 1.7 06/26/2018
+ * @version 1.8 07/01/2018
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -1108,7 +1111,12 @@ public class TableEntryForm extends JFrame implements ActionListener
                      else if (dataSourceType.equals(ConnectionManager.DERBY))
                         sqlValuesString += "CURRENT_TIMESTAMP, ";
                      else if (dataSourceType.equals(ConnectionManager.SQLITE))
-                        sqlValuesString += "STRFTIME('%Y-%m-%d %H:%M:%S.%f', 'now', 'localtime'), ";
+                     {
+                        if (columnSQLType == Types.VARCHAR)
+                           sqlValuesString += "STRFTIME('%Y-%m-%d %H:%M:%f', 'now', 'localtime'), ";
+                        else
+                           sqlValuesString += "STRFTIME('%s', 'now', 'localtime') * 1000" + ", ";
+                     }
                      else
                         sqlValuesString += "NOW(), ";
                   }
@@ -1824,12 +1832,19 @@ public class TableEntryForm extends JFrame implements ActionListener
                         prepared_sqlStatement.setString(i++, dateString + timeString);
                      else
                      {
-                        dateTimeValue = java.sql.Timestamp.valueOf(dateString + timeString);
-                        prepared_sqlStatement.setTimestamp(i++, dateTimeValue); 
+                        if (dataSourceType.equals(ConnectionManager.SQLITE)
+                            && columnSQLType == Types.VARCHAR)
+                               prepared_sqlStatement.setString(i++, dateString + timeString);
+                        else
+                        {
+                           dateTimeValue = java.sql.Timestamp.valueOf(dateString + timeString);
+                           prepared_sqlStatement.setTimestamp(i++, dateTimeValue);
+                        }
                      }
                   }
                   // Timestamp
-                  else if (columnTypeName.equals("TIMESTAMP") || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                  else if (columnTypeName.equals("TIMESTAMP")
+                           || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
                            || columnTypeName.equals("TIMESTAMPTZ") || columnTypeName.equals("TIMESTAMPLTZ")
                            || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                   {
@@ -1875,7 +1890,7 @@ public class TableEntryForm extends JFrame implements ActionListener
                                        DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
                                        + " HH:mm:ss");
                               }
-                              else if (dataSourceType.equals(ConnectionManager.SQLITE))
+                              else if (dataSourceType.equals(ConnectionManager.SQLITE)) 
                                  timeStampFormat = new SimpleDateFormat(
                                     DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
                                     + " HH:mm:ss.SSS");
@@ -1908,9 +1923,26 @@ public class TableEntryForm extends JFrame implements ActionListener
                            else
                               dateParse = timeStampFormat.parse(dateTimeFormString);
 
-                           dateTimeValue = new java.sql.Timestamp(dateParse.getTime());
-                           // System.out.println(dateTimeValue);
-                           prepared_sqlStatement.setTimestamp(i++, dateTimeValue);
+                           if (dataSourceType.equals(ConnectionManager.SQLITE)
+                               && columnSQLType == Types.VARCHAR)
+                           {
+                              // Check for some kind of valid input.
+                              if (dateTimeFormString.indexOf(" ") == -1 || dateTimeFormString.length() < 19)
+                                 java.sql.Date.valueOf("error");
+
+                              dateString = dateTimeFormString.substring(0, dateTimeFormString.indexOf(" "));
+                              dateString = Utils.convertViewDateString_To_DBDateString(dateString,
+                                 DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
+                              timeString = dateTimeFormString.substring(dateTimeFormString.indexOf(" "));
+                              
+                              prepared_sqlStatement.setString(i++, dateString + timeString);
+                           }
+                           else
+                           {
+                              dateTimeValue = new java.sql.Timestamp(dateParse.getTime());
+                              // System.out.println(dateTimeValue);
+                              prepared_sqlStatement.setTimestamp(i++, dateTimeValue);
+                           }
                         }
                         catch (ParseException e)
                         {
