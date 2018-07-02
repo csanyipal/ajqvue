@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.2 06/26/2018
+// Version 1.3 07/02/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -44,6 +44,10 @@
 //             SQLType. Also in run() Change in Processing for SQLite Date
 //             Fields, Along With Added a Conditional for SQLite Time Types.
 //             Minor Code Formatting Changes.
+//         1.3 Demoted Class Instance filebuff to run() Method Instance,
+//             & Argument to dumpChunkOfData(). Minor Formatting. Changes
+//             in run() for SQLite Date, Time, Datetime, & Timestamp
+//             Processing Use of TableTabPanel_SQLite getters().
 //             
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -59,7 +63,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,6 +73,7 @@ import javax.swing.JOptionPane;
 import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
+import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel_SQLite;
 import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
 import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
@@ -81,7 +85,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.2 06/26/2018
+ * @version 1.3 07/02/2018
  */
 
 public class CSVQueryDataDumpThread implements Runnable
@@ -96,8 +100,6 @@ public class CSVQueryDataDumpThread implements Runnable
    private boolean useStatusDialog;
    private boolean useLimitIncrement;
    private boolean argConnection;
-   
-   private BufferedOutputStream filebuff;
    
    //==============================================================
    // CSVQueryDataDumpThread Constructor.
@@ -137,6 +139,7 @@ public class CSVQueryDataDumpThread implements Runnable
       // Class Method Instances
       Object dumpData;
       FileOutputStream fileStream;
+      BufferedOutputStream filebuff;
       ProgressBar dumpProgressBar;
       
       ArrayList<String> columnNameFields;
@@ -214,7 +217,7 @@ public class CSVQueryDataDumpThread implements Runnable
          {
             try
             {
-               if(!makeNewFile.delete())
+               if (!makeNewFile.delete())
                   throw new SecurityException();
             }
             catch (SecurityException se)
@@ -271,7 +274,7 @@ public class CSVQueryDataDumpThread implements Runnable
             dumpData = ((String) dumpData).substring(0,
                               ((String) dumpData).length() - dataDelimiter.length()) + "\n";
             
-            dumpChunkOfData(dumpData);
+            dumpChunkOfData(dumpData, filebuff);
             dumpData = "";
             
             // Setting up to begin actual field value dump.
@@ -338,6 +341,7 @@ public class CSVQueryDataDumpThread implements Runnable
                   dumpProgressBar.setCurrentValue(currentRow++);
 
                   columnNamesIterator = columnNameFields.iterator();
+                  
                   while (columnNamesIterator.hasNext())
                   {
                      String currentHeading = columnNamesIterator.next();
@@ -434,15 +438,20 @@ public class CSVQueryDataDumpThread implements Runnable
                         {
                            Object date;
                            
-                           if (dataSourceType.equals(ConnectionManager.SQLITE) 
-                               && columnSQLType == Types.VARCHAR)
-                              date = dbResultSet.getString(i);
+                           if (dataSourceType.equals(ConnectionManager.SQLITE))
+                              date = TableTabPanel_SQLite.getDate(dbResultSet, columnSQLType, currentHeading);
                            else
                               date = dbResultSet.getDate(i);
                            
                            if (date != null)
-                              fieldContent = Utils.convertDBDateString_To_ViewDateString(
-                                 date + "", DBTablesPanel.getDataExportProperties().getCSVDateFormat());
+                           {
+                              if (dataSourceType.equals(ConnectionManager.SQLITE))
+                                 fieldContent = date + "";
+                              else
+                                 fieldContent = Utils.convertDBDateString_To_ViewDateString(
+                                                date + "", DBTablesPanel.getDataExportProperties()
+                                                .getCSVDateFormat());
+                           }
                            else
                               fieldContent = "NULL";
                         }
@@ -473,10 +482,21 @@ public class CSVQueryDataDumpThread implements Runnable
                            {
                               Object dateTime = dbResultSet.getTimestamp(i);
                               
+                              if (dataSourceType.equals(ConnectionManager.SQLITE))
+                                 dateTime = TableTabPanel_SQLite.getTimestamp(dbResultSet, columnSQLType,
+                                                                              columnTypeName, currentHeading);
+                              else
+                                 dateTime = dbResultSet.getTimestamp(i); 
+                              
                               if (dateTime != null)
-                                 fieldContent = (new SimpleDateFormat(
-                                    DBTablesPanel.getDataExportProperties().getCSVDateFormat()
-                                    + " HH:mm:ss")).format(dateTime) + "";
+                              {
+                                 if (dataSourceType.equals(ConnectionManager.SQLITE))
+                                    fieldContent = dateTime + "";
+                                 else
+                                    fieldContent = (new SimpleDateFormat(
+                                       DBTablesPanel.getDataExportProperties().getCSVDateFormat()
+                                       + " HH:mm:ss")).format(dateTime) + "";
+                              }
                               else
                                  fieldContent = "NULL";
                            }
@@ -484,12 +504,23 @@ public class CSVQueryDataDumpThread implements Runnable
                                     || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
                                     || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                            {
-                              Object dateTime = dbResultSet.getTimestamp(i);
+                              Object dateTime;
+                              
+                              if (dataSourceType.equals(ConnectionManager.SQLITE))
+                                 dateTime = TableTabPanel_SQLite.getTimestamp(dbResultSet, columnSQLType,
+                                                                              columnTypeName, currentHeading);
+                              else
+                                 dateTime = dbResultSet.getTimestamp(i); 
                               
                               if (dateTime != null)
-                                 fieldContent = (new SimpleDateFormat(
-                                    DBTablesPanel.getDataExportProperties().getCSVDateFormat()
-                                    + " HH:mm:ss Z")).format(dateTime) + "";
+                              {
+                                 if (dataSourceType.equals(ConnectionManager.SQLITE))
+                                    fieldContent = dateTime + "";
+                                 else
+                                    fieldContent = (new SimpleDateFormat(
+                                       DBTablesPanel.getDataExportProperties().getCSVDateFormat()
+                                       + " HH:mm:ss Z")).format(dateTime) + "";
+                              }
                               else
                                  fieldContent = "NULL";
                            }
@@ -519,11 +550,15 @@ public class CSVQueryDataDumpThread implements Runnable
                      else if (dataSourceType.equals(ConnectionManager.SQLITE)
                               && columnTypeName.equals("TIME"))
                      {
-                        if (columnSQLType == Types.VARCHAR)
-                           dumpData = dumpData + dbResultSet.getString(i).trim() + dataDelimiter;
+                        Object timeObject;
+                        
+                        timeObject = TableTabPanel_SQLite.getTime(dbResultSet, columnSQLType,
+                                                                  currentHeading);
+                        
+                        if (timeObject != null)
+                           dumpData = dumpData + (timeObject + dataDelimiter);
                         else
-                           dumpData = dumpData + new SimpleDateFormat("HH:mm:ss").format(
-                              dbResultSet.getTime(i)) + dataDelimiter; 
+                           dumpData = dumpData + "NULL" + dataDelimiter;   
                      }
                      
                      // All other fields.
@@ -542,7 +577,7 @@ public class CSVQueryDataDumpThread implements Runnable
                                     ((String) dumpData).length() - dataDelimiter.length()) + "\n";
                   // System.out.print(currentRow + " " + dumpData);
                   
-                  dumpChunkOfData(dumpData);
+                  dumpChunkOfData(dumpData, filebuff);
                   dumpData = "";
                }
                if (useLimitIncrement)
@@ -629,7 +664,7 @@ public class CSVQueryDataDumpThread implements Runnable
    // Class Method to dump a chunk of data to the output file.
    //==============================================================
 
-   private void dumpChunkOfData(Object dumpData)
+   private void dumpChunkOfData(Object dumpData, BufferedOutputStream filebuff)
    {
       // Class Method Instances
       byte[] currentBytes;
