@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.8 07/01/2018
+// Version 1.9 07/02/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -65,6 +65,9 @@
 //         1.8 07/01/2018 Method addUpdateTableEntry() Changes for SQLite Processing
 //                        of Timestamp NOW(), Datetime, & Timestamp Fields. Integer
 //                        & Strings.
+//         1.9 07/02/2018 Method addUpdateTableEntry() Changed SQLite Timestamp, Add
+//                        Function for Now() Calculation for Integer Type to a More
+//                        Accurate Value of Milliseconds.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -138,7 +141,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 1.8 07/01/2018
+ * @version 1.9 07/02/2018
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -1115,7 +1118,9 @@ public class TableEntryForm extends JFrame implements ActionListener
                         if (columnSQLType == Types.VARCHAR)
                            sqlValuesString += "STRFTIME('%Y-%m-%d %H:%M:%f', 'now', 'localtime'), ";
                         else
-                           sqlValuesString += "STRFTIME('%s', 'now', 'localtime') * 1000" + ", ";
+                           sqlValuesString += "CAST("
+                                 + "(SELECT (julianday('now') - julianday('1970-01-01'))"
+                                 + "*24*60*60*1000) AS INTEGER)" + ", ";
                      }
                      else
                         sqlValuesString += "NOW(), ";
