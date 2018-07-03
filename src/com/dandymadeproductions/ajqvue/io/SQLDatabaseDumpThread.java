@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.9 06/29/2018
+// Version 2.0 07/03/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -62,6 +62,8 @@
 //             StampIndexes & Used To Properly Define SQLite Export Option Now().
 //             Same Processing Change in explicitStatementData(). Both of These
 //             Methods Removed Process for SQLite Timestamp to Just Use getString().
+//         2.0 Methods insertReplace/explicitStatementData() Change in SQLite
+//             Timestamp Now().
 //
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -112,7 +114,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
  * the ability to prematurely terminate the dump.
  * 
  * @author Dana Proctor
- * @version 1.9 06/29/2018
+ * @version 2.0 07/03/2018
  */
 
 public class SQLDatabaseDumpThread extends SQLDump implements Runnable
@@ -811,7 +813,8 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                      else
                      {
                         // Check for a TimeStamp
-                        if (timeStampIndexes.contains(Integer.valueOf(i)) && sqlDataExportOptions.getTimeStamp())
+                        if (timeStampIndexes.contains(Integer.valueOf(i))
+                            && sqlDataExportOptions.getTimeStamp())
                         {
                            if (arrayIndexes.contains(Integer.valueOf(i)))
                               dumpData = dumpData + "'{NOW()}', ";
@@ -827,8 +830,9 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                                     dumpData = dumpData + "STRFTIME("
                                                + "'%Y-%m-%d %H:%M:%f', 'now', 'localtime'), ";
                                  else
-                                    dumpData = dumpData + "STRFTIME('%s', 'now', 'localtime') * 1000"
-                                               + ", ";
+                                    dumpData = dumpData + "CAST("
+                                          + "(SELECT (julianday('now') - julianday('1970-01-01'))"
+                                          + "*24*60*60*1000) AS INTEGER)" + ", ";
                               }
                               else
                                  dumpData = dumpData + "NOW(), ";
@@ -1336,8 +1340,9 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                                     dumpData = dumpData + "STRFTIME("
                                                + "'%Y-%m-%d %H:%M:%f', 'now', 'localtime'), ";
                                  else
-                                    dumpData = dumpData + "STRFTIME('%s', 'now', 'localtime') * 1000"
-                                               + ", ";
+                                    dumpData = dumpData + "CAST("
+                                          + "(SELECT (julianday('now') - julianday('1970-01-01'))"
+                                          + "*24*60*60*1000) AS INTEGER)" + ", ";
                               }
                               else
                                  dumpData = dumpData + "NOW(), ";
