@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.7 06/25/2018
+// Version 1.8 07/03/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -44,6 +44,9 @@
 //         1.6 Method importCSVFile() Added Instances columnSQLTypeHashMap &
 //             columnSQLType, Formatted One Instance per Line.
 //         1.7 Method importCSVFile() Changed Utils.isNumeric() to Utils.isNotQuoted().
+//         1.8 Method importCSVFile() Conditional Check on columnHashMap to
+//             Insure CSV File Header Matches Selected TableTabPanel, Null
+//             Error Crash.
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -80,7 +83,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * address the ability to cancel the import.
  * 
  * @author Dana M. Proctor
- * @version 1.7 06/25/2018
+ * @version 1.8 07/03/2018
  */
 
 public class CSVDataImportThread implements Runnable
@@ -390,6 +393,7 @@ public class CSVDataImportThread implements Runnable
                         tableFields.add(lineContent[i]);
                      else
                         tableFields.add(parseColumnNameField(lineContent[i]));
+                     
                      fields.add(lineContent[i]);
                   }
                   if (csvOption.equals("Insert"))
@@ -412,9 +416,17 @@ public class CSVDataImportThread implements Runnable
 
                   for (int i = 0; i < lineContent.length; i++)
                   {
+                     // Check fields match selected tab.
+                     if (!columnClassHashMap.containsKey(tableFields.get(i)))
+                     {
+                        validImport = false;
+                        break;
+                     }
+                     
                      columnClass = columnClassHashMap.get(tableFields.get(i));
                      columnSQLType = columnSQLTypeHashMap.get(tableFields.get(i));
                      columnTypeName = columnTypeNameHashMap.get(tableFields.get(i));
+                     
                      // System.out.println("tableField:" + tableFields.get(i) + " ColumnClass: "
                      //                    + columnClass + " ColumnSQLType: " + columnSQLType
                      //                    + " ColumnType: " + columnTypeName
