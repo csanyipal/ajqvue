@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 07/02/2018
+// Version 1.4 07/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -48,6 +48,8 @@
 //             & Argument to dumpChunkOfData(). Minor Formatting. Changes
 //             in run() for SQLite Date, Time, Datetime, & Timestamp
 //             Processing Use of TableTabPanel_SQLite getters().
+//         1.4 Method run() Corrected columnSQLType Extraction From columnSQL
+//             TypeHashMap as int.
 //             
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -85,7 +87,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.3 07/02/2018
+ * @version 1.4 07/04/2018
  */
 
 public class CSVQueryDataDumpThread implements Runnable
@@ -346,7 +348,7 @@ public class CSVQueryDataDumpThread implements Runnable
                   {
                      String currentHeading = columnNamesIterator.next();
                      columnClass = columnClassHashMap.get(currentHeading);
-                     columnSQLType = columnSQLTypeHashMap.get(currentHeading);
+                     columnSQLType = columnSQLTypeHashMap.get(currentHeading).intValue();
                      columnTypeName = columnTypeNameHashMap.get(currentHeading);
                      columnSize = columnSizeHashMap.get(currentHeading).intValue();
                      
