@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 07/02/2018
+// Version 1.6 07/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -46,6 +46,8 @@
 //         1.5 07/02/2018 Method run() Added Instance columnName. Minor Code, Comment
 //                        Formatting, Changes. In Same SQLite Date, Time, Datetime,
 //                        & Timestamp Processing Use of TableTabPanel_SQLite getters().
+//         1.6 07/04/2018 Method run() Corrected columnSQLType to int & Extraction From
+//                        columnSQLTypeHashMap as Such.
 //             
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -81,7 +83,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * is provided to allow the ability to prematurely terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.5 07/02/2018
+ * @version 1.6 07/04/2018
  */
 
 public class CSVDataDumpThread implements Runnable
@@ -142,7 +144,7 @@ public class CSVDataDumpThread implements Runnable
       
       String columnName;
       String columnClass;
-      Integer columnSQLType;
+      int columnSQLType;
       String columnTypeName;
       int columnSize;
       
@@ -348,7 +350,7 @@ public class CSVDataDumpThread implements Runnable
                      String currentHeading = columnNamesIterator.next();
                      columnName = tableColumnNamesHashMap.get(currentHeading);
                      columnClass = tableColumnClassHashMap.get(currentHeading);
-                     columnSQLType = tableColumnSQLTypeHashMap.get(currentHeading);
+                     columnSQLType = tableColumnSQLTypeHashMap.get(currentHeading).intValue();
                      columnTypeName = tableColumnTypeNameHashMap.get(currentHeading);
                      columnSize = (tableColumnSizeHashMap.get(currentHeading)).intValue();
                      
