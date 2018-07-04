@@ -11,7 +11,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.8 07/03/2018
+// Version 1.9 07/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -47,6 +47,8 @@
 //         1.8 Method importCSVFile() Conditional Check on columnHashMap to
 //             Insure CSV File Header Matches Selected TableTabPanel, Null
 //             Error Crash.
+//         1.9 Method importCSVFile() Corrected columnSQLType Extraction From
+//             columnSQLTypeHashMap as int.
 //
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -83,7 +85,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * address the ability to cancel the import.
  * 
  * @author Dana M. Proctor
- * @version 1.8 07/03/2018
+ * @version 1.9 07/04/2018
  */
 
 public class CSVDataImportThread implements Runnable
@@ -424,7 +426,7 @@ public class CSVDataImportThread implements Runnable
                      }
                      
                      columnClass = columnClassHashMap.get(tableFields.get(i));
-                     columnSQLType = columnSQLTypeHashMap.get(tableFields.get(i));
+                     columnSQLType = columnSQLTypeHashMap.get(tableFields.get(i)).intValue();
                      columnTypeName = columnTypeNameHashMap.get(tableFields.get(i));
                      
                      // System.out.println("tableField:" + tableFields.get(i) + " ColumnClass: "
