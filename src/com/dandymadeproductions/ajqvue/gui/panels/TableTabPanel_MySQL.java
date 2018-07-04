@@ -13,7 +13,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 06/21/2018
+// Version 1.4 07/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -45,6 +45,8 @@
 //             System.out to type name.
 //         1.3 Methods addItem() & editSelectedItem() Change in Arguments for
 //             TableEntryForm to Meet New Constructor Requirments.
+//         1.4 Methods getColumnNames() & loadTable(), columnSQLTypeHashMap
+//             Proper Loading of Integer & Extracting int.
 //        
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -76,7 +78,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.3 06/21/2018
+ * @version 1.4 07/04/2018
  */
 
 public class TableTabPanel_MySQL extends TableTabPanel
@@ -145,8 +147,8 @@ public class TableTabPanel_MySQL extends TableTabPanel
             columnTypeName = db_resultSet.getString("Type");
             columnKey = db_resultSet.getString("Key");
             columnExtra = db_resultSet.getString("Extra");
-            //System.out.println(colNameString + " " + columnTypeName + " " +
-            //columnKey + " " + columnExtra);
+            // System.out.println(colNameString + " " + columnTypeName + " " +
+            //                    columnKey + " " + columnExtra);
 
             if (columnKey.indexOf("PRI") != -1)
                primaryKeys.add(colNameString);
@@ -187,7 +189,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
             colNameString = tableMetaData.getColumnName(i);
             comboBoxNameString = parseColumnNameField(colNameString);
             columnClass = tableMetaData.getColumnClassName(i);
-            columnSQLType = tableMetaData.getColumnType(i);
+            columnSQLType = Integer.valueOf(tableMetaData.getColumnType(i));
             columnTypeName = tableMetaData.getColumnTypeName(i);
             columnSize = Integer.valueOf(tableMetaData.getColumnDisplaySize(i));
 
@@ -486,7 +488,7 @@ public class TableTabPanel_MySQL extends TableTabPanel
                String currentHeading = headings.next();
                columnName = columnNamesHashMap.get(currentHeading);
                columnClass = columnClassHashMap.get(currentHeading);
-               columnSQLType = columnSQLTypeHashMap.get(currentHeading);
+               columnSQLType = (columnSQLTypeHashMap.get(currentHeading)).intValue();
                columnTypeName = columnTypeNameHashMap.get(currentHeading);
                columnSize = (columnSizeHashMap.get(currentHeading)).intValue();
                keyLength = keyLengthHashMap.get(columnName);
