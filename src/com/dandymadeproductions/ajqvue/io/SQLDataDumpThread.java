@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.0 07/03/2018
+// Version 2.1 07/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -64,6 +64,8 @@
 //             Methods Removed Process for SQLite Timestamp to Just Use getString().
 //         2.0 Methods insertReplace/explicitStatementData() Change in SQLite
 //             Timestamp Now().
+//         2.1 Methods insertReplace/explicitStatementData() Corrected columnSQL
+//             Type Extraction From tableColumnSQLTypeHashMap as int.
 //
 //-----------------------------------------------------------------
 //                poisonerbg@users.sourceforge.net
@@ -105,7 +107,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
  * the dump.
  * 
  * @author Borislav Gizdov a.k.a. PoisoneR, Dana Proctor
- * @version 2.0 07/03/2018
+ * @version 2.1 07/04/2018
  */
 
 public class SQLDataDumpThread extends SQLDump implements Runnable
@@ -508,7 +510,7 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
       {
          field = columnNamesIterator.next();
          columnClass = tableColumnClassHashMap.get(field);
-         columnSQLType = tableColumnSQLTypeHashMap.get(field);
+         columnSQLType = tableColumnSQLTypeHashMap.get(field).intValue();
          columnTypeName = tableColumnTypeNameHashMap.get(field);
          // System.out.println("field:" + field + " class:" + columnClass +
          //                    " sql type:" + columnSQLType + " type name:" + columnTypeName);
@@ -1204,7 +1206,7 @@ public class SQLDataDumpThread extends SQLDump implements Runnable
                {
                   field = (String) columnNamesIterator.next();
                   columnClass = tableColumnClassHashMap.get(field);
-                  columnSQLType = tableColumnSQLTypeHashMap.get(field);
+                  columnSQLType = tableColumnSQLTypeHashMap.get(field).intValue();
                   columnTypeName = tableColumnTypeNameHashMap.get(field);
                   // System.out.println("field:" + field + " class:" + columnClass
                   //                    + " sql type:" + columnSQLType + " type name:" + columnTypeName);
