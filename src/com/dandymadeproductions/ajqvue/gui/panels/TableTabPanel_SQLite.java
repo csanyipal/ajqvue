@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.7 07/01/2018
+// Version 1.8 07/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -77,6 +77,10 @@
 //                        Before Call to displayMyDateString(). Methods getTime/TZ() Added
 //                        timeObject Instance. Method getTimestamp() Check for timestampObject
 //                        Null.
+//         1.8 07/04/2018 Methods getColumnNames(), loadTable(), viewSelectedItem, & edit
+//                        SelectedItem() columnSQLTypeHashMap Proper Loading of Integer &
+//                        Extracting int. Method getColumnNames() Assigning columnClass &
+//                        columnSQLType Then Loading Into HashMaps.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -111,7 +115,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.7 07/01/2018
+ * @version 1.8 07/04/2018
  */
 
 public class TableTabPanel_SQLite extends TableTabPanel
@@ -226,7 +230,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
             colNameString = tableMetaData.getColumnName(i);
             comboBoxNameString = parseColumnNameField(colNameString);
             columnClass = tableMetaData.getColumnClassName(i);
-            columnSQLType = tableMetaData.getColumnType(i);
+            columnSQLType = Integer.valueOf(tableMetaData.getColumnType(i));
             columnTypeName = tableMetaData.getColumnTypeName(i);
             columnSize = Integer.valueOf(tableMetaData.getColumnDisplaySize(i));
 
@@ -253,23 +257,25 @@ public class TableTabPanel_SQLite extends TableTabPanel
                 || columnTypeName.toUpperCase(Locale.ENGLISH).equals("TIMESTAMP"))
             {
                if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("DATE"))
-                  columnClassHashMap.put(comboBoxNameString, "java.sql.Date");
+                  columnClass = "java.sql.Date";
                else if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("TIME"))
-                  columnClassHashMap.put(comboBoxNameString, "java.sql.Time");
+                  columnClass = "java.sql.Time";
                else
-                  columnClassHashMap.put(comboBoxNameString, "java.sql.Timestamp");
+                  columnClass = "java.sql.Timestamp";
                
-               columnSQLTypeHashMap.put(comboBoxNameString, SQLQuery.getTypeof(dbConnection,
+               columnSQLType = Integer.valueOf(SQLQuery.getTypeof(dbConnection,
                   "SELECT " + colNameString + " FROM " + schemaTableName + " LIMIT 1", colNameString));     
             }
-            else
-            {
-               columnClassHashMap.put(comboBoxNameString, columnClass);
-               columnSQLTypeHashMap.put(comboBoxNameString, columnSQLType);
-            }
             
+            columnClassHashMap.put(comboBoxNameString, columnClass);
+            columnSQLTypeHashMap.put(comboBoxNameString, columnSQLType);
             columnTypeNameHashMap.put(comboBoxNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
             columnSizeHashMap.put(comboBoxNameString, columnSize);
+            
+            // System.out.println(i + " " + colNameString + " " +
+            //                    comboBoxNameString + " " +
+            //                    columnClass + " " + columnSQLType + " " +
+            //                    columnTypeName + " " + columnSize);
             
             if (comboBoxNameString.length() < 5)
                preferredColumnSizeHashMap.put(comboBoxNameString,
@@ -576,7 +582,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
                String currentHeading = headings.next();
                columnName = columnNamesHashMap.get(currentHeading);
                columnClass = columnClassHashMap.get(currentHeading);
-               columnSQLType = columnSQLTypeHashMap.get(currentHeading);
+               columnSQLType = (columnSQLTypeHashMap.get(currentHeading)).intValue();
                columnTypeName = columnTypeNameHashMap.get(currentHeading);
                columnSize = (columnSizeHashMap.get(currentHeading)).intValue();
                keyLength = keyLengthHashMap.get(columnName);
@@ -872,7 +878,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
                currentContentData = listTable.getValueAt(rowToView, i);
                currentDB_ColumnName = columnNamesHashMap.get(listTable.getColumnName(i));
                currentColumnClass = columnClassHashMap.get(listTable.getColumnName(i));
-               currentColumnSQLType = columnSQLTypeHashMap.get(listTable.getColumnName(i));
+               currentColumnSQLType = columnSQLTypeHashMap.get(listTable.getColumnName(i)).intValue();
                currentColumnTypeName = columnTypeNameHashMap.get(listTable.getColumnName(i));
                columnSize = columnSizeHashMap.get(listTable.getColumnName(i)).intValue();
                
@@ -955,7 +961,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnSQLType = columnSQLTypeHashMap.get(currentColumnName);
+            currentColumnSQLType = columnSQLTypeHashMap.get(currentColumnName).intValue();
             currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
             columnSize = columnSizeHashMap.get(currentColumnName).intValue();
 
@@ -1313,7 +1319,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
             currentColumnName = textFieldNamesIterator.next();
             currentDB_ColumnName = columnNamesHashMap.get(currentColumnName);
             currentColumnClass = columnClassHashMap.get(currentColumnName);
-            currentColumnSQLType = columnSQLTypeHashMap.get(currentColumnName);
+            currentColumnSQLType = columnSQLTypeHashMap.get(currentColumnName).intValue();
             currentColumnTypeName = columnTypeNameHashMap.get(currentColumnName);
             currentColumnSize = (columnSizeHashMap.get(currentColumnName)).intValue();
 
