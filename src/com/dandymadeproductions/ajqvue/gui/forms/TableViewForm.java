@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.2 06/12/2018
+// Version 1.3 07/05/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,8 @@
 //                        isBlob()/isText(). Method setFormField() Instance columnType
 //                        Changed to columnTypeName & Added columnSize. Same Method Used
 //                        Utils.isBlob() & isText().
+//         1.3 07/05/2018 Constructor & setFormField() Insured columnSize Defined as
+//                        int & Extracted From fieldSizeHashMap as Such.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -86,7 +88,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * in the TableTabPanel summary table.
  * 
  * @author Dana M. Proctor
- * @version 1.2 06/12/2018
+ * @version 1.3 07/05/2018
  */
 
 public class TableViewForm extends JPanel implements ActionListener, KeyListener
@@ -163,7 +165,7 @@ public class TableViewForm extends JPanel implements ActionListener, KeyListener
          itemName = columnNamesIterator.next();
          columnClass = fieldClassHashMap.get(itemName);
          columnTypeName = fieldTypeNameHashMap.get(itemName);
-         columnSize = fieldSizeHashMap.get(itemName);
+         columnSize = (fieldSizeHashMap.get(itemName)).intValue();
          // System.out.println(x + " " + y + " " + itemName + " " + columnClass + " " + columnTypeName);
 
          // =================================
@@ -504,11 +506,11 @@ public class TableViewForm extends JPanel implements ActionListener, KeyListener
       // Method Instances.
       String columnClass;
       String columnTypeName;
-      Integer columnSize;
+      int columnSize;
 
       columnClass = fieldClassHashMap.get(itemName);
       columnTypeName = fieldTypeNameHashMap.get(itemName);
-      columnSize = fieldSizeHashMap.get(itemName);
+      columnSize = (fieldSizeHashMap.get(itemName)).intValue();
 
       // Binary Button, Note all data with buttons processed
       // the same just grouping for clarity.
