@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.9 07/02/2018
+// Version 2.0 07/05/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -68,6 +68,9 @@
 //         1.9 07/02/2018 Method addUpdateTableEntry() Changed SQLite Timestamp, Add
 //                        Function for Now() Calculation for Integer Type to a More
 //                        Accurate Value of Milliseconds.
+//         2.0 07/05/2018 Methods addUpdateTableEntry() & setFormField() Insured
+//                        columnSQLType & columnSize Extracted via intValue() From
+//                        Associated HashMap.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -141,7 +144,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 1.9 07/02/2018
+ * @version 2.0 07/05/2018
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -965,6 +968,7 @@ public class TableEntryForm extends JFrame implements ActionListener
       String columnClass;
       int columnSQLType;
       String columnTypeName;
+      int columnSize;
       
       StringBuffer sqlStatementString;
       String sqlFieldNamesString;
@@ -973,12 +977,14 @@ public class TableEntryForm extends JFrame implements ActionListener
       String currentKey_ColumnName;
       String currentDB_ColumnName;
       Object currentContentData;
-      String dateString, timeString;
+      String dateString;
+      String timeString;
       String message;
+      
       boolean isTextField;
       boolean isBlobField;
       boolean isArrayField;
-      int columnSize;
+      
       int keyColumn = 0;
 
       // Get Connection to Database.
@@ -1022,7 +1028,7 @@ public class TableEntryForm extends JFrame implements ActionListener
 
                columnName = columnNamesIterator.next();
                columnClass = columnClassHashMap.get(columnName);
-               columnSQLType = columnSQLTypeHashMap.get(columnName);
+               columnSQLType = (columnSQLTypeHashMap.get(columnName)).intValue();
                columnTypeName = columnTypeNameHashMap.get(columnName);
                columnSize = (columnSizeHashMap.get(columnName)).intValue();
                isTextField = Utils.isText(columnClass, columnTypeName, true, columnSize);
@@ -1277,7 +1283,7 @@ public class TableEntryForm extends JFrame implements ActionListener
 
                columnName = columnNamesIterator.next();
                columnClass = columnClassHashMap.get(columnName);
-               columnSQLType = columnSQLTypeHashMap.get(columnName);
+               columnSQLType = (columnSQLTypeHashMap.get(columnName)).intValue();
                columnTypeName = columnTypeNameHashMap.get(columnName);
                columnSize = (columnSizeHashMap.get(columnName)).intValue();
                isTextField = Utils.isText(columnClass, columnTypeName, true, columnSize);
@@ -1628,7 +1634,7 @@ public class TableEntryForm extends JFrame implements ActionListener
 
             columnName = columnNamesIterator.next();
             columnClass = columnClassHashMap.get(columnName);
-            columnSQLType = columnSQLTypeHashMap.get(columnName);
+            columnSQLType = (columnSQLTypeHashMap.get(columnName)).intValue();
             columnTypeName = columnTypeNameHashMap.get(columnName);
             columnSize = (columnSizeHashMap.get(columnName)).intValue();
             isTextField = Utils.isText(columnClass, columnTypeName, true, columnSize);
@@ -2370,9 +2376,9 @@ public class TableEntryForm extends JFrame implements ActionListener
       // type fields. HSQLDB2 & MS_Access Issue.
       
       columnClass = columnClassHashMap.get(columnName);
-      columnSQLType = columnSQLTypeHashMap.get(columnName);
+      columnSQLType = (columnSQLTypeHashMap.get(columnName)).intValue();
       columnTypeName = columnTypeNameHashMap.get(columnName);
-      columnSize = columnSizeHashMap.get(columnName);
+      columnSize = (columnSizeHashMap.get(columnName)).intValue();
       
       if (Utils.isNotQuoted(columnClass, columnSQLType, columnTypeName))
          valueDelimiter = "";
@@ -2515,7 +2521,7 @@ public class TableEntryForm extends JFrame implements ActionListener
       {
          columnClass = columnClassHashMap.get(columnName);
          columnTypeName = columnTypeNameHashMap.get(columnName);
-         columnSize = columnSizeHashMap.get(columnName);
+         columnSize = (columnSizeHashMap.get(columnName)).intValue();
 
          // Blob/Bytea Button
          if (Utils.isBlob(columnClass, columnTypeName))
