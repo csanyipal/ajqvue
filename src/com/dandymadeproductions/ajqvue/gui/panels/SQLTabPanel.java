@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 06/27/2018
+// Version 1.5 07/05/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -50,6 +50,10 @@
 //         1.4 06/27/2018 Method executeSQL() Replaced Processing SQLite Date,
 //                        Time, TimeTZ, Datetime, & Timestamp Types to Getters
 //                        in TableTabPanel_SQLite.
+//         1.5 07/05/2018 Method executeSQL() columnSQLTypeHashMap Properly Stored
+//                        columnSQLType as Integer. Coding Formatting Changes in
+//                        Same for Assignment of columnClass & columnSQLType, Tried
+//                        to Simplify, Maintained Logic.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -109,7 +113,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * from the direct input of SQL commands executed on the database.  
  * 
  * @author Dana M. Proctor
- * @version 1.4 06/27/2018
+ * @version 1.5 07/05/2018
  */
 
 public class SQLTabPanel extends JPanel implements ActionListener, Printable
@@ -340,7 +344,7 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                tableHeadings.add(colNameString);
                columnNamesHashMap.put(colNameString, colNameString);
                columnClassHashMap.put(colNameString, columnClass);
-               columnSQLTypeHashMap.put(colNameString, columnSQLType);
+               columnSQLTypeHashMap.put(colNameString, Integer.valueOf(columnSQLType));
                columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
                columnSizeHashMap.put(colNameString, Integer.valueOf(columnSize));
                preferredColumnSizeHashMap.put(colNameString,
@@ -425,26 +429,20 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                          || columnTypeName.toUpperCase(Locale.ENGLISH).equals("TIMESTAMP")))
                {
                     if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("DATE"))
-                       columnClassHashMap.put(colNameString, "java.sql.Date");
+                       columnClass = "java.sql.Date";
                     else if (columnTypeName.toUpperCase(Locale.ENGLISH).equals("TIME"))
-                       columnClassHashMap.put(colNameString, "java.sql.Time");
+                       columnClass = "java.sql.Time";
                     else
-                       columnClassHashMap.put(colNameString, "java.sql.Timestamp");
+                       columnClass = "java.sql.Timestamp";
                     
                     int type = SQLQuery.getTypeof(dbConnection, sqlString, colNameString);
                     
-                    if (type == Types.NULL)
-                       columnSQLTypeHashMap.put(colNameString, columnSQLType);
-                    else
-                       columnSQLTypeHashMap.put(colNameString,
-                          SQLQuery.getTypeof(dbConnection, sqlString, colNameString));
-               }
-               else
-               {
-                  columnClassHashMap.put(colNameString, columnClass);
-                  columnSQLTypeHashMap.put(colNameString, columnSQLType);
+                    if (type != Types.NULL)
+                       columnSQLType = type;
                }
                
+               columnClassHashMap.put(colNameString, columnClass);
+               columnSQLTypeHashMap.put(colNameString, Integer.valueOf(columnSQLType));
                columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
                columnSizeHashMap.put(colNameString, Integer.valueOf(columnSize));
                preferredColumnSizeHashMap.put(colNameString,
@@ -465,7 +463,7 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
                {
                   colNameString = headings.next();
                   columnClass = columnClassHashMap.get(colNameString);
-                  columnSQLType = columnSQLTypeHashMap.get(colNameString);
+                  columnSQLType = (columnSQLTypeHashMap.get(colNameString)).intValue();
                   columnTypeName = columnTypeNameHashMap.get(colNameString);
                   columnSize = (columnSizeHashMap.get(colNameString)).intValue();
                   preferredColumnSize = (preferredColumnSizeHashMap.get(colNameString)).intValue();
@@ -859,7 +857,7 @@ public class SQLTabPanel extends JPanel implements ActionListener, Printable
             tableHeadings.add(colNameString);
             columnNamesHashMap.put(colNameString, colNameString);
             columnClassHashMap.put(colNameString, columnClass);
-            columnSQLTypeHashMap.put(colNameString, columnSQLType);
+            columnSQLTypeHashMap.put(colNameString, Integer.valueOf(columnSQLType));
             columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
             columnSizeHashMap.put(colNameString, Integer.valueOf(columnSize));
             preferredColumnSizeHashMap.put(colNameString,
