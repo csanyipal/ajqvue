@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 06/23/2018
+// Version 1.6 07/05/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -46,6 +46,9 @@
 //             Same Method Use of Loading columnSQLTypeHashMap With Results
 //             for typeof() With SQLite Date, Time, Datetime, & Timestamp
 //             columnTypeName. Added Public static Method getTypeof().
+//         1.6 Method executeQuery() Insured columnSQLType is Stored as
+//             an Integer in columnSQLTypeHashMap. Simplified Assignment
+//             of columnSQLType, Maintained Logic.
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -71,7 +74,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
  * the characteristics of a SQL query.   
  * 
  * @author Dana M. Proctor
- * @version 1.5 06/23/2018
+ * @version 1.6 07/05/2018
  */
 
 public class SQLQuery
@@ -256,7 +259,7 @@ public class SQLQuery
                
                columnNames.add(colNameString);
                columnClassHashMap.put(colNameString, columnClass);
-               columnSQLTypeHashMap.put(colNameString, columnSQLType);
+               columnSQLTypeHashMap.put(colNameString, Integer.valueOf(columnSQLType));
                columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
                columnScaleHashMap.put(colNameString, Integer.valueOf(columnScale));
                columnPrecisionHashMap.put(colNameString, Integer.valueOf(columnPrecision));
@@ -324,7 +327,6 @@ public class SQLQuery
                }
 
                columnNames.add(colNameString);
-               columnClassHashMap.put(colNameString, columnClass);
                
                if (dbConnection.getMetaData().getDatabaseProductName().toUpperCase(Locale.ENGLISH).indexOf(
                      "SQLITE") != -1
@@ -335,15 +337,13 @@ public class SQLQuery
                {  
                   int type = getTypeof(dbConnection, sqlString, colNameString);
                     
-                  if (type == Types.NULL)
-                     columnSQLTypeHashMap.put(colNameString, columnSQLType);
-                  else
-                     columnSQLTypeHashMap.put(colNameString, type);
+                  if (type != Types.NULL)
+                     columnSQLType = type;
                }
-               else
-                  columnSQLTypeHashMap.put(colNameString, columnSQLType);
                
                columnTypeNameHashMap.put(colNameString, columnTypeName.toUpperCase(Locale.ENGLISH));
+               columnClassHashMap.put(colNameString, columnClass);
+               columnSQLTypeHashMap.put(colNameString, Integer.valueOf(columnSQLType));
                columnScaleHashMap.put(colNameString, Integer.valueOf(columnScale));
                columnPrecisionHashMap.put(colNameString, Integer.valueOf(columnPrecision));
                columnSizeHashMap.put(colNameString, Integer.valueOf(columnSize));
