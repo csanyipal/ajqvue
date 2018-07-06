@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.1 06/12/2018
+// Version 1.2 07/06/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,11 @@
 //                        NameHashMap. Method updateTable() Changed Instance
 //                        columnType to columnTypeName. Method getWhereSQLExpression()
 //                        Changed Instance columnTypeString to columnTypeNameString.
+//         1.2 07/06/2018 Added Class Instance columnSQLTypeHashMap. Method updateTable()
+//                        Added Instance columnSQLType, Minor Formatting Changes &
+//                        Temporary System.out for Pending Temporal Changes. Method
+//                        getWhereSQLExpression() Same Along With Testing No Selection
+//                        for Field in whereComboBox.
 //                        
 //=================================================================
 
@@ -94,7 +99,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * table.
  * 
  * @author Dana M. Proctor
- * @version 1.1 06/12/2018
+ * @version 1.2 07/06/2018
  */
 
 public class UpdateForm extends JFrame implements ActionListener
@@ -107,6 +112,7 @@ public class UpdateForm extends JFrame implements ActionListener
    private String identifierQuoteString;
    private HashMap<String, String> columnNamesHashMap;
    private HashMap<String, String> columnClassHashMap;
+   private HashMap<String, Integer> columnSQLTypeHashMap;
    private HashMap<String, String> columnTypeNameHashMap;
    private HashMap<String, Integer> columnSizeHashMap;
    private ArrayList<String> updateComboBoxColumnNames;
@@ -150,6 +156,7 @@ public class UpdateForm extends JFrame implements ActionListener
    public UpdateForm(String table, AResourceBundle resourceBundle,
                         HashMap<String, String> columnNamesHashMap,
                         HashMap<String, String> columnClassHashMap,
+                        HashMap<String, Integer> columnSQLTypeHashMap,
                         HashMap<String, String> columnTypeNameHashMap,
                         HashMap<String, Integer> columnSizeHashMap,
                         ArrayList<String> columnNames)
@@ -157,6 +164,7 @@ public class UpdateForm extends JFrame implements ActionListener
       sqlTable = table;
       this.columnNamesHashMap = columnNamesHashMap;
       this.columnClassHashMap = columnClassHashMap;
+      this.columnSQLTypeHashMap = columnSQLTypeHashMap;
       this.columnTypeNameHashMap = columnTypeNameHashMap;
       this.columnSizeHashMap = columnSizeHashMap;
       this.resourceBundle = resourceBundle;
@@ -717,14 +725,17 @@ public class UpdateForm extends JFrame implements ActionListener
       // Method Instances.
       String columnName;
       String columnClass;
+      int columnSQLType;
       String columnTypeName;
+      int columnSize;
+      
       String sqlStatementString;
       Statement sqlStatement;
       ResultSet db_resultSet;
 
       InputDialog updateDialog;
       int updateRowCount;
-      int columnSize;
+      
       String updateTextString;
       String updateString;
       String dateString;
@@ -823,10 +834,12 @@ public class UpdateForm extends JFrame implements ActionListener
                updateTextString = updateColumnToTextField.getText();
                columnName = (String) updateColumnComboBox.getSelectedItem();
                columnClass = columnClassHashMap.get(columnName);
+               columnSQLType = (columnSQLTypeHashMap.get(columnName)).intValue();
                columnTypeName = columnTypeNameHashMap.get(columnName);
                columnSize = (columnSizeHashMap.get(columnName)).intValue();
-               // System.out.println(updateTextString + " " + columnName + " " + columnClass + " " + columnType
-               //                   + " " + columnSize);
+               
+               // System.out.println(updateTextString + " " + columnName + " " + columnClass + " "
+               //                    + columnSQLType + " " + columnTypeName + " " + columnSize);
 
                // Create basic initial SQL.
                sqlStatementString = ("UPDATE " + sqlTable + " SET " + identifierQuoteString
@@ -1045,7 +1058,7 @@ public class UpdateForm extends JFrame implements ActionListener
                quoteCheckBox.setSelected(quoteCheckBoxState);
                
                // Proceed with execution and finish up.
-               // System.out.println(sqlStatementString);
+               System.out.println(sqlStatementString);
                sqlStatement.executeUpdate(sqlStatementString);
                dbConnection.commit();
                dbConnection.setAutoCommit(true);
@@ -1115,6 +1128,7 @@ public class UpdateForm extends JFrame implements ActionListener
       String whereString;
       String columnNameString;
       String columnClassString;
+      int columnSQLType;
       String columnTypeNameString;
       String operatorString;
       String tempSearchString;
@@ -1130,8 +1144,16 @@ public class UpdateForm extends JFrame implements ActionListener
       unionString = "";
       do
       {
+         // Catch the empty string inserted at index 0.
+         if (((String) whereComboBox[i].getSelectedItem()).isEmpty())
+         {
+            i++;
+            continue;
+         }
+         
          columnNameString = columnNamesHashMap.get(whereComboBox[i].getSelectedItem());
          columnClassString = columnClassHashMap.get(whereComboBox[i].getSelectedItem());
+         columnSQLType = columnSQLTypeHashMap.get(whereComboBox[i].getSelectedItem());
          columnTypeNameString = columnTypeNameHashMap.get(whereComboBox[i].getSelectedItem());
          operatorString = (String) operatorComboBox[i].getSelectedItem();
          tempSearchString = whereTextField[i].getText();
