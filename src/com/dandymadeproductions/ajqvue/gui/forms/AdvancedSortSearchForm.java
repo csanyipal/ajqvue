@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 06/25/2018
+// Version 1.4 07/07/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -41,6 +41,10 @@
 //                        Instance columnSQLTypeInt, & Used in Call to isNumeric().
 //         1.3 06/25/2018 Method getAdvancedSortSearchSQL() Changed isNumeric() to
 //                        isNotQuoted().
+//         1.4 07/07/2018 Minor Code Formatting Changes. Method getAdvancedSortSearch
+//                        SQL Inserted a Conditional to Check Empty Selected Fields
+//                        of searchComboBox & Insured columnSQLTypeInt Explicitly
+//                        Extracted From columnSQLTypeHashMap as int.
 //                      
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -89,7 +93,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * calling TableTabPanel's database table.
  * 
  * @author Dana M. Proctor
- * @version 1.3 06/25/2018
+ * @version 1.4 07/07/2018
  */
 
 public class AdvancedSortSearchForm extends JFrame implements ActionListener
@@ -136,11 +140,11 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
 
    @SuppressWarnings("unchecked")
    public AdvancedSortSearchForm(String table, AResourceBundle resourceBundle,
-                                    HashMap<String, String> columnNamesHashMap,
-                                    HashMap<String, String> columnClassHashMap,
-                                    HashMap<String, Integer> columnSQLTypeHashMap,
-                                    HashMap<String, String> columnTypeNameHashMap,
-                                    ArrayList<String> columnNames)
+                                 HashMap<String, String> columnNamesHashMap,
+                                 HashMap<String, String> columnClassHashMap,
+                                 HashMap<String, Integer> columnSQLTypeHashMap,
+                                 HashMap<String, String> columnTypeNameHashMap,
+                                 ArrayList<String> columnNames)
    {
       sqlTable = table;
       this.resourceBundle = resourceBundle;
@@ -766,7 +770,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
    //==============================================================
 
    public StringBuffer getAdvancedSortSearchSQL(String sqlTableFieldsString, int tableRowStart,
-                                             int tableRowLimit)
+                                                int tableRowLimit)
    {
       // Method Instances
       StringBuffer sqlStatementString;
@@ -776,12 +780,13 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
       String unionString;
       String orderString;
       String ascDescString;
+      String operatorString;
+      String searchString;
+      
       String columnNameString;
       String columnClassString;
       int columnSQLTypeInt;
       String columnTypeNameString;
-      String operatorString;
-      String searchString;
       
       boolean notFieldSort;
       boolean notFieldGroup;
@@ -819,9 +824,16 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
       unionString = "";
       do
       {
+         // Catch the empty string inserted at index 0.
+         if (((String) searchComboBox[i].getSelectedItem()).isEmpty())
+         {
+            i++;
+            continue;
+         }
+         
          columnNameString = columnNamesHashMap.get(searchComboBox[i].getSelectedItem());
          columnClassString = columnClassHashMap.get(searchComboBox[i].getSelectedItem());
-         columnSQLTypeInt = columnSQLTypeHashMap.get(searchComboBox[i].getSelectedItem());
+         columnSQLTypeInt = (columnSQLTypeHashMap.get(searchComboBox[i].getSelectedItem())).intValue();
          columnTypeNameString = columnTypeNameHashMap.get(searchComboBox[i].getSelectedItem());
          operatorString = (String) operatorComboBox[i].getSelectedItem();
          searchString = searchTextField[i].getText();
