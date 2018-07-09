@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.8 07/04/2018
+// Version 1.9 07/09/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -81,6 +81,10 @@
 //                        SelectedItem() columnSQLTypeHashMap Proper Loading of Integer &
 //                        Extracting int. Method getColumnNames() Assigning columnClass &
 //                        columnSQLType Then Loading Into HashMaps.
+//         1.9 07/09/2018 Method loadTable() Replaced searchQueryString, WHERE Creation,
+//                        to New Method createSearch(). Methods getDate(), getTime(),
+//                        getTimeTZ(), & getTimeStamp() Included Processing for columnSQLType
+//                        REAL.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -115,7 +119,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.8 07/04/2018
+ * @version 1.9 07/09/2018
  */
 
 public class TableTabPanel_SQLite extends TableTabPanel
@@ -444,55 +448,27 @@ public class TableTabPanel_SQLite extends TableTabPanel
             for (int i = 0; i < tableColumns.length; i++)
             {
                columnName = tableColumns[i].replaceAll(identifierQuoteString, "");
+               
+               columnSQLType = (columnSQLTypeHashMap.get(parseColumnNameField(
+                  columnName.trim()))).intValue();
                columnTypeName = columnTypeNameHashMap.get(parseColumnNameField(columnName.trim()));
                
-               String searchString = searchTextString;
-               
-               if (columnTypeName.equals("DATE"))
-               {
-                  searchString = Utils.processDateFormatSearch(searchString);
-                  
-                  // Something not right in conversion.
-                  if (searchString.equals("0"))
-                     searchString = searchTextString;
-               }
-               else if (columnTypeName.equals("DATETIME") || columnTypeName.equals("TIMESTAMP")
-                        || columnTypeName.equals("TIMESTAMPTZ"))
-               {
-                  if (searchString.indexOf(" ") != -1)
-                     searchString = Utils.processDateFormatSearch(
-                        searchString.substring(0, searchString.indexOf(" ")))
-                        + searchString.substring(searchString.indexOf(" "));
-                  else if (searchString.indexOf("-") != -1 || searchString.indexOf("/") != -1)
-                     searchString = Utils.processDateFormatSearch(searchString);
-               }
+               createSearch(searchQueryString, columnTypeName, columnSQLType, tableColumns[i],
+                            searchTextString);
                
                if (i < tableColumns.length - 1)
-                  searchQueryString.append(tableColumns[i] + " LIKE '%" + searchString + "%' OR");
-               else
-                  searchQueryString.append(tableColumns[i] + " LIKE '%" + searchString + "%'");
+                  searchQueryString.append(" OR");
             }
          }
          // Field specified.
          else
          {
+            columnSQLType = (columnSQLTypeHashMap.get(searchComboBox.getSelectedItem())).intValue();
             columnTypeName = columnTypeNameHashMap.get(searchComboBox.getSelectedItem());
             
-            if (columnTypeName.equals("DATE"))
-               searchTextString = Utils.processDateFormatSearch(searchTextString);
-            else if (columnTypeName.equals("DATETIME") || columnTypeName.equals("TIMESTAMP")
-                     || columnTypeName.equals("TIMESTAMPTZ"))
-            {
-               if (searchTextString.indexOf(" ") != -1)
-                  searchTextString = Utils.processDateFormatSearch(
-                     searchTextString.substring(0, searchTextString.indexOf(" ")))
-                     + searchTextString.substring(searchTextString.indexOf(" "));
-               else if (searchTextString.indexOf("-") != -1 || searchTextString.indexOf("/") != -1)
-                  searchTextString = Utils.processDateFormatSearch(searchTextString);
-            }
-            
-            searchQueryString.append(identifierQuoteString + columnSearchString + identifierQuoteString
-                                     + " LIKE '%" + searchTextString + "%'");
+            createSearch(searchQueryString, columnTypeName, columnSQLType,
+                         identifierQuoteString + columnSearchString + identifierQuoteString,
+                         searchTextString);
          }
       }
       // System.out.println(searchTextString);
@@ -1490,7 +1466,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
       // Method Instances.
       Object dateObject;
       
-      if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
+      if (columnSQLType == Types.NULL || columnSQLType == Types.INTEGER
+          || columnSQLType == Types.REAL)
          dateObject = resultSet.getDate(columnName);
       else
          dateObject = resultSet.getString(columnName);
@@ -1506,7 +1483,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
    {
       Object timeObject;
       
-      if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
+      if (columnSQLType == Types.NULL || columnSQLType == Types.INTEGER
+          || columnSQLType == Types.REAL)
       {
          timeObject = resultSet.getTime(columnName);
          
@@ -1524,7 +1502,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
    {
       Object timeObject;
       
-      if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
+      if (columnSQLType == Types.NULL || columnSQLType == Types.INTEGER
+          || columnSQLType == Types.REAL)
       {
          timeObject = resultSet.getTime(columnName);
          
@@ -1545,7 +1524,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
       String dateString;
       String timeString;
       
-      if (columnSQLType == Types.INTEGER || columnSQLType == Types.NULL)
+      if (columnSQLType == Types.NULL || columnSQLType == Types.INTEGER
+          || columnSQLType == Types.REAL)
       {
          timestampObject = resultSet.getTimestamp(columnName);
          
@@ -1585,5 +1565,75 @@ public class TableTabPanel_SQLite extends TableTabPanel
          else
             throw new SQLException("Timestamp String Invalid Format");  
       }
+   }
+   
+   //==============================================================
+   // Class method to create the search string for the WHERE SQL
+   // statement.
+   //==============================================================
+   
+   public static void createSearch(StringBuffer searchQueryString, String columnTypeName,
+                                   int columnSQLType, String tableColumn, String searchTextString)
+   {
+      // Method Instances.
+      String tempString;
+      // System.out.println(tableColumn + ":" + columnSQLType + ":" + columnTypeName);
+      
+      if (columnTypeName.equals("DATE"))
+      {
+         tempString = Utils.processDateFormatSearch(searchTextString);
+         
+         // Something not right in conversion.
+         if (tempString.equals("0"))
+            tempString = searchTextString;
+         
+         if (columnSQLType == Types.VARCHAR)
+            searchQueryString.append(tableColumn + " LIKE '%" + tempString + "%'");
+         else
+         {
+            searchQueryString.append(
+               " DATE(" + tableColumn + " / 1000, 'unixepoch')"
+               + " LIKE '%" + tempString + "%'");
+         }   
+      }
+      else if (columnTypeName.equals("DATETIME") || columnTypeName.equals("TIMESTAMP")
+               || columnTypeName.equals("TIMESTAMPTZ"))
+      {
+         tempString = searchTextString;
+         
+         if (tempString.indexOf(" ") != -1)
+            tempString = Utils.processDateFormatSearch(
+               tempString.substring(0, tempString.indexOf(" ")))
+               + tempString.substring(tempString.indexOf(" "));
+         else if (tempString.indexOf("-") != -1 || tempString.indexOf("/") != -1)
+            tempString = Utils.processDateFormatSearch(tempString);
+         
+         if (columnSQLType == Types.VARCHAR)
+            searchQueryString.append(tableColumn + " LIKE '%" + tempString + "%'");
+         else
+         {
+            if (columnTypeName.equals("DATETIME"))
+            {
+               searchQueryString.append(
+                  " DATETIME(" + tableColumn + " / 1000, 'unixepoch', 'localtime')"
+                  + " LIKE '%" + tempString + "%'");
+            }
+            else
+            {
+               searchQueryString.append(
+                   " STRFTIME('%Y-%m-%d %H:%M:%f'," + tableColumn + " / 1000.0, 'unixepoch', 'localtime')"
+                   + " LIKE '%" + tempString + "%'");
+            }  
+         } 
+      }
+      else if (columnTypeName.equals("TIME") && (columnSQLType == Types.INTEGER
+               || columnSQLType == Types.REAL))
+      {
+         searchQueryString.append(
+            " TIME(" + tableColumn + " / 1000, 'unixepoch', 'localtime')"
+            + " LIKE '%" + searchTextString + "%'");
+      }
+      else
+         searchQueryString.append(tableColumn + " LIKE '%" + searchTextString + "%'");
    }
 }
