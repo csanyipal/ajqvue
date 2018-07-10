@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 05/25/2018
+// Version 1.5 07/10/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -40,6 +40,7 @@
 //         1.3 05/16/2018 H2_ARRAY Changed SQLITE_NONE to SQLITE_TEXT.
 //         1.4 05/25/2018 Method getType() Added Argument sourceSQLType, & Used As
 //                        an Alternative to Try & Derive Return for UNSPECIFIED.
+//         1.5 07/10/2018 SQLITE_TYPES Added SQLITE_NULL.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -57,7 +58,7 @@ import java.util.Map;
  * data types information for the various support databases.
  * 
  * @author Dana M. Proctor
- * @version 1.4 05/25/2018
+ * @version 1.5 07/10/2018
  */
 
 public class TypesInfoCache
@@ -270,6 +271,7 @@ public class TypesInfoCache
        {TypeID.SQLITE_TEXT, TypeID.H2_VARCHAR, TypeID.HSQL_LONGVARCHAR, TypeID.DERBY_CLOB, TypeID.SQLITE_TEXT},
        
        {TypeID.SQLITE_BLOB, TypeID.H2_BLOB, TypeID.HSQL_BLOB, TypeID.DERBY_BLOB, TypeID.SQLITE_BLOB},
+       {TypeID.SQLITE_NULL, TypeID.H2_BLOB, TypeID.HSQL_BLOB, TypeID.DERBY_BLOB, TypeID.SQLITE_NULL},
        {TypeID.SQLITE_NONE, TypeID.H2_BLOB, TypeID.HSQL_BLOB, TypeID.DERBY_BLOB, TypeID.SQLITE_NONE}};
    
    private static final int[][] MSACCESS_TYPES = {
