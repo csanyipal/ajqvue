@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.9 05/29/2018
+// Version 2.0 07/10/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -56,6 +56,8 @@
 //                        Call to infoCache.getType() Added Column SQL Type From SQLQuery
 //                        columnSQLTypeHashMap as Argument.
 //         1.9 05/29/2018 Moved to utilities.db Package. Updated Import for Utils.
+//         2.0 07/10/2018 Method convertToSQLiteType() Added TIME to be Defined as SQLite
+//                        Numeric, Essentially None, Null.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -82,7 +84,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * a given database query to an alternate database table. 
  * 
  * @author Dana M. Proctor
- * @version 1.9 05/29/2018
+ * @version 2.0 07/10/2018
  */
 
 public class DDLGenerator
@@ -331,6 +333,7 @@ public class DDLGenerator
             || columnType.indexOf("DECIMAL") != -1
             || columnType.indexOf("BOOLEAN") != -1
             || columnType.indexOf("DATE") != -1
+            || columnType.indexOf("TIME") != -1
             || columnType.indexOf("DATETIME") != -1
             || columnType.indexOf("TIMESTAMP") != -1
             || columnType.indexOf("YEAR") != -1)
