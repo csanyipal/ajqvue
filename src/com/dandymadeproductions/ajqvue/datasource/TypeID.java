@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.1 06/11/2018
+// Version 1.2 07/10/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,8 @@
 //=================================================================
 // Version 1.0 Production TypeID Class.
 //         1.1 Updated Copyright.
+//         1.2 Added SQLite Data Type ID, SQLITE_NULL, to Bring Into
+//             Conformance With SQLite3 Data Types.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -47,7 +49,7 @@ import java.util.Locale;
  * types that follows a prescribe naming scheme.
  * 
  * @author Dana M. Proctor
- * @version 1.1 06/11/2018
+ * @version 1.2 07/10/2018
  */
 
 public class TypeID
@@ -237,7 +239,8 @@ public class TypeID
    public static final int SQLITE_REAL = 54;
    public static final int SQLITE_NUMERIC = 55;
    public static final int SQLITE_TEXT = 56;
-   public static final int SQLITE_BLOB = 58;
+   public static final int SQLITE_BLOB = 57;
+   public static final int SQLITE_NULL = 58;
    public static final int SQLITE_NONE = 59;
    
    // MS Access Data Type IDs
