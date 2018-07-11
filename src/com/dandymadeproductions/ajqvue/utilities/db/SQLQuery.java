@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.6 07/05/2018
+// Version 1.7 07/11/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -49,6 +49,8 @@
 //         1.6 Method executeQuery() Insured columnSQLType is Stored as
 //             an Integer in columnSQLTypeHashMap. Simplified Assignment
 //             of columnSQLType, Maintained Logic.
+//         1.7 Added SQLite Temporal Getters, getDate(), getTime/TZ(), &
+//             getTimestamp().
 //             
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -62,6 +64,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -74,7 +77,7 @@ import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
  * the characteristics of a SQL query.   
  * 
  * @author Dana M. Proctor
- * @version 1.6 07/05/2018
+ * @version 1.7 07/11/2018
  */
 
 public class SQLQuery
@@ -479,6 +482,114 @@ public class SQLQuery
       }
       // System.out.println("TableTabPanel_SQLite getTypeof() columnName: " + colNameString + "-" + type);
       return type;
+   }
+   
+   //==============================================================
+   // Class methods to collect temporal data for SQLite based on
+   // the defined SQL Type, columnSQLType.
+   //==============================================================
+   
+   public static Object getDate(ResultSet resultSet, int columnSQLType, String columnName)
+         throws SQLException
+   {
+      // Method Instances.
+      Object dateObject;
+      
+      if (columnSQLType == Types.NULL || columnSQLType == Types.INTEGER
+          || columnSQLType == Types.REAL)
+         dateObject = resultSet.getDate(columnName);
+      else
+         dateObject = resultSet.getString(columnName);
+      
+      if (dateObject != null)
+         return dateObject + "";
+      else
+         return null;
+   }
+   
+   public static Object getTime(ResultSet resultSet, int columnSQLType, String columnName)
+         throws SQLException
+   {
+      Object timeObject;
+      
+      if (columnSQLType == Types.NULL || columnSQLType == Types.INTEGER
+          || columnSQLType == Types.REAL)
+      {
+         timeObject = resultSet.getTime(columnName);
+         
+         if (timeObject != null)
+            timeObject = (new SimpleDateFormat("HH:mm:ss").format(timeObject));
+      }
+      else
+         timeObject = resultSet.getString(columnName);
+      
+      return timeObject;
+   }
+   
+   public static Object getTimeTZ(ResultSet resultSet, int columnSQLType, String columnName)
+         throws SQLException
+   {
+      Object timeObject;
+      
+      if (columnSQLType == Types.NULL || columnSQLType == Types.INTEGER
+          || columnSQLType == Types.REAL)
+      {
+         timeObject = resultSet.getTime(columnName);
+         
+         if (timeObject != null)
+            timeObject = new SimpleDateFormat("HH:mm:ss z").format(timeObject);
+      }
+      else
+         timeObject = resultSet.getString(columnName);
+      
+      return timeObject;
+   }
+   
+   public static Object getTimestamp(ResultSet resultSet, int columnSQLType, String columnTypeName,
+                               String columnName) throws SQLException
+   {
+      // Method Instances.
+      Object timestampObject;
+      String dateString;
+      String timeString;
+      
+      if (columnSQLType == Types.NULL || columnSQLType == Types.INTEGER
+          || columnSQLType == Types.REAL)
+      {
+         timestampObject = resultSet.getTimestamp(columnName);
+         
+         if (timestampObject == null)
+            return null;
+         
+         if (columnTypeName.equals("DATETIME"))
+            return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(timestampObject));
+         else if (columnTypeName.equals("TIMESTAMP"))
+            return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(timestampObject));
+         // TIMESTAMPTZ
+         else
+           return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").format(timestampObject));   
+      }
+      else
+      {
+         timestampObject = resultSet.getString(columnName);
+         
+         if (timestampObject == null)
+            return null;
+         
+         if (((String) timestampObject).indexOf(" ") != -1)
+         {
+            dateString = timestampObject + "";
+            dateString = dateString.substring(0, (dateString.indexOf(" ")));
+
+            timeString = timestampObject + "";
+            timeString = timeString.substring(timeString.indexOf(" "));
+            timestampObject = dateString + timeString;
+            
+            return timestampObject;
+         }
+         else
+            throw new SQLException("Timestamp String Invalid Format");  
+      }
    }
    
    //==============================================================
