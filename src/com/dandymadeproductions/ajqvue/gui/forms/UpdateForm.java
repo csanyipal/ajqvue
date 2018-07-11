@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.2 07/06/2018
+// Version 1.3 07/11/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -42,6 +42,10 @@
 //                        Temporary System.out for Pending Temporal Changes. Method
 //                        getWhereSQLExpression() Same Along With Testing No Selection
 //                        for Field in whereComboBox.
+//         1.3 07/11/2018 Class Instance updateFormExpressionNumber Remove static
+//                        final & References to AdvancedSortSearchForm searchFormExpression
+//                        Number. Method getWhereSQLExpression() Replaced with Call to
+//                        AdvanceSortSearchForm.getWhereExpression().
 //                        
 //=================================================================
 
@@ -99,7 +103,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * table.
  * 
  * @author Dana M. Proctor
- * @version 1.2 07/06/2018
+ * @version 1.3 07/11/2018
  */
 
 public class UpdateForm extends JFrame implements ActionListener
@@ -133,7 +137,7 @@ public class UpdateForm extends JFrame implements ActionListener
    private JTextField updateColumnToTextField;
    private JCheckBox quoteCheckBox;
 
-   private static final int updateFormExpressionNumber = 5;
+   private int updateFormExpressionNumber;
    private JComboBox<Object>[] whereComboBox;
    private JComboBox<Object>[] operatorComboBox;
    private JComboBox<Object>[] andOrComboBox;
@@ -154,12 +158,12 @@ public class UpdateForm extends JFrame implements ActionListener
 
    @SuppressWarnings("unchecked")
    public UpdateForm(String table, AResourceBundle resourceBundle,
-                        HashMap<String, String> columnNamesHashMap,
-                        HashMap<String, String> columnClassHashMap,
-                        HashMap<String, Integer> columnSQLTypeHashMap,
-                        HashMap<String, String> columnTypeNameHashMap,
-                        HashMap<String, Integer> columnSizeHashMap,
-                        ArrayList<String> columnNames)
+                     HashMap<String, String> columnNamesHashMap,
+                     HashMap<String, String> columnClassHashMap,
+                     HashMap<String, Integer> columnSQLTypeHashMap,
+                     HashMap<String, String> columnTypeNameHashMap,
+                     HashMap<String, Integer> columnSizeHashMap,
+                     ArrayList<String> columnNames)
    {
       sqlTable = table;
       this.columnNamesHashMap = columnNamesHashMap;
@@ -212,6 +216,7 @@ public class UpdateForm extends JFrame implements ActionListener
       statusWorkingIcon = resourceBundle.getResourceImage(iconsDirectory + "statusWorkingIcon.png");
       deleteDataIcon = resourceBundle.getResourceImage(iconsDirectory + "deleteDataIcon.gif");
       
+      updateFormExpressionNumber = AdvancedSortSearchForm.searchFormExpressionNumber;
       whereComboBox = new JComboBox[updateFormExpressionNumber];
       operatorComboBox = new JComboBox[updateFormExpressionNumber];
       andOrComboBox = new JComboBox[whereComboBox.length - 1];
@@ -1123,140 +1128,10 @@ public class UpdateForm extends JFrame implements ActionListener
 
    private String getWhereSQLExpression()
    {
-      // Method Instances
-      StringBuffer sqlStatementString;
-      String whereString;
-      String columnNameString;
-      String columnClassString;
-      int columnSQLType;
-      String columnTypeNameString;
-      String operatorString;
-      String tempSearchString;
-      String unionString;
-
-      sqlStatementString = new StringBuffer();
-
-      // ========================================
-      // Adding the search(s), WHERE, option.
-      
-      int i = 0;
-      whereString = "WHERE ";
-      unionString = "";
-      do
-      {
-         // Catch the empty string inserted at index 0.
-         if (((String) whereComboBox[i].getSelectedItem()).isEmpty())
-         {
-            i++;
-            continue;
-         }
-         
-         columnNameString = columnNamesHashMap.get(whereComboBox[i].getSelectedItem());
-         columnClassString = columnClassHashMap.get(whereComboBox[i].getSelectedItem());
-         columnSQLType = columnSQLTypeHashMap.get(whereComboBox[i].getSelectedItem());
-         columnTypeNameString = columnTypeNameHashMap.get(whereComboBox[i].getSelectedItem());
-         operatorString = (String) operatorComboBox[i].getSelectedItem();
-         tempSearchString = whereTextField[i].getText();
-
-         if (columnNameString != null
-             && (!tempSearchString.equals("")
-                 || operatorString.toLowerCase(Locale.ENGLISH).indexOf("null") != -1))
-         {
-            if (i > 0)
-               sqlStatementString.append(unionString.equals("") ? "WHERE " : unionString);
-            
-            if (operatorString.toLowerCase(Locale.ENGLISH).indexOf("null") != -1)
-               sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                         + identifierQuoteString + " " + operatorString + " ");
-            else
-            {
-               if (operatorString.equals("<=>")
-                   && tempSearchString.toLowerCase(Locale.ENGLISH).equals("null"))
-                  sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                            + identifierQuoteString + " " + operatorString
-                                            + " " + tempSearchString + " ");
-               else
-               {
-                  if (columnTypeNameString.equals("DATE"))
-                  {
-                     if (dataSourceType.equals(ConnectionManager.ORACLE))
-                     {
-                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                  + identifierQuoteString + " " + operatorString
-                                                  + " TO_DATE('"
-                                                  + Utils.convertViewDateString_To_DBDateString(
-                                                    tempSearchString,
-                                                    DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
-                                                    + "', 'YYYY-MM-dd') ");
-                     }
-                     else
-                     {
-                        tempSearchString = Utils.processDateFormatSearch(tempSearchString);
-                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                  + identifierQuoteString + " " + operatorString + " '"
-                                                  + tempSearchString + "' ");
-                     }
-                  }
-                  else if (columnTypeNameString.equals("DATETIME")
-                           || columnTypeNameString.indexOf("TIMESTAMP") != -1)
-                  {
-                     if (tempSearchString.indexOf(" ") != -1)
-                        tempSearchString = Utils.processDateFormatSearch(
-                           tempSearchString.substring(0, tempSearchString.indexOf(" ")))
-                           + tempSearchString.substring(tempSearchString.indexOf(" "));
-                     else if (tempSearchString.indexOf("-") != -1 || tempSearchString.indexOf("/") != -1)
-                        tempSearchString = Utils.processDateFormatSearch(tempSearchString);
-                     
-                     if (dataSourceType.equals(ConnectionManager.ORACLE) 
-                           && columnTypeNameString.indexOf("TIMESTAMP") != -1)
-                     {
-                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                 + identifierQuoteString + " " + operatorString
-                                                 + " TO_TIMESTAMP('" + tempSearchString
-                                                 + "', 'MM-dd-YYYY HH24:MI:SS') ");
-                     }
-                     else
-                     {
-                        if (dataSourceType.equals(ConnectionManager.MSACCESS))
-                           sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                     + identifierQuoteString + " " + operatorString + " #"
-                                                     + tempSearchString + "# ");
-                        else
-                           sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                     + identifierQuoteString + " " + operatorString + " '"
-                                                     + tempSearchString + "' ");
-                     }
-                  }
-                  else
-                  {
-                     // Character data gets single quotes for some databases,
-                     // not numbers though.
-                          
-                     if ((dataSourceType.equals(ConnectionManager.MSACCESS)
-                          || dataSourceType.indexOf(ConnectionManager.HSQL) != -1
-                          || dataSourceType.equals(ConnectionManager.DERBY))
-                         && columnClassString.toLowerCase(Locale.ENGLISH).indexOf("string") == -1)
-                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                  + identifierQuoteString + " " + operatorString + " "
-                                                  + tempSearchString + " ");
-                     else
-                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                  + identifierQuoteString + " " + operatorString + " '"
-                                                  + tempSearchString + "' ");
-                  }
-               }
-            }
-
-            if (i < andOrComboBox.length)
-               unionString = ((String) andOrComboBox[i].getSelectedItem()).toUpperCase(Locale.ENGLISH) + " ";
-         }
-         i++;
-         whereString = "";
-      }
-      while (i < updateFormExpressionNumber);
-      
-      // System.out.println(sqlStatementString);
-      return sqlStatementString.toString();
+      return AdvancedSortSearchForm.getWhereExpression(dataSourceType,
+         identifierQuoteString, whereComboBox, operatorComboBox, whereTextField,
+         andOrComboBox, columnNamesHashMap, columnClassHashMap,
+         columnSQLTypeHashMap, columnTypeNameHashMap).toString();
    }
    
    //==============================================================
