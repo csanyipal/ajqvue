@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 07/07/2018
+// Version 1.5 07/11/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -45,6 +45,12 @@
 //                        SQL Inserted a Conditional to Check Empty Selected Fields
 //                        of searchComboBox & Insured columnSQLTypeInt Explicitly
 //                        Extracted From columnSQLTypeHashMap as int.
+//         1.5 07/11/2018 Code Formatting for Class Instances. Changed Class Instance
+//                        searchComboBox to whereComboBox & searchTextField to where
+//                        TextField. Method getAdvancedSortSearchSQL() Removed All
+//                        Aspects of Creating WHERE Condition, & Moved to New static
+//                        Method getWhereExpression(). Consolidation for AdvancedSort
+//                        SearchForm & UpdateForm.
 //                      
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -84,6 +90,7 @@ import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.gui.HelpFrame;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
+import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel_SQLite;
 import com.dandymadeproductions.ajqvue.utilities.AResourceBundle;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
 
@@ -93,7 +100,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * calling TableTabPanel's database table.
  * 
  * @author Dana M. Proctor
- * @version 1.4 07/07/2018
+ * @version 1.5 07/11/2018
  */
 
 public class AdvancedSortSearchForm extends JFrame implements ActionListener
@@ -118,17 +125,22 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
    private JPanel sortSearchPanel;
    private JButton questionButton;
    private JComboBox<String> selectTypeComboBox;
-   private JComboBox<Object> aggregateFunctionComboBox, aggregateComboBox;
+   private JComboBox<Object> aggregateFunctionComboBox;
+   private JComboBox<Object> aggregateComboBox;
    
    private static final int sortFormExpressionNumber = 3;
-   private JComboBox<Object>[] sortComboBox, sort_AscendingDescendingComboBox;
+   private JComboBox<Object>[] sortComboBox;
+   private JComboBox<Object>[] sort_AscendingDescendingComboBox;
    
    private static final int groupFormExpressionNumber = 5;
-   private JComboBox<Object> groupComboBox[], group_AscendingDescendingComboBox[];
+   private JComboBox<Object>[] groupComboBox;
+   private JComboBox<Object>[] group_AscendingDescendingComboBox;
    
-   private static final int searchFormExpressionNumber = 5;
-   private JComboBox<Object>[] searchComboBox, operatorComboBox, andOrComboBox;
-   private JTextField[] searchTextField;
+   protected static final int searchFormExpressionNumber = 5;
+   private JComboBox<Object>[] whereComboBox;
+   private JComboBox<Object>[] operatorComboBox;
+   private JComboBox<Object>[] andOrComboBox;
+   private JTextField[] whereTextField;
    private ArrayList<JComponent> stateComponents;
 
    private JButton closeButton, clearButton;
@@ -283,10 +295,10 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
       sort_AscendingDescendingComboBox = new JComboBox[sortFormExpressionNumber];
       groupComboBox = new JComboBox[groupFormExpressionNumber];
       group_AscendingDescendingComboBox = new JComboBox[groupFormExpressionNumber];
-      searchComboBox = new JComboBox[searchFormExpressionNumber];
+      whereComboBox = new JComboBox[searchFormExpressionNumber];
       operatorComboBox = new JComboBox[searchFormExpressionNumber];
-      andOrComboBox = new JComboBox[searchComboBox.length - 1];
-      searchTextField = new JTextField[searchFormExpressionNumber];
+      andOrComboBox = new JComboBox[whereComboBox.length - 1];
+      whereTextField = new JTextField[searchFormExpressionNumber];
       
       createSortSearchInterface(resourceBundle);
 
@@ -410,11 +422,11 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
                   group_AscendingDescendingComboBox[i].setSelectedIndex(0);
                }
                
-               searchComboBox[i].setSelectedIndex(0);
+               whereComboBox[i].setSelectedIndex(0);
                operatorComboBox[i].setSelectedIndex(0);
                if (i < andOrComboBox.length)
                   andOrComboBox[i].setSelectedIndex(0);
-               searchTextField[i].setText("");
+               whereTextField[i].setText("");
                
                i++;
             }
@@ -698,15 +710,15 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
          gridbag.setConstraints(searchLabel[i], constraints);
          searchPanel.add(searchLabel[i]);
 
-         searchComboBox[i] = new JComboBox<Object>(comboBoxColumnNames.toArray());
-         searchComboBox[i].setBorder(BorderFactory.createLoweredBevelBorder());
-         stateComponents.add(searchComboBox[i]);
+         whereComboBox[i] = new JComboBox<Object>(comboBoxColumnNames.toArray());
+         whereComboBox[i].setBorder(BorderFactory.createLoweredBevelBorder());
+         stateComponents.add(whereComboBox[i]);
 
          buildConstraints(constraints, 1, (i + 3), 1, 1, 100, 100);
          constraints.fill = GridBagConstraints.NONE;
          constraints.anchor = GridBagConstraints.CENTER;
-         gridbag.setConstraints(searchComboBox[i], constraints);
-         searchPanel.add(searchComboBox[i]);
+         gridbag.setConstraints(whereComboBox[i], constraints);
+         searchPanel.add(whereComboBox[i]);
 
          operatorComboBox[i] = new JComboBox<Object>(whereOperators);
          operatorComboBox[i].setBorder(BorderFactory.createLoweredBevelBorder());
@@ -718,17 +730,17 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
          gridbag.setConstraints(operatorComboBox[i], constraints);
          searchPanel.add(operatorComboBox[i]);
 
-         searchTextField[i] = new JTextField(15);
-         searchTextField[i].setBorder(BorderFactory.createCompoundBorder(
+         whereTextField[i] = new JTextField(15);
+         whereTextField[i].setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
             BorderFactory.createLoweredBevelBorder()));
-         stateComponents.add(searchTextField[i]);
+         stateComponents.add(whereTextField[i]);
 
          buildConstraints(constraints, 3, (i + 3), 1, 1, 100, 100);
          constraints.fill = GridBagConstraints.NONE;
          constraints.anchor = GridBagConstraints.CENTER;
-         gridbag.setConstraints(searchTextField[i], constraints);
-         searchPanel.add(searchTextField[i]);
+         gridbag.setConstraints(whereTextField[i], constraints);
+         searchPanel.add(whereTextField[i]);
 
          if (i < andOrComboBox.length)
          {
@@ -774,26 +786,21 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
    {
       // Method Instances
       StringBuffer sqlStatementString;
+      
       String aggregateFunctionString;
       String aggregateField;
-      String whereString;
-      String unionString;
+      
       String orderString;
       String ascDescString;
-      String operatorString;
-      String searchString;
       
       String columnNameString;
-      String columnClassString;
-      int columnSQLTypeInt;
-      String columnTypeNameString;
       
       boolean notFieldSort;
       boolean notFieldGroup;
 
       sqlStatementString = new StringBuffer();
       sqlStatementString.append("SELECT ");
-
+      
       // ========================================
       // Adding DISTINCT & Aggregate options as needed.
 
@@ -819,125 +826,10 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
       // ========================================
       // Adding the search(s), WHERE, option(s).
       
-      int i = 0;
-      whereString = "WHERE ";
-      unionString = "";
-      do
-      {
-         // Catch the empty string inserted at index 0.
-         if (((String) searchComboBox[i].getSelectedItem()).isEmpty())
-         {
-            i++;
-            continue;
-         }
-         
-         columnNameString = columnNamesHashMap.get(searchComboBox[i].getSelectedItem());
-         columnClassString = columnClassHashMap.get(searchComboBox[i].getSelectedItem());
-         columnSQLTypeInt = (columnSQLTypeHashMap.get(searchComboBox[i].getSelectedItem())).intValue();
-         columnTypeNameString = columnTypeNameHashMap.get(searchComboBox[i].getSelectedItem());
-         operatorString = (String) operatorComboBox[i].getSelectedItem();
-         searchString = searchTextField[i].getText();
-
-         if (columnNameString != null
-             && (!searchString.equals("")
-                 || operatorString.toLowerCase(Locale.ENGLISH).indexOf("null") != -1))
-         {
-            if (i > 0)
-               sqlStatementString.append(unionString.equals("") ? "WHERE " : unionString);
-            
-            if (operatorString.toLowerCase(Locale.ENGLISH).indexOf("null") != -1)
-               sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                         + identifierQuoteString + " " + operatorString + " ");
-            else
-            {
-               if (operatorString.equals("<=>") && searchString.toLowerCase(Locale.ENGLISH).equals("null"))
-                  sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                            + identifierQuoteString + " " + operatorString
-                                            + " " + searchString + " ");
-               else
-               {
-                  if (columnTypeNameString.equals("DATE"))
-                  {
-                     if (dataSourceType.equals(ConnectionManager.ORACLE))
-                     {
-                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                  + identifierQuoteString + " " + operatorString
-                                                  + " TO_DATE('"
-                                                  + Utils.convertViewDateString_To_DBDateString(
-                                                    searchString,
-                                                    DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
-                                                    + "', 'YYYY-MM-dd') ");
-                     }
-                     else
-                     {
-                        searchString = Utils.processDateFormatSearch(searchString);
-                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                  + identifierQuoteString + " " + operatorString + " '"
-                                                  + searchString + "' ");
-                     }
-                  }
-                  else if (columnTypeNameString.equals("DATETIME")
-                           || columnTypeNameString.indexOf("TIMESTAMP") != -1)
-                  {
-                     if (searchString.indexOf(" ") != -1)
-                        searchString = Utils.processDateFormatSearch(
-                           searchString.substring(0, searchString.indexOf(" ")))
-                           + searchString.substring(searchString.indexOf(" "));
-                     else if (searchString.indexOf("-") != -1 || searchString.indexOf("/") != -1)
-                        searchString = Utils.processDateFormatSearch(searchString);
-                     
-                     if (dataSourceType.equals(ConnectionManager.ORACLE) 
-                           && columnTypeNameString.indexOf("TIMESTAMP") != -1)
-                     {
-                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                  + identifierQuoteString + " " + operatorString
-                                                  + " TO_TIMESTAMP('" + searchString
-                                                  + "', 'YYYY-MM-dd HH24:MI:SS') ");
-                     }
-                     else
-                     {
-                        if (dataSourceType.equals(ConnectionManager.MSACCESS))
-                           sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                     + identifierQuoteString + " " + operatorString + " #"
-                                                     + searchString + "# ");
-                        else
-                           sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                     + identifierQuoteString + " " + operatorString + " '"
-                                                     + searchString + "' ");
-                     }
-                  }
-                  else if ((dataSourceType.equals(ConnectionManager.MYSQL)
-                            || dataSourceType.equals(ConnectionManager.MARIADB))
-                           && columnTypeNameString.equals("BIT"))
-                  {
-                     sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                               + identifierQuoteString + " " + operatorString + " B'"
-                                               + searchString + "' ");
-                  }
-                  else
-                  {
-                     // Character data gets single quotes for some databases,
-                     // not numbers though.
-                          
-                     if (Utils.isNotQuoted(columnClassString, columnSQLTypeInt, columnTypeNameString))
-                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                  + identifierQuoteString + " " + operatorString + " "
-                                                  + searchString + " ");
-                     else
-                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
-                                                  + identifierQuoteString + " " + operatorString + " '"
-                                                  + searchString + "' ");
-                  }
-               }
-            }
-            
-            if (i < andOrComboBox.length)
-               unionString = ((String) andOrComboBox[i].getSelectedItem()).toUpperCase(Locale.ENGLISH) + " ";
-         }
-         i++;
-         whereString = "";
-      }
-      while (i < searchFormExpressionNumber);
+      sqlStatementString.append(getWhereExpression(dataSourceType, identifierQuoteString,
+                                                   whereComboBox, operatorComboBox, whereTextField,
+                                                   andOrComboBox, columnNamesHashMap, columnClassHashMap,
+                                                   columnSQLTypeHashMap, columnTypeNameHashMap));
       
       // ========================================
       // Adding the sort(s), GROUP BY, option.
@@ -946,7 +838,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
       ascDescString = "";
       notFieldGroup = true;
       
-      i = 0;
+      int i = 0;
       do
       {
          columnNameString = columnNamesHashMap.get(groupComboBox[i].getSelectedItem());
@@ -1039,6 +931,175 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
        * columnNamesHashMap.get(sortComboBox.getSelectedItem()) + " " + "LIMIT " +
        * tableRowStart + "," + tableRowLimit;
        */ 
+   }
+   
+   //==============================================================
+   // Class method to create the WHERE expression.
+   //==============================================================
+
+   protected static StringBuffer getWhereExpression(String dataSourceType,
+                                            String identifierQuoteString, JComboBox<Object>[] whereComboBox,
+                                            JComboBox<Object>[] operatorComboBox, JTextField[] whereTextField,
+                                            JComboBox<Object>[] andOrComboBox,
+                                            HashMap<String, String> columnNamesHashMap,
+                                            HashMap<String, String> columnClassHashMap,
+                                            HashMap<String, Integer> columnSQLTypeHashMap,
+                                            HashMap<String, String> columnTypeNameHashMap)
+   {
+      // Method Instances
+      StringBuffer sqlStatementString;
+      StringBuffer sqliteSearchString;
+      
+      String columnNameString;
+      String columnClassString;
+      int columnSQLTypeInt;
+      String columnTypeNameString;
+      
+      String whereString;
+      String operatorString;
+      String searchString;
+      String unionString;
+      
+      // ========================================
+      // WHERE, option(s).
+      
+      int i = 0;
+      whereString = "WHERE ";
+      unionString = "";
+      sqlStatementString = new StringBuffer();
+      sqliteSearchString = new StringBuffer();
+      
+      do
+      {
+         // Catch the empty string inserted at index 0.
+         if (((String) whereComboBox[i].getSelectedItem()).isEmpty())
+         {
+            i++;
+            continue;
+         }
+         
+         sqliteSearchString.delete(0, sqliteSearchString.length());
+         
+         columnNameString = columnNamesHashMap.get(whereComboBox[i].getSelectedItem());
+         columnClassString = columnClassHashMap.get(whereComboBox[i].getSelectedItem());
+         columnSQLTypeInt = (columnSQLTypeHashMap.get(whereComboBox[i].getSelectedItem())).intValue();
+         columnTypeNameString = columnTypeNameHashMap.get(whereComboBox[i].getSelectedItem());
+         operatorString = (String) operatorComboBox[i].getSelectedItem();
+         searchString = whereTextField[i].getText();
+
+         if (columnNameString != null
+             && (!searchString.equals("")
+                 || operatorString.toLowerCase(Locale.ENGLISH).indexOf("null") != -1))
+         {
+            if (i > 0)
+               sqlStatementString.append(unionString.equals("") ? "WHERE " : unionString);
+            
+            if (operatorString.toLowerCase(Locale.ENGLISH).indexOf("null") != -1)
+               sqlStatementString.append(whereString + identifierQuoteString + columnNameString
+                                         + identifierQuoteString + " " + operatorString + " ");
+            else
+            {
+               if (operatorString.equals("<=>") && searchString.toLowerCase(Locale.ENGLISH).equals("null"))
+                  sqlStatementString.append(whereString + identifierQuoteString + columnNameString
+                                            + identifierQuoteString + " " + operatorString
+                                            + " " + searchString + " ");
+               else
+               {
+                  if (columnTypeNameString.equals("DATE"))
+                  {
+                     if (dataSourceType.equals(ConnectionManager.ORACLE))
+                     {
+                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
+                                                  + identifierQuoteString + " " + operatorString
+                                                  + " TO_DATE('"
+                                                  + Utils.convertViewDateString_To_DBDateString(
+                                                    searchString,
+                                                    DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
+                                                    + "', 'YYYY-MM-dd') ");
+                     }
+                     else if (dataSourceType.equals(ConnectionManager.SQLITE)
+                              && operatorString.indexOf("LIKE") != -1)
+                     {
+                        TableTabPanel_SQLite.createSearch(sqliteSearchString, columnTypeNameString,
+                                                          columnSQLTypeInt,
+                                                          identifierQuoteString + columnNameString
+                                                          + identifierQuoteString, searchString,
+                                                          operatorString);
+                        sqlStatementString.append(whereString + sqliteSearchString + " ");
+                     }
+                     else
+                     {
+                        searchString = Utils.processDateFormatSearch(searchString);
+                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
+                                                  + identifierQuoteString + " " + operatorString + " '"
+                                                  + searchString + "' ");
+                     }
+                  }
+                  else if (columnTypeNameString.equals("DATETIME")
+                           || columnTypeNameString.indexOf("TIMESTAMP") != -1)
+                  {
+                     if (searchString.indexOf(" ") != -1)
+                        searchString = Utils.processDateFormatSearch(
+                           searchString.substring(0, searchString.indexOf(" ")))
+                           + searchString.substring(searchString.indexOf(" "));
+                     else if (searchString.indexOf("-") != -1 || searchString.indexOf("/") != -1)
+                        searchString = Utils.processDateFormatSearch(searchString);
+                     
+                     if (dataSourceType.equals(ConnectionManager.ORACLE) 
+                           && columnTypeNameString.indexOf("TIMESTAMP") != -1)
+                     {
+                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
+                                                  + identifierQuoteString + " " + operatorString
+                                                  + " TO_TIMESTAMP('" + searchString
+                                                  + "', 'YYYY-MM-dd HH24:MI:SS') ");
+                     }
+                     else
+                     {
+                        if (dataSourceType.equals(ConnectionManager.MSACCESS))
+                           sqlStatementString.append(whereString + identifierQuoteString + columnNameString
+                                                     + identifierQuoteString + " " + operatorString + " #"
+                                                     + searchString + "# ");
+                        else
+                           sqlStatementString.append(whereString + identifierQuoteString + columnNameString
+                                                     + identifierQuoteString + " " + operatorString + " '"
+                                                     + searchString + "' ");
+                     }
+                  }
+                  else if ((dataSourceType.equals(ConnectionManager.MYSQL)
+                            || dataSourceType.equals(ConnectionManager.MARIADB))
+                           && columnTypeNameString.equals("BIT"))
+                  {
+                     sqlStatementString.append(whereString + identifierQuoteString + columnNameString
+                                               + identifierQuoteString + " " + operatorString + " B'"
+                                               + searchString + "' ");
+                  }
+                  else
+                  {
+                     // Character data gets single quotes for some databases,
+                     // not numbers though.
+                          
+                     if (Utils.isNotQuoted(columnClassString, columnSQLTypeInt, columnTypeNameString))
+                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
+                                                  + identifierQuoteString + " " + operatorString + " "
+                                                  + searchString + " ");
+                     else
+                        sqlStatementString.append(whereString + identifierQuoteString + columnNameString
+                                                  + identifierQuoteString + " " + operatorString + " '"
+                                                  + searchString + "' ");
+                  }
+               }
+            }
+            
+            if (i < andOrComboBox.length)
+               unionString = ((String) andOrComboBox[i].getSelectedItem()).toUpperCase(Locale.ENGLISH) + " ";
+         }
+         i++;
+         whereString = "";
+      }
+      while (i < searchFormExpressionNumber);
+      
+      System.out.println("AdvancedSortSearchForm getWhereExpression()\n" + sqlStatementString);
+      return sqlStatementString;
    }
 
    //==============================================================
