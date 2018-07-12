@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.3 07/11/2018
+// Version 1.4 07/12/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -46,6 +46,8 @@
 //                        final & References to AdvancedSortSearchForm searchFormExpression
 //                        Number. Method getWhereSQLExpression() Replaced with Call to
 //                        AdvanceSortSearchForm.getWhereExpression().
+//         1.4 07/12/2018 Method updateTable() Updated to Temporal Types Processing for
+//                        SQLite, columnSQLType Numerical vs String.
 //                        
 //=================================================================
 
@@ -68,6 +70,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,7 +106,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * table.
  * 
  * @author Dana M. Proctor
- * @version 1.3 07/11/2018
+ * @version 1.4 07/12/2018
  */
 
 public class UpdateForm extends JFrame implements ActionListener
@@ -880,9 +883,8 @@ public class UpdateForm extends JFrame implements ActionListener
                               java.sql.Date.valueOf("error");
                            
                            // Process
-                           dateString = updateTextString.trim();
                            dateString = Utils.convertViewDateString_To_DBDateString(
-                              dateString, DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
+                              updateTextString, DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
                            
                            if (dataSourceType.equals(ConnectionManager.ORACLE))
                            {
@@ -892,7 +894,12 @@ public class UpdateForm extends JFrame implements ActionListener
                            else
                            {
                               dateValue = java.sql.Date.valueOf(dateString);
-                              updateString = dateValue.toString();
+                              
+                              if (dataSourceType.equals(ConnectionManager.SQLITE)
+                                  && columnSQLType != Types.VARCHAR)
+                                 updateString = Long.toString(dateValue.getTime());
+                              else
+                                 updateString = dateValue.toString();
                            }
                         }
                         // Time
@@ -906,8 +913,13 @@ public class UpdateForm extends JFrame implements ActionListener
                               Time.valueOf("error");
                            
                            // Process
-                           timeValue = Time.valueOf(updateTextString.substring(0, 7));
-                           updateString = timeValue.toString();
+                           timeValue = Time.valueOf(updateTextString.substring(0, 8));
+                           
+                           if (dataSourceType.equals(ConnectionManager.SQLITE)
+                               && columnSQLType != Types.VARCHAR)
+                              updateString = Long.toString(timeValue.getTime());
+                           else
+                              updateString = timeValue.toString();
                         }
                         // DateTime
                         else if (columnTypeName.equals("DATETIME"))
@@ -928,10 +940,17 @@ public class UpdateForm extends JFrame implements ActionListener
                            
                            timeString = updateTextString.substring(updateTextString.indexOf(" "));
                            dateTimeValue = java.sql.Timestamp.valueOf(dateString + timeString);
-                           updateString = dateTimeValue.toString();
                            
-                           if (updateString.indexOf(".") != -1)
-                              updateString = updateString.substring(0, updateString.indexOf("."));
+                           if (dataSourceType.equals(ConnectionManager.SQLITE)
+                               && columnSQLType != Types.VARCHAR)
+                              updateString = Long.toString(dateTimeValue.getTime());
+                           else
+                           {
+                              updateString = dateTimeValue.toString();
+                              
+                              if (updateString.indexOf(".") != -1)
+                                 updateString = updateString.substring(0, updateString.indexOf("."));
+                           } 
                         }
                         // Timestamp
                         else if (columnTypeName.equals("TIMESTAMP") || columnTypeName.equals("TIMESTAMPTZ")
@@ -952,19 +971,32 @@ public class UpdateForm extends JFrame implements ActionListener
                               // Create a Timestamp Format.
                               if (columnTypeName.equals("TIMESTAMP"))
                               {
-                                 if (columnSize == 2)
-                                    timeStampFormat = new SimpleDateFormat("yy");
-                                 else if (columnSize == 4)
-                                    timeStampFormat = new SimpleDateFormat("MM-yy");
-                                 else if (columnSize == 6)
-                                    timeStampFormat = new SimpleDateFormat("MM-dd-yy");
-                                 else if (columnSize == 8)
-                                    timeStampFormat = new SimpleDateFormat("MM-dd-yyyy");
-                                 else if (columnSize == 10)
-                                    timeStampFormat = new SimpleDateFormat("MM-dd-yy HH:mm");
-                                 else if (columnSize == 12)
-                                    timeStampFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm");
-                                 // All current coloumnSizes for MySQL > 5.0 Should be 19.
+                                 // Old MySQL Database Requirement, 4.x.
+                                 if (dataSourceType.equals(ConnectionManager.MYSQL)
+                                     || dataSourceType.equals(ConnectionManager.MARIADB))
+                                 {
+                                    if (columnSize == 2)
+                                       timeStampFormat = new SimpleDateFormat("yy");
+                                    else if (columnSize == 4)
+                                       timeStampFormat = new SimpleDateFormat("MM-yy");
+                                    else if (columnSize == 6)
+                                       timeStampFormat = new SimpleDateFormat("MM-dd-yy");
+                                    else if (columnSize == 8)
+                                       timeStampFormat = new SimpleDateFormat("MM-dd-yyyy");
+                                    else if (columnSize == 10)
+                                       timeStampFormat = new SimpleDateFormat("MM-dd-yy HH:mm");
+                                    else if (columnSize == 12)
+                                       timeStampFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm");
+                                    // All current coloumnSizes for MySQL > 5.0 Should be 19.
+                                    else
+                                       timeStampFormat = new SimpleDateFormat(
+                                          DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+                                          + " HH:mm:ss");
+                                 }
+                                 else if (dataSourceType.equals(ConnectionManager.SQLITE)) 
+                                    timeStampFormat = new SimpleDateFormat(
+                                       DBTablesPanel.getGeneralDBProperties().getViewDateFormat()
+                                       + " HH:mm:ss.SSS");
                                  else
                                     timeStampFormat = new SimpleDateFormat(
                                        DBTablesPanel.getGeneralDBProperties().getViewDateFormat() + " HH:mm:ss");
@@ -1000,7 +1032,13 @@ public class UpdateForm extends JFrame implements ActionListener
                                  quoteCheckBox.setSelected(false);
                               }
                               else
-                                 updateString = dateTimeValue.toString();
+                              {
+                                 if (dataSourceType.equals(ConnectionManager.SQLITE)
+                                     && columnSQLType != Types.VARCHAR)
+                                    updateString = Long.toString(dateTimeValue.getTime());
+                                 else
+                                    updateString = dateTimeValue.toString();
+                              }
                            }
                            catch (ParseException e)
                            {
@@ -1063,7 +1101,7 @@ public class UpdateForm extends JFrame implements ActionListener
                quoteCheckBox.setSelected(quoteCheckBoxState);
                
                // Proceed with execution and finish up.
-               System.out.println(sqlStatementString);
+               // System.out.println("UpdateForm updateTable() \n" + sqlStatementString);
                sqlStatement.executeUpdate(sqlStatementString);
                dbConnection.commit();
                dbConnection.setAutoCommit(true);
