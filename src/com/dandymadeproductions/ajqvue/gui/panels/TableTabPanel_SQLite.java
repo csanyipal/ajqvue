@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.9 07/09/2018
+// Version 2.0 07/13/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -85,6 +85,7 @@
 //                        to New Method createSearch(). Methods getDate(), getTime(),
 //                        getTimeTZ(), & getTimeStamp() Included Processing for columnSQLType
 //                        REAL.
+//         2.0 07/13/2018 Method createSearch() Added Argument wildCardCharacter.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -119,7 +120,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.9 07/09/2018
+ * @version 2.0 07/13/2018
  */
 
 public class TableTabPanel_SQLite extends TableTabPanel
@@ -454,7 +455,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
                columnTypeName = columnTypeNameHashMap.get(parseColumnNameField(columnName.trim()));
                
                createSearch(searchQueryString, columnTypeName, columnSQLType, tableColumns[i],
-                            searchTextString);
+                            searchTextString, "LIKE", "%");
                
                if (i < tableColumns.length - 1)
                   searchQueryString.append(" OR");
@@ -468,7 +469,7 @@ public class TableTabPanel_SQLite extends TableTabPanel
             
             createSearch(searchQueryString, columnTypeName, columnSQLType,
                          identifierQuoteString + columnSearchString + identifierQuoteString,
-                         searchTextString);
+                         searchTextString, "LIKE", "%");
          }
       }
       // System.out.println(searchTextString);
@@ -1573,7 +1574,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
    //==============================================================
    
    public static void createSearch(StringBuffer searchQueryString, String columnTypeName,
-                                   int columnSQLType, String tableColumn, String searchTextString)
+                                   int columnSQLType, String tableColumn, String searchTextString,
+                                   String operatorString, String wildCardCharacter)
    {
       // Method Instances.
       String tempString;
@@ -1588,12 +1590,13 @@ public class TableTabPanel_SQLite extends TableTabPanel
             tempString = searchTextString;
          
          if (columnSQLType == Types.VARCHAR)
-            searchQueryString.append(tableColumn + " LIKE '%" + tempString + "%'");
+            searchQueryString.append(tableColumn + " " + operatorString + " '" +
+                                     wildCardCharacter + tempString + wildCardCharacter + "'");
          else
          {
             searchQueryString.append(
                " DATE(" + tableColumn + " / 1000, 'unixepoch')"
-               + " LIKE '%" + tempString + "%'");
+               + " " + operatorString + " '" + wildCardCharacter + tempString + wildCardCharacter + "'");
          }   
       }
       else if (columnTypeName.equals("DATETIME") || columnTypeName.equals("TIMESTAMP")
@@ -1609,20 +1612,23 @@ public class TableTabPanel_SQLite extends TableTabPanel
             tempString = Utils.processDateFormatSearch(tempString);
          
          if (columnSQLType == Types.VARCHAR)
-            searchQueryString.append(tableColumn + " LIKE '%" + tempString + "%'");
+            searchQueryString.append(tableColumn + " " + operatorString + " '" + wildCardCharacter
+                                     + tempString + wildCardCharacter + "'");
          else
          {
             if (columnTypeName.equals("DATETIME"))
             {
                searchQueryString.append(
                   " DATETIME(" + tableColumn + " / 1000, 'unixepoch', 'localtime')"
-                  + " LIKE '%" + tempString + "%'");
+                  + " " + operatorString + " '" + wildCardCharacter + tempString + wildCardCharacter
+                  + "'");
             }
             else
             {
                searchQueryString.append(
                    " STRFTIME('%Y-%m-%d %H:%M:%f'," + tableColumn + " / 1000.0, 'unixepoch', 'localtime')"
-                   + " LIKE '%" + tempString + "%'");
+                   + " " + operatorString + " '" + wildCardCharacter + tempString + wildCardCharacter
+                   + "'");
             }  
          } 
       }
@@ -1631,9 +1637,11 @@ public class TableTabPanel_SQLite extends TableTabPanel
       {
          searchQueryString.append(
             " TIME(" + tableColumn + " / 1000, 'unixepoch', 'localtime')"
-            + " LIKE '%" + searchTextString + "%'");
+            + " " + operatorString + " '" + wildCardCharacter + searchTextString + wildCardCharacter
+            + "'");
       }
       else
-         searchQueryString.append(tableColumn + " LIKE '%" + searchTextString + "%'");
+         searchQueryString.append(tableColumn + " " + operatorString + " '" + wildCardCharacter
+                                  + searchTextString + wildCardCharacter + "'");
    }
 }
