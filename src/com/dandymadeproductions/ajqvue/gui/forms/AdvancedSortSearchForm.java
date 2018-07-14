@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 07/11/2018
+// Version 1.6 07/13/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -51,6 +51,8 @@
 //                        Aspects of Creating WHERE Condition, & Moved to New static
 //                        Method getWhereExpression(). Consolidation for AdvancedSort
 //                        SearchForm & UpdateForm.
+//         1.6 07/14/2018 Method getWhereExpression() Relegated All Processing for
+//                        SQLite Setting WHERE to TableTabPanel_SQLite.createSearch().
 //                      
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -100,7 +102,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * calling TableTabPanel's database table.
  * 
  * @author Dana M. Proctor
- * @version 1.5 07/11/2018
+ * @version 1.6 07/14/2018
  */
 
 public class AdvancedSortSearchForm extends JFrame implements ActionListener
@@ -1005,7 +1007,16 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
                                             + " " + searchString + " ");
                else
                {
-                  if (columnTypeNameString.equals("DATE"))
+                  if (dataSourceType.equals(ConnectionManager.SQLITE))
+                  {
+                     TableTabPanel_SQLite.createSearch(sqliteSearchString, columnClassString,
+                                                       columnSQLTypeInt, columnTypeNameString,
+                                                       identifierQuoteString + columnNameString
+                                                       + identifierQuoteString, searchString,
+                                                       operatorString, "");
+                     sqlStatementString.append(whereString + sqliteSearchString + " ");
+                  }
+                  else if (columnTypeNameString.equals("DATE"))
                   {
                      if (dataSourceType.equals(ConnectionManager.ORACLE))
                      {
@@ -1016,16 +1027,6 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
                                                     searchString,
                                                     DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
                                                     + "', 'YYYY-MM-dd') ");
-                     }
-                     else if (dataSourceType.equals(ConnectionManager.SQLITE)
-                              && operatorString.indexOf("LIKE") != -1)
-                     {
-                        TableTabPanel_SQLite.createSearch(sqliteSearchString, columnTypeNameString,
-                                                          columnSQLTypeInt,
-                                                          identifierQuoteString + columnNameString
-                                                          + identifierQuoteString, searchString,
-                                                          operatorString);
-                        sqlStatementString.append(whereString + sqliteSearchString + " ");
                      }
                      else
                      {
