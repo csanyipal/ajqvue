@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.0 07/13/2018
+// Version 2.1 07/16/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -86,6 +86,10 @@
 //                        getTimeTZ(), & getTimeStamp() Included Processing for columnSQLType
 //                        REAL.
 //         2.0 07/13/2018 Method createSearch() Added Argument wildCardCharacter.
+//         2.1 07/16/2018 Method createSearch() Added Argument columnClass & Added Instances
+//                        operators, sqliteNumericalOperators. Same Method Added Processing
+//                        for Non-Text Temporal Type Comparisons in WHERE. Default Processing
+//                        Used Utils.isNotQuoted().
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -102,6 +106,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -120,7 +125,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 2.0 07/13/2018
+ * @version 2.1 07/16/2018
  */
 
 public class TableTabPanel_SQLite extends TableTabPanel
@@ -449,12 +454,12 @@ public class TableTabPanel_SQLite extends TableTabPanel
             for (int i = 0; i < tableColumns.length; i++)
             {
                columnName = tableColumns[i].replaceAll(identifierQuoteString, "");
-               
+               columnClass = columnClassHashMap.get(parseColumnNameField(columnName.trim()));
                columnSQLType = (columnSQLTypeHashMap.get(parseColumnNameField(
                   columnName.trim()))).intValue();
                columnTypeName = columnTypeNameHashMap.get(parseColumnNameField(columnName.trim()));
                
-               createSearch(searchQueryString, columnTypeName, columnSQLType, tableColumns[i],
+               createSearch(searchQueryString, columnClass, columnSQLType, columnTypeName,tableColumns[i],
                             searchTextString, "LIKE", "%");
                
                if (i < tableColumns.length - 1)
@@ -464,10 +469,11 @@ public class TableTabPanel_SQLite extends TableTabPanel
          // Field specified.
          else
          {
+            columnClass = columnClassHashMap.get(searchComboBox.getSelectedItem());
             columnSQLType = (columnSQLTypeHashMap.get(searchComboBox.getSelectedItem())).intValue();
             columnTypeName = columnTypeNameHashMap.get(searchComboBox.getSelectedItem());
             
-            createSearch(searchQueryString, columnTypeName, columnSQLType,
+            createSearch(searchQueryString, columnClass, columnSQLType, columnTypeName,
                          identifierQuoteString + columnSearchString + identifierQuoteString,
                          searchTextString, "LIKE", "%");
          }
@@ -1573,13 +1579,23 @@ public class TableTabPanel_SQLite extends TableTabPanel
    // statement.
    //==============================================================
    
-   public static void createSearch(StringBuffer searchQueryString, String columnTypeName,
-                                   int columnSQLType, String tableColumn, String searchTextString,
+   public static void createSearch(StringBuffer searchQueryString, String columnClass,
+                                   int columnSQLType, String columnTypeName,
+                                   String tableColumn, String searchTextString,
                                    String operatorString, String wildCardCharacter)
    {
       // Method Instances.
       String tempString;
-      // System.out.println(tableColumn + ":" + columnSQLType + ":" + columnTypeName);
+      String[] operators = {"=", "<", "<<", "<=", ">", ">>", ">=", "<>", "!=", "=="};
+      ArrayList<String> sqliteNumericalOperators = new ArrayList<String>();
+      
+      for (int i = 0; i < operators.length; i++)
+         sqliteNumericalOperators.add(operators[i]);
+      
+      // System.out.println(tableColumn + ":" + columnClass + ":" + columnSQLType + ":" + columnTypeName);
+      
+      // Process various temporal types, default handles
+      // all other types.
       
       if (columnTypeName.equals("DATE"))
       {
@@ -1592,11 +1608,31 @@ public class TableTabPanel_SQLite extends TableTabPanel
          if (columnSQLType == Types.VARCHAR)
             searchQueryString.append(tableColumn + " " + operatorString + " '" +
                                      wildCardCharacter + tempString + wildCardCharacter + "'");
+         // Numerical
          else
          {
-            searchQueryString.append(
-               " DATE(" + tableColumn + " / 1000, 'unixepoch')"
-               + " " + operatorString + " '" + wildCardCharacter + tempString + wildCardCharacter + "'");
+            // Value too Value
+            if (sqliteNumericalOperators.contains(operatorString))
+            {
+               try
+               {
+                  java.sql.Date dateValue = java.sql.Date.valueOf(tempString);
+                  
+                  searchQueryString.append(tableColumn + " " + operatorString + " " + wildCardCharacter
+                     + Long.toString(dateValue.getTime()) + wildCardCharacter);
+               }
+               // Default
+               catch (Exception e)
+               {
+                  searchQueryString.append(tableColumn + " " + operatorString + " " + wildCardCharacter
+                     + searchTextString + wildCardCharacter);
+               }  
+            }
+            // String to String.
+            else
+               searchQueryString.append(
+                  " DATE(" + tableColumn + " / 1000, 'unixepoch')"
+                  + " " + operatorString + " '" + wildCardCharacter + tempString + wildCardCharacter + "'");
          }   
       }
       else if (columnTypeName.equals("DATETIME") || columnTypeName.equals("TIMESTAMP")
@@ -1614,22 +1650,44 @@ public class TableTabPanel_SQLite extends TableTabPanel
          if (columnSQLType == Types.VARCHAR)
             searchQueryString.append(tableColumn + " " + operatorString + " '" + wildCardCharacter
                                      + tempString + wildCardCharacter + "'");
+         // Numerical
          else
          {
-            if (columnTypeName.equals("DATETIME"))
+            // Value too Value.
+            if (sqliteNumericalOperators.contains(operatorString))
             {
-               searchQueryString.append(
-                  " DATETIME(" + tableColumn + " / 1000, 'unixepoch', 'localtime')"
-                  + " " + operatorString + " '" + wildCardCharacter + tempString + wildCardCharacter
-                  + "'");
+               try
+               {
+                  java.sql.Timestamp dateTimeValue = java.sql.Timestamp.valueOf(tempString);
+                  searchQueryString.append(tableColumn + " " + operatorString + " " + wildCardCharacter
+                     + Long.toString(dateTimeValue.getTime()) + wildCardCharacter);
+                  
+               }
+               // Default
+               catch (Exception e)
+               {
+                  searchQueryString.append(tableColumn + " " + operatorString + " " + wildCardCharacter
+                     + searchTextString + wildCardCharacter);
+               }  
             }
+            // String to String.
             else
             {
-               searchQueryString.append(
-                   " STRFTIME('%Y-%m-%d %H:%M:%f'," + tableColumn + " / 1000.0, 'unixepoch', 'localtime')"
-                   + " " + operatorString + " '" + wildCardCharacter + tempString + wildCardCharacter
-                   + "'");
-            }  
+               if (columnTypeName.equals("DATETIME"))
+               {
+                     searchQueryString.append(
+                        " DATETIME(" + tableColumn + " / 1000, 'unixepoch', 'localtime')"
+                        + " " + operatorString + " '" + wildCardCharacter + tempString + wildCardCharacter
+                        + "'");
+               }
+               else
+               {
+                  searchQueryString.append(
+                      " STRFTIME('%Y-%m-%d %H:%M:%f'," + tableColumn + " / 1000.0, 'unixepoch', 'localtime')"
+                      + " " + operatorString + " '" + wildCardCharacter + tempString + wildCardCharacter
+                      + "'");
+               }  
+            } 
          } 
       }
       else if (columnTypeName.equals("TIME") && (columnSQLType == Types.INTEGER
@@ -1640,8 +1698,15 @@ public class TableTabPanel_SQLite extends TableTabPanel
             + " " + operatorString + " '" + wildCardCharacter + searchTextString + wildCardCharacter
             + "'");
       }
+      // Default
       else
-         searchQueryString.append(tableColumn + " " + operatorString + " '" + wildCardCharacter
-                                  + searchTextString + wildCardCharacter + "'");
+      {
+         if (Utils.isNotQuoted(columnClass, columnSQLType, columnTypeName))
+            searchQueryString.append(tableColumn + " " + operatorString + " " + wildCardCharacter
+                                     + searchTextString + wildCardCharacter);
+         else
+            searchQueryString.append(tableColumn + " " + operatorString + " '" + wildCardCharacter
+               + searchTextString + wildCardCharacter + "'");
+      }
    }
 }
