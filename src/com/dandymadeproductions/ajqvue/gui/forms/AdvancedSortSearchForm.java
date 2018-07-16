@@ -1099,7 +1099,7 @@ public class AdvancedSortSearchForm extends JFrame implements ActionListener
       }
       while (i < searchFormExpressionNumber);
       
-      System.out.println("AdvancedSortSearchForm getWhereExpression()\n" + sqlStatementString);
+      // System.out.println("AdvancedSortSearchForm getWhereExpression()\n" + sqlStatementString);
       return sqlStatementString;
    }
 
