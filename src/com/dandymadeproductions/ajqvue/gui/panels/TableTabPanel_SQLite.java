@@ -952,9 +952,10 @@ public class TableTabPanel_SQLite extends TableTabPanel
                currentContentData = db_resultSet.getBytes(currentDB_ColumnName);
             else
                currentContentData = db_resultSet.getString(currentDB_ColumnName);
-            System.out.println(i + " " + currentColumnName + " " +
-                                currentDB_ColumnName + " " + currentColumnSQLType + " " +
-                                currentColumnTypeName + " " + columnSize + " " + currentContentData);
+            
+            // System.out.println(i + " " + currentColumnName + " " +
+            //                     currentDB_ColumnName + " " + currentColumnSQLType + " " +
+            //                     currentColumnTypeName + " " + columnSize + " " + currentContentData);
 
             if (currentContentData != null)
             {
