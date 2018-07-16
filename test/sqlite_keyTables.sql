@@ -4,6 +4,7 @@
 -- =============================================================
 -- Version 07/26/2010 Original key_tables Database tables for
 --                    SQLite Database, sqliteKeyTables_test.db.
+--         07/16/2018 Commented key_table3, Do Not Test for Blob Keys.
 --      
 -- danap@dandymadeproductions.com
 -- =============================================================
@@ -37,11 +38,11 @@ CREATE TABLE keY_tAble2 (
 -- Table structure for table key_table3
 --
 
-DROP TABLE IF EXISTS key_table3;
-CREATE TABLE key_table3 (
-  blob_col BLOB,
-  PRIMARY KEY (blob_col)
-);
+-- DROP TABLE IF EXISTS key_table3;
+-- CREATE TABLE key_table3 (
+--  blob_col BLOB,
+--  PRIMARY KEY (blob_col)
+--);
 
 --
 -- Table structure for table key_table4
