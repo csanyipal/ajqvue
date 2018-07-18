@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.0 07/05/2018
+// Version 2.1 07/18/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -71,6 +71,9 @@
 //         2.0 07/05/2018 Methods addUpdateTableEntry() & setFormField() Insured
 //                        columnSQLType & columnSize Extracted via intValue() From
 //                        Associated HashMap.
+//         2.1 07/18/2018 Method addUpdateTableEntry() Edit Entry Used TableTabPanel_SQLite
+//                        createSearch() for Date Keys. Same Method Use of Utils.isNotQuoted()
+//                        for Correctly Quoting Keys.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -129,6 +132,7 @@ import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
 import com.dandymadeproductions.ajqvue.gui.panels.DBTablesPanel;
 import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel;
+import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel_SQLite;
 import com.dandymadeproductions.ajqvue.io.ReadDataFile;
 import com.dandymadeproductions.ajqvue.io.WriteDataFile;
 import com.dandymadeproductions.ajqvue.utilities.BlobTextKey;
@@ -144,7 +148,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 2.0 07/05/2018
+ * @version 2.1 07/18/2018
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -1526,56 +1530,61 @@ public class TableEntryForm extends JFrame implements ActionListener
                   }
                   else
                   {
-                     // Escape single quotes.
+                     
                      columnClass = columnClassHashMap.get(selectedTableTabPanel
                            .parseColumnNameField(currentKey_ColumnName));
+                     
+                     // Escape single quotes.
                      if (columnClass.indexOf("String") != -1)
                         currentContentData = ((String) currentContentData).replaceAll("'", "''");
 
+                     columnSQLType = columnSQLTypeHashMap.get(selectedTableTabPanel
+                           .parseColumnNameField(currentKey_ColumnName));
                      columnTypeName = columnTypeNameHashMap.get(selectedTableTabPanel
                            .parseColumnNameField(currentKey_ColumnName));
                      
                      if (columnTypeName.indexOf("DATE") != -1)
                      {
-                        if (dataSourceType.equals(ConnectionManager.ORACLE))
+                        if (dataSourceType.equals(ConnectionManager.SQLITE))
                         {
-                           currentContentData = "TO_DATE('"
-                              + Utils.convertViewDateString_To_DBDateString(
-                                 currentContentData + "",
-                                 DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
-                                 + "', 'YYYY-MM-dd')";
+                           TableTabPanel_SQLite.createSearch(sqlStatementString, columnClass, columnSQLType,
+                                        columnTypeName, identifierQuoteString + currentKey_ColumnName
+                                        + identifierQuoteString, (String) currentContentData,
+                                        "=", "");
+                           sqlStatementString.append(" AND ");
                         }
                         else
-                           currentContentData = "'" + Utils.convertViewDateString_To_DBDateString(
-                              currentContentData + "",
-                              DBTablesPanel.getGeneralDBProperties().getViewDateFormat()) + "'";
-                        
-                        sqlStatementString.append(identifierQuoteString + currentKey_ColumnName
-                                                  + identifierQuoteString + "="
-                                                  + currentContentData + " AND ");
+                        {
+                           if (dataSourceType.equals(ConnectionManager.ORACLE))
+                           {
+                              currentContentData = "TO_DATE('"
+                                 + Utils.convertViewDateString_To_DBDateString(
+                                    currentContentData + "",
+                                    DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
+                                    + "', 'YYYY-MM-dd')";
+                           }
+                           
+                           else
+                              currentContentData = "'" + Utils.convertViewDateString_To_DBDateString(
+                                 currentContentData + "",
+                                 DBTablesPanel.getGeneralDBProperties().getViewDateFormat()) + "'";
+                           
+                           sqlStatementString.append(identifierQuoteString + currentKey_ColumnName
+                                                     + identifierQuoteString + "="
+                                                     + currentContentData + " AND ");
+                        }
                      }
                      else
                      {
-                        // Character data gets single quotes for some databases,
-                        // not numbers though.
-                        
-                        if (dataSourceType.equals(ConnectionManager.MSACCESS)
-                            || dataSourceType.equals(ConnectionManager.DERBY)
-                            || dataSourceType.indexOf(ConnectionManager.HSQL) != -1)
-                        {
-                           if (columnClass.toLowerCase(Locale.ENGLISH).indexOf("string") != -1)
-                              sqlStatementString.append(identifierQuoteString + currentKey_ColumnName
-                                                     + identifierQuoteString + "='"
-                                                     + currentContentData + "' AND ");
-                           else
-                              sqlStatementString.append(identifierQuoteString + currentKey_ColumnName
+                        // Character data gets single quotes numbers do not.
+                        if (Utils.isNotQuoted(columnClass, columnSQLType, columnTypeName))
+                           sqlStatementString.append(identifierQuoteString + currentKey_ColumnName
                                                      + identifierQuoteString + "="
-                                                     + currentContentData + " AND ");   
-                        }
+                              + currentContentData + " AND ");
                         else
                            sqlStatementString.append(identifierQuoteString + currentKey_ColumnName
-                              + identifierQuoteString + "='"
-                              + currentContentData + "' AND ");
+                                                     + identifierQuoteString + "='"
+                                                     + currentContentData + "' AND ");
                      }  
                   }
                }
