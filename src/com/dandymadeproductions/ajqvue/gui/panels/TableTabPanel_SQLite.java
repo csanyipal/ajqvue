@@ -13,7 +13,7 @@
 //
 //================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.1 07/16/2018
+// Version 2.2 07/18/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -90,6 +90,10 @@
 //                        operators, sqliteNumericalOperators. Same Method Added Processing
 //                        for Non-Text Temporal Type Comparisons in WHERE. Default Processing
 //                        Used Utils.isNotQuoted().
+//         2.2 07/18/2018 Added Class Instance OPERATORS. Method viewSelectedItem() Replaced
+//                        Processing for Single Date Keys to Use createSearch() Along With
+//                        Brute Force for Date, Datetime, & Timestamps. Method editSelectedItem()
+//                        Same for Date Keys. Method createSearch() Removed Instance operators.
 //             
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -125,13 +129,15 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * the mechanism to page through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 2.1 07/16/2018
+ * @version 2.2 07/18/2018
  */
 
 public class TableTabPanel_SQLite extends TableTabPanel
 {
    // Class Instances.
    private static final long serialVersionUID = 1120844312402713622L;
+   
+   private static String[] OPERATORS = {"=", "<", "<<", "<=", ">", ">>", ">=", "<>", "!=", "=="};
 
    //===========================================================
    // TableTabPanel Constructor
@@ -824,23 +830,22 @@ public class TableTabPanel_SQLite extends TableTabPanel
                   }
                   else
                   {
-                     // Escape single quotes.
                      currentColumnClass = columnClassHashMap.get(parseColumnNameField(currentDB_ColumnName));
                      
+                     // Escape single quotes.
                      if (currentColumnClass.indexOf("String") != -1)
                         currentContentData = ((String) currentContentData).replaceAll("'", "''");
                      
-                     // Reformat date keys.
+                     currentColumnSQLType = columnSQLTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
                      currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
                      
+                     // Reformat date keys.
                      if (currentColumnTypeName.equals("DATE"))
                      {
-                        sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
-                                                  + identifierQuoteString + "='"
-                                                  + Utils.convertViewDateString_To_DBDateString(
-                                                     currentContentData + "",
-                                                     DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
-                                                  + "' AND ");
+                        createSearch(sqlStatementString, currentColumnClass, currentColumnSQLType,
+                                     currentColumnTypeName, identifierQuoteString + currentDB_ColumnName
+                                     + identifierQuoteString, (String) currentContentData, "=", "");
+                        sqlStatementString.append(" AND ");
                      }
                      else
                         sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
@@ -892,26 +897,14 @@ public class TableTabPanel_SQLite extends TableTabPanel
                   sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
                      + identifierQuoteString);
                   
-                  // Process Date
-                  if (currentColumnTypeName.equals("DATE"))
+                  // Process Date, Datetime, & Timesamp
+                  if (currentColumnTypeName.equals("DATE")
+                      || currentColumnTypeName.equals("DATETIME")
+                      || currentColumnTypeName.equals("TIMESTAMP"))
                   {
-                     String dateString = Utils.processDateFormatSearch(
-                        (String) currentContentData);
-                     
-                     sqlStatementString.append("='" + dateString + "' ");
-                  }
-                  // Process DateTime
-                  else if (currentColumnTypeName.equals("DATETIME")
-                           || currentColumnTypeName.equals("TIMESTAMP"))
-                  {
-                     String content, dateTimeString;
-                     content = (String) currentContentData;
-                     
-                     dateTimeString = Utils.processDateFormatSearch(content.substring(0,
-                        content.indexOf(" ")))
-                           + content.substring(content.indexOf(" "));
-                     
-                     sqlStatementString.append("='" + dateTimeString + "' ");
+                     createSearch(sqlStatementString, currentColumnClass, currentColumnSQLType,
+                                  currentColumnTypeName, identifierQuoteString + currentDB_ColumnName
+                                  + identifierQuoteString, (String) currentContentData, "=", "");
                   }
                   // All Others
                   else
@@ -1264,22 +1257,23 @@ public class TableTabPanel_SQLite extends TableTabPanel
                }
                else
                {
-                  // Escape single quotes.
                   currentColumnClass = columnClassHashMap
                         .get(parseColumnNameField(currentDB_ColumnName));
+                  
+                  // Escape single quotes.
                   if (currentColumnClass.indexOf("String") != -1)
                      currentContentData = ((String) currentContentData).replaceAll("'", "''");
+                  
+                  currentColumnSQLType = columnSQLTypeHashMap.get(parseColumnNameField(currentDB_ColumnName));
+                  currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
 
                   // Reformat date keys.
-                  currentColumnTypeName = columnTypeNameHashMap.get(parseColumnNameField(currentDB_ColumnName));
                   if (currentColumnTypeName.equals("DATE"))
                   {
-                     sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
-                                               + identifierQuoteString + "='"
-                                               + Utils.convertViewDateString_To_DBDateString(
-                                                  currentContentData + "",
-                                                  DBTablesPanel.getGeneralDBProperties().getViewDateFormat())
-                                               + "' AND ");
+                     createSearch(sqlStatementString, currentColumnClass, currentColumnSQLType,
+                                  currentColumnTypeName, identifierQuoteString + currentDB_ColumnName
+                                  + identifierQuoteString, (String) currentContentData, "=", "");
+                                  sqlStatementString.append(" AND ");
                   }
                   else
                      sqlStatementString.append(identifierQuoteString + currentDB_ColumnName
@@ -1587,11 +1581,11 @@ public class TableTabPanel_SQLite extends TableTabPanel
    {
       // Method Instances.
       String tempString;
-      String[] operators = {"=", "<", "<<", "<=", ">", ">>", ">=", "<>", "!=", "=="};
+      
       ArrayList<String> sqliteNumericalOperators = new ArrayList<String>();
       
-      for (int i = 0; i < operators.length; i++)
-         sqliteNumericalOperators.add(operators[i]);
+      for (int i = 0; i < OPERATORS.length; i++)
+         sqliteNumericalOperators.add(OPERATORS[i]);
       
       // System.out.println(tableColumn + ":" + columnClass + ":" + columnSQLType + ":" + columnTypeName);
       
@@ -1625,6 +1619,9 @@ public class TableTabPanel_SQLite extends TableTabPanel
                // Default
                catch (Exception e)
                {
+                  if (Ajqvue.getDebug())
+                     System.out.println("TableTabPanel_SQLite createSearch() Date: " + tempString + e);
+                  
                   searchQueryString.append(tableColumn + " " + operatorString + " " + wildCardCharacter
                      + searchTextString + wildCardCharacter);
                }  
@@ -1702,7 +1699,8 @@ public class TableTabPanel_SQLite extends TableTabPanel
       // Default
       else
       {
-         if (Utils.isNotQuoted(columnClass, columnSQLType, columnTypeName))
+         if (Utils.isNotQuoted(columnClass, columnSQLType, columnTypeName)
+             && sqliteNumericalOperators.contains(operatorString))
             searchQueryString.append(tableColumn + " " + operatorString + " " + wildCardCharacter
                                      + searchTextString + wildCardCharacter);
          else
