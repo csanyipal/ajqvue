@@ -54,7 +54,10 @@ Note: Insure for each test case that involves a menu command that the
 	f. Test for each database that support such feature the passing of
 	   parameters to Database Name on login.
 	   
-	   Example: dbname;PARAMETER_NAME='xxx'?PARAMETER_NAME='xxx'.
+	   ConnectionProperties.STD_PROPERTY_CHAR = "?";
+	   ConnectionProperties.STD_PROPERTY_DELIMITER = "&";
+	   
+	   Example: dbname;?PARAMETER_NAME_1='xxx'&PARAMETER_NAME_2='xxx'.
 
 2. Table Summary Printing
 
