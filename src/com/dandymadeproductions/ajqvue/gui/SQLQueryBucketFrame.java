@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 05/31/2018
+// Version 1.5 07/19/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -39,6 +39,10 @@
 //             URL, databaseName.
 //         1.4 Organized Imports. Method createSQLObjectDialog() Added to
 //             dialog_sqlTextArea MouseListener for All, View Included.
+//         1.5 Methods createUnableToReadFileDialog() & createFileNotFoundDialog
+//             Added Class Name to Message. Methods openLastUsedList() &
+//             saveLastUsedList() Insured Database Name That Starts With a
+//             Colon is Removed, SQLite :memory: & Win File Illegal Character.
 //         
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -124,7 +128,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * storage of SQL Query statements derived from DBTablesTab.
  * 
  * @author Dana M. Proctor
- * @version 1.4 05/31/2018
+ * @version 1.5 07/19/2018
  */
 
 public class SQLQueryBucketFrame extends JFrame implements ActionListener, MouseListener
@@ -1336,7 +1340,8 @@ public class SQLQueryBucketFrame extends JFrame implements ActionListener, Mouse
       resourceMessage = resourceBundle.getResourceString("SQLQueryBucketFrame.dialogmessage.InputFile",
                                                          "Unable to Read Input File");
 
-      JOptionPane.showMessageDialog(null, resourceMessage, resourceAlert, JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(null, "SQLQueryBucketFrame: " + resourceMessage, resourceAlert,
+                                    JOptionPane.ERROR_MESSAGE);
    }
 
    //==============================================================
@@ -1351,7 +1356,8 @@ public class SQLQueryBucketFrame extends JFrame implements ActionListener, Mouse
       resourceMessage = resourceBundle.getResourceString("SQLQueryBucketFrame.dialogmessage.FileNOTFound",
                                                          "File NOT Found");
 
-      JOptionPane.showMessageDialog(null, resourceMessage, resourceAlert, JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(null, "SQLQueryBucketFrame: " + resourceMessage, resourceAlert,
+                                    JOptionPane.ERROR_MESSAGE);
    }
    
    //==============================================================
@@ -1406,6 +1412,9 @@ public class SQLQueryBucketFrame extends JFrame implements ActionListener, Mouse
       String[] sqlObjectParameters;
       
       // Clean up some.
+      
+      if (dbName.startsWith(":"))
+         dbName = dbName.substring(1, dbName.length());
       
       databaseName = dbName.replaceAll("/", "_");
       String slash = "\\";
@@ -1562,7 +1571,12 @@ public class SQLQueryBucketFrame extends JFrame implements ActionListener, Mouse
             return;
          }
       }
-      fileName = sqlQueryBucketDirectory + fileSeparator + databaseName + ".txt";
+      
+      if (databaseName.startsWith(":"))
+         fileName = sqlQueryBucketDirectory + fileSeparator
+                    + databaseName.substring(1, databaseName.length()) + ".txt";
+      else
+         fileName = sqlQueryBucketDirectory + fileSeparator + databaseName + ".txt";
 
       // Collect the list.
       int i = 0;
