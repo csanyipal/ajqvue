@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.1 05/29/2018
+// Version 1.2 07/20/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -32,6 +32,8 @@
 //=================================================================
 // Version 1.0 Production SearchDatabase Class.
 //         1.1 Moved to utilities.db Package. Updated Import for Utils.
+//         1.2 Rebuilt Method createColumnsSQLQuery() to Use SQLQuery
+//             & Handle SQLite, Affinity.
 //         
 //-----------------------------------------------------------------
 //                  danap@dandymadeproductions.com
@@ -41,17 +43,16 @@ package com.dandymadeproductions.ajqvue.utilities.db;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JProgressBar;
 
 import com.dandymadeproductions.ajqvue.Ajqvue;
 import com.dandymadeproductions.ajqvue.datasource.ConnectionManager;
+import com.dandymadeproductions.ajqvue.gui.panels.TableTabPanel_SQLite;
 import com.dandymadeproductions.ajqvue.utilities.Utils;
 
 /**
@@ -59,7 +60,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * through all the database tables for a given input string.
  * 
  * @author Dana Proctor
- * @version 1.1 05/29/2018
+ * @version 1.2 07/20/2018
  */
 
 public class SearchDatabaseThread implements Runnable
@@ -290,10 +291,7 @@ public class SearchDatabaseThread implements Runnable
                                         String searchQueryString) throws SQLException
    {
       // Method Instances
-      Statement sqlStatement;
-      ResultSet resultSet;
-      ResultSetMetaData tableMetaData;
-
+      SQLQuery sqlQuery;
       StringBuffer columnsSQLQuery;
       String dataSourceType, sqlColumnSelectString;
       String identifierQuoteString;
@@ -305,14 +303,9 @@ public class SearchDatabaseThread implements Runnable
       // Beginning creating the table columns
       // search string query.
       
-      sqlStatement = null;
-      resultSet = null;
-      
       try
       {
-         sqlStatement = dbConnection.createStatement();
-
-         // Create query to obtain the tables Table Meta Data.
+         // Create query to obtain the table's Meta Data.
          dataSourceType = ConnectionManager.getDataSourceType();
          
          // HSQL
@@ -335,59 +328,36 @@ public class SearchDatabaseThread implements Runnable
             sqlColumnSelectString = "SELECT * FROM " + tableName + " LIMIT 1";
 
          // System.out.println(sqlColumnSelectString);
-         resultSet = sqlStatement.executeQuery(sqlColumnSelectString);
-         tableMetaData = resultSet.getMetaData();
-
+         
+         sqlQuery = new SQLQuery(sqlColumnSelectString);
+         
+         if (sqlQuery.executeSQL(dbConnection) != 1)
+            return "";
+         
          // Cycling through the table's columns and adding
-         // to the SQL search query string. Exclude any coulumn
-         // that is not binary in nature.
-
-         for (int k = 1; k < tableMetaData.getColumnCount() + 1; k++)
+         // to the SQL search query string. Exclude any column
+         // that is binary in nature.
+         
+         for (int k = 0; k < sqlQuery.getColumnNames().size(); k++)
          {
             // Collect Information on Column.
-            String columnClass = tableMetaData.getColumnClassName(k);
-            String columnType = tableMetaData.getColumnTypeName(k);
-            String columnName = tableMetaData.getColumnName(k);
-            // System.out.println(columnName + " " + columnType);
+            String columnName = sqlQuery.getColumnNames().get(k);
+            String columnClass = sqlQuery.getColumnClassHashMap().get(columnName);
+            int columnSQLType = (sqlQuery.getColumnSQLTypeHashMap().get(columnName)).intValue();
+            String columnTypeName = sqlQuery.getColumnTypeNameHashMap().get(columnName);
             
-            // This going to be a problem so skip this column.
-
-            if (columnClass == null && columnType == null)
-               continue;
-
-            if (columnClass == null)
-            {
-               if (dataSourceType.equals(ConnectionManager.ORACLE)
-                   && columnType.toUpperCase(Locale.ENGLISH).equals("BINARY_FLOAT"))
-               {
-                  columnClass = "java.lang.Float";
-                  columnType = "FLOAT";
-               }
-               else if (dataSourceType.equals(ConnectionManager.ORACLE)
-                        && columnType.toUpperCase(Locale.ENGLISH).equals("BINARY_DOUBLE"))
-               {
-                  columnClass = "java.lang.Double";
-                  columnType = "DOUBLE";
-               }
-               else
-                  columnClass = columnType;
-            }
-            
-            columnClass = columnClass.toUpperCase(Locale.ENGLISH);
-            columnType = columnType.toUpperCase(Locale.ENGLISH);
+            // System.out.println(k + ": " + columnName + " " + columnClass + " " + columnSQLType + " "
+            //                    + columnTypeName);
             
             String searchString = searchQueryString;
 
             // Exclude binary & file column types.
-            if (columnType.indexOf("BLOB") == -1 && columnType.indexOf("BYTEA") == -1
-                && columnType.indexOf("RAW") == -1 && columnType.indexOf("BINARY") == -1
-                && columnType.indexOf("LONG") == -1 && columnType.indexOf("FILE") == -1
-                && columnType.indexOf("BIT DATA") == -1 && columnType.indexOf("IMAGE") == -1
-                && columnType.indexOf("XML") == -1)
+            if (!Utils.isBlob(columnClass, columnTypeName)
+                && columnTypeName.indexOf("FILE") == -1)
             {
                // Convert date, datetime, timestamp search string
                // to proper format.
-               if (columnType.equals("DATE"))
+               if (columnTypeName.equals("DATE"))
                {
                   if (dataSourceType.equals(ConnectionManager.ORACLE))
                   {
@@ -398,7 +368,7 @@ public class SearchDatabaseThread implements Runnable
                      {
                         searchString = searchQueryString;
                         // Do not process as DATE.
-                        columnType = "";
+                        columnTypeName = "";
                      }
                   }
                   else
@@ -410,9 +380,9 @@ public class SearchDatabaseThread implements Runnable
                         searchString = searchQueryString;
                   }
                }
-               else if ((columnType.indexOf("DATETIME") != -1)
-                         || (columnType.equals("TIMESTAMP") && !dataSourceType.equals(ConnectionManager.MSSQL))
-                         || (columnType.equals("TIMESTAMPTZ")))
+               else if ((columnTypeName.indexOf("DATETIME") != -1)
+                         || (columnTypeName.equals("TIMESTAMP") && !dataSourceType.equals(ConnectionManager.MSSQL))
+                         || (columnTypeName.equals("TIMESTAMPTZ")))
                {
                   if (searchString.indexOf(" ") != -1)
                      searchString = Utils.processDateFormatSearch(
@@ -431,7 +401,7 @@ public class SearchDatabaseThread implements Runnable
                   if (columnClass.indexOf("STRING") != -1)
                      columnsSQLQuery.append(identifierQuoteString + columnName + identifierQuoteString
                         + " LIKE \'%" + searchString + "%\' OR "); 
-                  else if (columnType.equals("DOUBLE") || columnType.equals("REAL"))
+                  else if (columnTypeName.equals("DOUBLE") || columnTypeName.equals("REAL"))
                      columnsSQLQuery.append(identifierQuoteString + columnName + identifierQuoteString
                         + "=" + searchString + " OR ");
                   else
@@ -441,13 +411,21 @@ public class SearchDatabaseThread implements Runnable
                }
                else if (dataSourceType.equals(ConnectionManager.ORACLE))
                {
-                  if (columnType.equals("DATE"))
+                  if (columnTypeName.equals("DATE"))
                      columnsSQLQuery.append(identifierQuoteString + columnName + identifierQuoteString
                                             + " LIKE TO_DATE(\'" + searchString + "\', "
                                             + "\'YYYY-MM-dd\') OR ");
                   else
                      columnsSQLQuery.append(identifierQuoteString + columnName + identifierQuoteString
                         + " LIKE \'%" + searchString + "%\' OR ");     
+               }
+               else if (dataSourceType.equalsIgnoreCase(ConnectionManager.SQLITE))
+               {
+                  TableTabPanel_SQLite.createSearch(columnsSQLQuery, columnClass, columnSQLType,
+                                                    columnTypeName, identifierQuoteString + columnName
+                                                    + identifierQuoteString, searchQueryString,
+                                                    "LIKE", "%");
+                  columnsSQLQuery.append(" OR ");
                }
                else
                   columnsSQLQuery.append(identifierQuoteString + columnName + identifierQuoteString
@@ -465,23 +443,6 @@ public class SearchDatabaseThread implements Runnable
       {
          ConnectionManager.displaySQLErrors(e, "SearchDatabaseThread createColumnSQLQuery()");
          return "";
-      }
-      finally
-      {
-         try
-         {
-            if (resultSet != null)
-               resultSet.close();
-         }
-         catch (SQLException sqle)
-         {
-            ConnectionManager.displaySQLErrors(sqle, "SearchDatabaseThread createColumnSQLQuery()");
-         }
-         finally
-         {
-            if (sqlStatement != null)
-               sqlStatement.close();
-         }
       }
    }
    
