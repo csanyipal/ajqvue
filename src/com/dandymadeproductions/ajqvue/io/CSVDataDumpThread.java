@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.6 07/04/2018
+// Version 1.7 07/21/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -48,6 +48,9 @@
 //                        & Timestamp Processing Use of TableTabPanel_SQLite getters().
 //         1.6 07/04/2018 Method run() Corrected columnSQLType to int & Extraction From
 //                        columnSQLTypeHashMap as Such.
+//         1.7 07/21/2018 Method run() Processing for SQLite Date, Datetime, & Timestamp
+//                        Corrected, getDate() & getTimestamp() Always Return a View
+//                        Date Format as Defined in GeneralDBProperties.
 //             
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -83,7 +86,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * is provided to allow the ability to prematurely terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.6 07/04/2018
+ * @version 1.7 07/21/2018
  */
 
 public class CSVDataDumpThread implements Runnable
@@ -450,11 +453,11 @@ public class CSVDataDumpThread implements Runnable
                            if (date != null)
                            {
                               if (dataSourceType.equals(ConnectionManager.SQLITE))
-                                 fieldContent = date + "";
-                              else
-                                 fieldContent = Utils.convertDBDateString_To_ViewDateString(
-                                                date + "", DBTablesPanel.getDataExportProperties()
-                                                .getCSVDateFormat());
+                                 date = Utils.convertViewDateString_To_DBDateString(date + "",
+                                    DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
+                              
+                              fieldContent = Utils.convertDBDateString_To_ViewDateString(
+                                 date + "", DBTablesPanel.getDataExportProperties().getCSVDateFormat());
                            }
                            else
                               fieldContent = "NULL";
@@ -495,7 +498,20 @@ public class CSVDataDumpThread implements Runnable
                               if (dateTime != null)
                               {
                                  if (dataSourceType.equals(ConnectionManager.SQLITE))
-                                    fieldContent = dateTime + "";
+                                 {
+                                    String date = dateTime + "";
+                                    date = date.substring(0, (date.indexOf(" ")));
+                                    date = Utils.convertViewDateString_To_DBDateString(date,
+                                       DBTablesPanel.getGeneralDBProperties().getViewDateFormat());
+                                    
+                                    date = Utils.convertDBDateString_To_ViewDateString(date,
+                                       DBTablesPanel.getDataExportProperties().getCSVDateFormat());
+
+                                    String time = dateTime + "";
+                                    time = time.substring(time.indexOf(" "));
+                                    
+                                    fieldContent = date + time;
+                                 }
                                  else
                                     fieldContent = (new SimpleDateFormat(
                                        DBTablesPanel.getDataExportProperties().getCSVDateFormat()
