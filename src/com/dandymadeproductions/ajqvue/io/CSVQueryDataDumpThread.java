@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 07/21/2018
+// Version 1.6 07/22/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -53,6 +53,8 @@
 //         1.5 Method run() Processing for SQLite Date, Datetime, & Timestamp
 //             Corrected, getDate() & getTimestamp() Always Return a View
 //             Date Format as Defined in GeneralDBProperties.
+//         1.6 Method run() Processing for Datetime & Timestamp Corrected
+//             to Just Define dateTime Rather Than getTimestamp().
 //             
 //-----------------------------------------------------------------
 //                   danap@dandymadeproductions.com
@@ -90,7 +92,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.SQLQuery;
  * terminate the dump.
  * 
  * @author Dana M. Proctor
- * @version 1.5 07/21/2018
+ * @version 1.6 07/22/2018
  */
 
 public class CSVQueryDataDumpThread implements Runnable
@@ -485,7 +487,7 @@ public class CSVQueryDataDumpThread implements Runnable
                            else if (columnTypeName.indexOf("DATETIME") != -1
                                     || columnTypeName.equals("TIMESTAMP"))
                            {
-                              Object dateTime = dbResultSet.getTimestamp(i);
+                              Object dateTime;
                               
                               if (dataSourceType.equals(ConnectionManager.SQLITE))
                                  dateTime = TableTabPanel_SQLite.getTimestamp(dbResultSet, columnSQLType,
