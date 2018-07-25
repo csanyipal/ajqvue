@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.5 07/23/2018
+// Version 2.6 07/25/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -53,6 +53,9 @@
 //         2.4 Method isBlob() Corrected Blob columnClass to 'String'.
 //         2.5 Method isNotQuoted() Explicitly Replaced indexOf(INT) With equals(INT),
 //             & Added indexOf(INTEGER).
+//         2.6 Method isNotQuoted() Replaced Numeric Aspects With Call to isNumeric().
+//             Method isNumeric() Comment Changes & Explicit Equals for INT, Po(int),
+//             FLOAT, DOUBLE, FLOAT, NUMERIC, Exclusion of Boolean & Arrays.
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -128,7 +131,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 2.5 07/23/2018
+ * @version 2.6 07/25/2018
  */
 
 public class Utils extends Ajqvue
@@ -1213,15 +1216,7 @@ public class Utils extends Ajqvue
    
    public static boolean isNotQuoted(String columnClass, int columnSQLType, String columnTypeName)
    {
-      if (columnTypeName.equals("INT")
-          || columnTypeName.indexOf("INTEGER") != -1 || columnTypeName.indexOf("SERIAL") != -1
-          || columnTypeName.equals("LONG") || columnTypeName.indexOf("DOUBLE") != -1
-          || columnTypeName.indexOf("FLOAT") != -1 || columnTypeName.indexOf("REAL") != -1
-          || columnTypeName.indexOf("DECIMAL") != -1 || columnTypeName.indexOf("NUMBER") != -1
-          || columnTypeName.indexOf("MONEY") != -1 || columnTypeName.indexOf("NUMERIC") != -1
-          || columnTypeName.indexOf("COUNTER") != -1
-          || (columnClass.indexOf("byte") != -1 && columnTypeName.equals("BYTE"))
-          || columnTypeName.equals("CURRENCY")
+      if (isNumeric(columnClass, columnTypeName)
           || columnSQLType == Types.BIGINT || columnSQLType == Types.DECIMAL
           || columnSQLType == Types.DOUBLE || columnSQLType == Types.FLOAT
           || columnSQLType == Types.INTEGER || columnSQLType == Types.NUMERIC
@@ -1236,23 +1231,37 @@ public class Utils extends Ajqvue
    
    //==============================================================
    // Method for determing if the given meta data class and type
-   // can be defined as a number.
+   // can be defined as a number. Used exclusively in processing
+   // data types, via:
+   //
+   // setByte(), setShort(), setInt(), setLong(), setFloat(),
+   // setDouble(), (defaults) setBigDecimal()
+   //
+   // Failing to only pass this small set of proper types will
+   // result in NUMBER parsing error.
    //
    // Types: SERIAL, TINYINT, SMALLINT, MEDIUMINT, INTEGER, BIGINT,
-   //        INT, = LONG, DOUBLE, FLOAT, REAL, NUMBER, DECIMAL,
+   //        INT, LONG, DOUBLE, FLOAT, REAL, NUMBER, DECIMAL,
    //        NUMERIC, MONEY, SMALLMONEY
    //==============================================================
    
    public static boolean isNumeric(String columnClass, String columnTypeName)
    {
-      if (columnTypeName.indexOf("INT") != -1 || columnTypeName.indexOf("SERIAL") != -1
-            || columnTypeName.equals("LONG") || columnTypeName.indexOf("DOUBLE") != -1
-            || columnTypeName.indexOf("FLOAT") != -1 || columnTypeName.indexOf("REAL") != -1
-            || columnTypeName.indexOf("DECIMAL") != -1 || columnTypeName.indexOf("NUMBER") != -1
-            || columnTypeName.indexOf("MONEY") != -1 || columnTypeName.indexOf("NUMERIC") != -1
-            || columnTypeName.indexOf("COUNTER") != -1
-            || (columnClass.indexOf("byte") != -1 && columnTypeName.equals("BYTE"))
-            || columnTypeName.equals("CURRENCY"))
+      if ((columnTypeName.equals("INT") || columnTypeName.equals("INT2")
+           || columnTypeName.equals("INT4") || columnTypeName.equals("INT8")
+           || (columnClass.indexOf("Boolean") == -1 && columnTypeName.indexOf("TINYINT") != -1)
+           || columnTypeName.indexOf("SMALLINT") != -1 || columnTypeName.indexOf("INTEGER") != -1
+           || columnTypeName.indexOf("MEDIUMINT") != -1 || columnTypeName.indexOf("BIGINT") != -1
+           || columnTypeName.indexOf("SERIAL") != -1
+           || columnTypeName.equals("DOUBLE") || columnTypeName.equals("FLOAT")
+           || columnTypeName.equals("FLOAT4") || columnTypeName.equals("FLOAT8")
+           || (columnClass.indexOf("String") == -1 && columnTypeName.equals("LONG"))
+           || columnTypeName.equals("REAL") || columnTypeName.indexOf("DECIMAL") != -1
+           || columnTypeName.indexOf("NUMBER") != -1 || columnTypeName.indexOf("MONEY") != -1
+           || columnTypeName.equals("NUMERIC") || columnTypeName.indexOf("COUNTER") != -1
+           || (columnClass.indexOf("byte") != -1 && columnTypeName.equals("BYTE"))
+           || columnTypeName.equals("CURRENCY"))
+          && columnClass.indexOf("Array") == -1)
       {
          return true;
       }
