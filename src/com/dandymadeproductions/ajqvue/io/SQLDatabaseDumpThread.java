@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.1 07/04/2018
+// Version 2.2 07/27/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -66,6 +66,8 @@
 //             Timestamp Now().
 //         2.1 Methods insertReplace/explicitStatementData() Corrected columnSQL
 //             Type Extraction From tableColumnSQLTypeHashMap as int.
+//         2.2 Methods insertReplace/explicitStatementData() Excluded Derby
+//             BIT DATA From Being Processed as Blob, Utils.isBlob().
 //
 //-----------------------------------------------------------------
 //                    danap@dandymadeproductions.com
@@ -116,7 +118,7 @@ import com.dandymadeproductions.ajqvue.utilities.db.TableDefinitionGenerator;
  * the ability to prematurely terminate the dump.
  * 
  * @author Dana Proctor
- * @version 2.1 07/04/2018
+ * @version 2.2 07/27/2018
  */
 
 public class SQLDatabaseDumpThread extends SQLDump implements Runnable
@@ -564,7 +566,8 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
          }
 
          // Save the index of blob/bytea/binary/image/raw entries.
-         if (Utils.isBlob(columnClass, columnTypeName))
+         if (Utils.isBlob(columnClass, columnTypeName)
+             && columnTypeName.indexOf("BIT DATA") == -1)
          {
             blobFieldIndexes.add(Integer.valueOf(columnsCount + 1));
          }
@@ -1255,7 +1258,8 @@ public class SQLDatabaseDumpThread extends SQLDump implements Runnable
                                 + identifierQuoteString + "=";
 
                      // Blob/Bytea/Binary data adding
-                     if (Utils.isBlob(columnClass, columnTypeName))
+                     if (Utils.isBlob(columnClass, columnTypeName)
+                         && columnTypeName.indexOf("BIT DATA") == -1)
                      {
                         byte[] theBytes = rs.getBytes(tableColumnNames.get(field));
 
