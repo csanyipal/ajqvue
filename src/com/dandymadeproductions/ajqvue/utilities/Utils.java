@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.6 07/25/2018
+// Version 2.7 07/27/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -56,6 +56,7 @@
 //         2.6 Method isNotQuoted() Replaced Numeric Aspects With Call to isNumeric().
 //             Method isNumeric() Comment Changes & Explicit Equals for INT, Po(int),
 //             FLOAT, DOUBLE, FLOAT, NUMERIC, Exclusion of Boolean & Arrays.
+//         2.7 Method isBlob() Added Comment With Regard to Derby BIT DATA.
 //       
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -131,7 +132,7 @@ import com.dandymadeproductions.ajqvue.io.WriteDataFile;
  * Ajqvue application.
  * 
  * @author Dana M. Proctor
- * @version 2.6 07/25/2018
+ * @version 2.7 07/27/2018
  */
 
 public class Utils extends Ajqvue
@@ -1200,6 +1201,7 @@ public class Utils extends Ajqvue
       
       if ((columnClass.indexOf("String") == -1 && columnTypeName.indexOf("BLOB") != -1)
           || (columnTypeName.indexOf("BYTEA") != -1) || (columnTypeName.indexOf("BINARY") != -1)
+          // Derby Char Bit Data
           || (columnClass.indexOf("byte") != -1 && columnTypeName.indexOf("BIT DATA") != -1)
           || (columnTypeName.indexOf("RAW") != -1) || (columnTypeName.indexOf("IMAGE") != -1))
       {
