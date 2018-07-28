@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.1 07/18/2018
+// Version 2.2 07/28/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -74,6 +74,9 @@
 //         2.1 07/18/2018 Method addUpdateTableEntry() Edit Entry Used TableTabPanel_SQLite
 //                        createSearch() for Date Keys. Same Method Use of Utils.isNotQuoted()
 //                        for Correctly Quoting Keys.
+//         2.2 07/28/2018 Method addUpdateTableEntry() Corrected PostgreSQL & HSQL2
+//                        Conditional for Bit Types Detection, (BIT && BIT VARYING)
+//                        Grouped Properly, Was Detecting MySQL/MariaDB Bits.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -148,7 +151,7 @@ import com.dandymadeproductions.ajqvue.utilities.SetListDialog;
  * edit a table entry in a SQL database table.
  * 
  * @author Dana M. Proctor
- * @version 2.1 07/18/2018
+ * @version 2.2 07/28/2018
  */
 
 public class TableEntryForm extends JFrame implements ActionListener
@@ -1149,8 +1152,8 @@ public class TableEntryForm extends JFrame implements ActionListener
                   else if ((columnTypeName.indexOf("BIT") != -1
                             && dataSourceType.equals(ConnectionManager.POSTGRESQL)
                             && columnTypeName.indexOf("_") == -1)
-                           || (columnTypeName.equals("BIT") || (columnTypeName.equals("BIT VARYING"))
-                               && dataSourceType.equals(ConnectionManager.HSQL2)))
+                           || (columnTypeName.equals("BIT") || columnTypeName.equals("BIT VARYING"))
+                               && dataSourceType.equals(ConnectionManager.HSQL2))
                   {
                      sqlValuesString += "B'" + getFormField(columnName) + "', ";
                   }
@@ -1377,8 +1380,8 @@ public class TableEntryForm extends JFrame implements ActionListener
                   else if ((columnTypeName.indexOf("BIT") != -1
                             && dataSourceType.equals(ConnectionManager.POSTGRESQL)
                             && columnTypeName.indexOf("_") == -1)
-                            || (columnTypeName.equalsIgnoreCase("BIT") || (columnTypeName.equals("BIT VARYING"))
-                                  && dataSourceType.equals(ConnectionManager.HSQL2)))
+                           || (columnTypeName.equalsIgnoreCase("BIT") || columnTypeName.equals("BIT VARYING"))
+                               && dataSourceType.equals(ConnectionManager.HSQL2))
                   {
                      sqlStatementString.append(identifierQuoteString + columnNamesHashMap.get(columnName)
                                                + identifierQuoteString + "=B'" + getFormField(columnName)
@@ -1960,7 +1963,6 @@ public class TableEntryForm extends JFrame implements ActionListener
                            else
                            {
                               dateTimeValue = new java.sql.Timestamp(dateParse.getTime());
-                              // System.out.println(dateTimeValue);
                               prepared_sqlStatement.setTimestamp(i++, dateTimeValue);
                            }
                         }
