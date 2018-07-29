@@ -13,7 +13,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.4 07/04/2018
+// Version 1.5 07/29/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -47,6 +47,8 @@
 //             TableEntryForm to Meet New Constructor Requirments.
 //         1.4 Methods getColumnNames() & loadTable(), columnSQLTypeHashMap
 //             Proper Loading of Integer & Extracting int.
+//         1.5 Method getColumnNames() Additional Indexes Only Added Columns
+//             That primaryKeys Does Not Currently Hold.
 //        
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -78,7 +80,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * through the database table's data.
  * 
  * @author Dana M. Proctor
- * @version 1.4 07/04/2018
+ * @version 1.5 07/29/2018
  */
 
 public class TableTabPanel_MySQL extends TableTabPanel
@@ -174,7 +176,9 @@ public class TableTabPanel_MySQL extends TableTabPanel
          while (db_resultSet.next())
          {
             colNameString = db_resultSet.getString("Column_name");
-            primaryKeys.add(colNameString);
+            
+            if (!primaryKeys.contains(colNameString))
+               primaryKeys.add(colNameString);
          }
 
          // Column Names, Form Fields, ComboBox Text and HashMaps.
