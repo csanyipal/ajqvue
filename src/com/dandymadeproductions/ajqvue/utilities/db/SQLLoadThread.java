@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2013-2018 Dana M. Proctor
-// Version 2.9 06/08/2018
+// Version 3.0 08/02/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -79,6 +79,11 @@
 //                        to DB_To_DBThread.
 //         2.9 06/08/2018 Method loadData() Used Identifier Quote on firstField & SQLQuery sql
 //                        OracleColumnNames.
+//         3.0 08/02/2018 Method loadData() Formatted Code, Instances One per Line, Changed
+//                        columnType to columnTypeName & Added columnSQLType. Same Method Date,
+//                        Time, & Timestamp Types Processed With getString() for SQLite When
+//                        columnSQLType is VARCHAR. In such Case of String Content Insured table
+//                        RowElements Set Accordingly.
 //             
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -90,6 +95,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -105,7 +111,7 @@ import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
  * Memory/File database transfer.
  * 
  * @author Dana M. Proctor
- * @version 2.9 06/08/2018
+ * @version 3.0 08/02/2018
  */
 
 public class SQLLoadThread implements Runnable
@@ -196,7 +202,10 @@ public class SQLLoadThread implements Runnable
 
       Iterator<String> columnNamesIterator;
       
-      String columnName, columnClass, columnType;
+      String columnName;
+      String columnClass;
+      int columnSQLType;
+      String columnTypeName;
       int columnSize;     
       int rowsCount;
       int currentTableIncrement;
@@ -310,16 +319,21 @@ public class SQLLoadThread implements Runnable
                {
                   columnName = columnNamesIterator.next();
                   columnClass = sqlQuery.getColumnClassHashMap().get(columnName);
-                  columnType = sqlQuery.getColumnTypeNameHashMap().get(columnName);
+                  columnSQLType = (sqlQuery.getColumnSQLTypeHashMap().get(columnName)).intValue();
+                  columnTypeName = sqlQuery.getColumnTypeNameHashMap().get(columnName);
                   columnSize = sqlQuery.getColumnSizeHashMap().get(columnName).intValue();
 
-                  // System.out.print("SLT: " + columnName + " " + columnClass + " " + columnType
-                  //                  + " " + columnSize + " ");
+                  // System.out.print("SLT: " + columnName + " " + columnClass + " " + columnSQLType
+                  //                   + " " + columnTypeName + " " + columnSize + " ");
 
                   // DATE Type Field
-                  if (columnType.equals("DATE"))
+                  if (columnTypeName.equals("DATE"))
                   {
-                     currentContentData = db_resultSet.getDate(columnName);
+                     if (connectionInstance.getDataSourceType().equals(ConnectionInstance.SQLITE)
+                         && columnSQLType == Types.VARCHAR)
+                        currentContentData = db_resultSet.getString(columnName);
+                     else
+                        currentContentData = db_resultSet.getDate(columnName);
                      
                      if (currentContentData == null)
                         tableRowElements.setRowElement(null);
@@ -328,7 +342,7 @@ public class SQLLoadThread implements Runnable
                   }
                   
                   // DATETIME Type Field
-                  else if (columnType.equals("DATETIME"))
+                  else if (columnTypeName.equals("DATETIME"))
                   {
                      currentContentData = db_resultSet.getString(columnName);
                      
@@ -346,19 +360,29 @@ public class SQLLoadThread implements Runnable
                   }
 
                   // TIME Type Field
-                  else if (columnType.equals("TIME"))
+                  else if (columnTypeName.equals("TIME"))
                   {
-                     currentContentData = db_resultSet.getTime(columnName);
+                     if (connectionInstance.getDataSourceType().equals(ConnectionInstance.SQLITE)
+                           && columnSQLType == Types.VARCHAR)
+                        currentContentData = db_resultSet.getString(columnName);
+                     else
+                        currentContentData = db_resultSet.getTime(columnName);
                      
                      if (currentContentData == null)
                         tableRowElements.setRowElement(null);
                      else
-                        tableRowElements.setRowElement(
-                           (new SimpleDateFormat("HH:mm:ss").format(currentContentData)));
+                     {
+                        if (connectionInstance.getDataSourceType().equals(ConnectionInstance.SQLITE)
+                            && columnSQLType == Types.VARCHAR)
+                           tableRowElements.setRowElement(currentContentData);
+                        else
+                           tableRowElements.setRowElement(
+                              (new SimpleDateFormat("HH:mm:ss").format(currentContentData)));
+                     }
                   }
                   
                   // TIME WITH TIME ZONE
-                  else if (columnType.equals("TIMETZ") || columnType.equals("TIME WITH TIME ZONE"))
+                  else if (columnTypeName.equals("TIMETZ") || columnTypeName.equals("TIME WITH TIME ZONE"))
                   {
                      currentContentData = db_resultSet.getString(columnName);
                      
@@ -369,7 +393,7 @@ public class SQLLoadThread implements Runnable
                         String timeString = (String) currentContentData;
                         
                         // PostgreSQL
-                        if (columnType.equals("TIMETZ"))
+                        if (columnTypeName.equals("TIMETZ"))
                         {
                            // Put in long format compatible
                            // with for possible HSQL sink.
@@ -390,31 +414,52 @@ public class SQLLoadThread implements Runnable
                   }
 
                   // TIMESTAMP Type Field
-                  else if (columnType.equals("TIMESTAMP"))
+                  else if (columnTypeName.equals("TIMESTAMP"))
                   {
-                     currentContentData = db_resultSet.getTimestamp(columnName);
+                     if (connectionInstance.getDataSourceType().equals(ConnectionInstance.SQLITE)
+                           && columnSQLType == Types.VARCHAR)
+                        currentContentData = db_resultSet.getString(columnName);
+                     else
+                        currentContentData = db_resultSet.getTimestamp(columnName);
                      
                      if (currentContentData == null)
                         tableRowElements.setRowElement(null);
                      else
-                        tableRowElements.setRowElement(
-                           (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(currentContentData)));
+                     {
+                        if (connectionInstance.getDataSourceType().equals(ConnectionInstance.SQLITE)
+                              && columnSQLType == Types.VARCHAR)
+                           tableRowElements.setRowElement(currentContentData);
+                        else
+                           tableRowElements.setRowElement(
+                              (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(currentContentData)));
+                     }
                   }
 
-                  else if (columnType.equals("TIMESTAMPTZ") || columnType.equals("TIMESTAMP WITH TIME ZONE")
-                           || columnType.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
+                  else if (columnTypeName.equals("TIMESTAMPTZ")
+                           || columnTypeName.equals("TIMESTAMP WITH TIME ZONE")
+                           || columnTypeName.equals("TIMESTAMP WITH LOCAL TIME ZONE"))
                   {
-                     currentContentData = db_resultSet.getTimestamp(columnName);
+                     if (connectionInstance.getDataSourceType().equals(ConnectionInstance.SQLITE)
+                           && columnSQLType == Types.VARCHAR)
+                        currentContentData = db_resultSet.getString(columnName);
+                     else
+                        currentContentData = db_resultSet.getTimestamp(columnName);
                      
                      if (currentContentData == null)
                         tableRowElements.setRowElement(null);
                      else
-                        tableRowElements.setRowElement(
-                           (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").format(currentContentData)));   
+                     {
+                        if (connectionInstance.getDataSourceType().equals(ConnectionInstance.SQLITE)
+                              && columnSQLType == Types.VARCHAR)
+                           tableRowElements.setRowElement(currentContentData);
+                        else
+                           tableRowElements.setRowElement(
+                              (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").format(currentContentData)));
+                     }
                   }
 
                   // TIMESTAMPS WITH LOCAL TIME ZONE Type Field
-                  else if (columnType.equals("TIMESTAMPLTZ"))
+                  else if (columnTypeName.equals("TIMESTAMPLTZ"))
                   {
                      currentContentData = db_resultSet.getString(columnName);
                      
@@ -425,7 +470,7 @@ public class SQLLoadThread implements Runnable
                   }
 
                   // YEAR Type Field
-                  else if (columnType.equals("YEAR"))
+                  else if (columnTypeName.equals("YEAR"))
                   {
                      currentContentData = db_resultSet.getString(columnName);
                      
@@ -449,7 +494,7 @@ public class SQLLoadThread implements Runnable
                   }
 
                   // BlOB, BYTEA, BINARY Type Fields
-                  else if (DB_To_DBThread.isBlob(columnClass, columnType))
+                  else if (DB_To_DBThread.isBlob(columnClass, columnTypeName))
                   {
                      currentContentData = db_resultSet.getBytes(columnName);
                      
@@ -460,7 +505,7 @@ public class SQLLoadThread implements Runnable
                   }
 
                   // BIT Type Field
-                  else if (columnClass.indexOf("Boolean") == -1 && columnType.equals("BIT"))
+                  else if (columnClass.indexOf("Boolean") == -1 && columnTypeName.equals("BIT"))
                   {
                      if (connectionInstance.getDataSourceType().equals(ConnectionInstance.MYSQL)
                          || connectionInstance.getDataSourceType().equals(ConnectionInstance.MARIADB))
@@ -494,7 +539,7 @@ public class SQLLoadThread implements Runnable
                   //       TypesInfoCache, will not convert to a more appropriate
                   //       Clob type.
                   
-                  else if (DB_To_DBThread.isText(columnClass, columnType, columnSize,
+                  else if (DB_To_DBThread.isText(columnClass, columnTypeName, columnSize,
                            DB_To_DBThread.VARCHAR_LIMIT))
                   {
                      currentContentData = db_resultSet.getString(columnName);
