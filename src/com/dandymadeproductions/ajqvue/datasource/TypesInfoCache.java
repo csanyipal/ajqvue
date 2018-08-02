@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.5 07/10/2018
+// Version 1.6 08/02/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -41,6 +41,10 @@
 //         1.4 05/25/2018 Method getType() Added Argument sourceSQLType, & Used As
 //                        an Alternative to Try & Derive Return for UNSPECIFIED.
 //         1.5 07/10/2018 SQLITE_TYPES Added SQLITE_NULL.
+//         1.6 08/02/2018 Method getType() Changed if nameToType Does Not Contain
+//                        a Key, Type Lookup, Then for SQLite Set Type Returned
+//                        From NONE, to NUMERIC. SQLite 3 No Longer Supports NONE,
+//                        Now BLOB, But NUMERIC Allows Any Affinity.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -58,7 +62,7 @@ import java.util.Map;
  * data types information for the various support databases.
  * 
  * @author Dana M. Proctor
- * @version 1.5 07/10/2018
+ * @version 1.6 08/02/2018
  */
 
 public class TypesInfoCache
@@ -416,7 +420,7 @@ public class TypesInfoCache
       else
       {
          if (dataSinkType.equals(ConnectionManager.SQLITE))
-            return TypeID.toString(TypeID.SQLITE_NONE);
+            return TypeID.toString(TypeID.SQLITE_NUMERIC);
          else
          {
             Field[] fields = Types.class.getFields();
