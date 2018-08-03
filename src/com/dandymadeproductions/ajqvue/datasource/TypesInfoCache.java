@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.6 08/02/2018
+// Version 1.7 08/03/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -45,6 +45,8 @@
 //                        a Key, Type Lookup, Then for SQLite Set Type Returned
 //                        From NONE, to NUMERIC. SQLite 3 No Longer Supports NONE,
 //                        Now BLOB, But NUMERIC Allows Any Affinity.
+//         1.7 08/03/2018 SQLITE_TYPES Added TypeID.SQLITE_DATE, TypeID.SQLITE_TIME,
+//                        & TypeID.SQLITE_TIMESTAMP Conversions.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -62,7 +64,7 @@ import java.util.Map;
  * data types information for the various support databases.
  * 
  * @author Dana M. Proctor
- * @version 1.6 08/02/2018
+ * @version 1.7 08/03/2018
  */
 
 public class TypesInfoCache
@@ -276,7 +278,10 @@ public class TypesInfoCache
        
        {TypeID.SQLITE_BLOB, TypeID.H2_BLOB, TypeID.HSQL_BLOB, TypeID.DERBY_BLOB, TypeID.SQLITE_BLOB},
        {TypeID.SQLITE_NULL, TypeID.H2_BLOB, TypeID.HSQL_BLOB, TypeID.DERBY_BLOB, TypeID.SQLITE_NULL},
-       {TypeID.SQLITE_NONE, TypeID.H2_BLOB, TypeID.HSQL_BLOB, TypeID.DERBY_BLOB, TypeID.SQLITE_NONE}};
+       {TypeID.SQLITE_NONE, TypeID.H2_BLOB, TypeID.HSQL_BLOB, TypeID.DERBY_BLOB, TypeID.SQLITE_NONE},
+       {TypeID.SQLITE_DATE, TypeID.H2_DATE, TypeID.HSQL_DATE, TypeID.DERBY_DATE, TypeID.SQLITE_DATE},
+       {TypeID.SQLITE_TIME, TypeID.H2_TIME, TypeID.HSQL_TIME, TypeID.DERBY_TIME, TypeID.SQLITE_TIME},
+       {TypeID.SQLITE_TIMESTAMP, TypeID.H2_TIMESTAMP, TypeID.HSQL_TIMESTAMP, TypeID.DERBY_TIMESTAMP, TypeID.SQLITE_TIMESTAMP},};
    
    private static final int[][] MSACCESS_TYPES = {
        {TypeID.MSACCESS_COUNTER, TypeID.H2_IDENTITY, TypeID.HSQL_IDENTITY, TypeID.DERBY_BIGINT, TypeID.SQLITE_INTEGER},
