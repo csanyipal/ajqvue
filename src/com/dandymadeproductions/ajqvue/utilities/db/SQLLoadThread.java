@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2013-2018 Dana M. Proctor
-// Version 3.0 08/02/2018
+// Version 3.1 08/03/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -84,6 +84,8 @@
 //                        Time, & Timestamp Types Processed With getString() for SQLite When
 //                        columnSQLType is VARCHAR. In such Case of String Content Insured table
 //                        RowElements Set Accordingly.
+//         3.1 08/03/2018 Method loadData() Moved Processing for Datetime, to be the Same as
+//                        Timestamp.
 //             
 //-----------------------------------------------------------------
 //                danap@dandymadeproductions.com
@@ -111,7 +113,7 @@ import com.dandymadeproductions.ajqvue.utilities.ProgressBar;
  * Memory/File database transfer.
  * 
  * @author Dana M. Proctor
- * @version 3.0 08/02/2018
+ * @version 3.1 08/03/2018
  */
 
 public class SQLLoadThread implements Runnable
@@ -340,24 +342,6 @@ public class SQLLoadThread implements Runnable
                      else
                         tableRowElements.setRowElement(currentContentData + "");
                   }
-                  
-                  // DATETIME Type Field
-                  else if (columnTypeName.equals("DATETIME"))
-                  {
-                     currentContentData = db_resultSet.getString(columnName);
-                     
-                     if (currentContentData == null)
-                        tableRowElements.setRowElement(null);
-                     else
-                     {
-                        String dateString = currentContentData.toString();
-                        String timeString = currentContentData.toString();
-                        
-                        dateString = dateString.substring(0, (dateString.indexOf(" ")));
-                        timeString = timeString.substring(timeString.indexOf(" "));
-                        tableRowElements.setRowElement(dateString + timeString);
-                     }
-                  }
 
                   // TIME Type Field
                   else if (columnTypeName.equals("TIME"))
@@ -414,7 +398,8 @@ public class SQLLoadThread implements Runnable
                   }
 
                   // TIMESTAMP Type Field
-                  else if (columnTypeName.equals("TIMESTAMP"))
+                  else if (columnTypeName.equals("TIMESTAMP")
+                           || columnTypeName.equalsIgnoreCase("DATETIME"))
                   {
                      if (connectionInstance.getDataSourceType().equals(ConnectionInstance.SQLITE)
                            && columnSQLType == Types.VARCHAR)
