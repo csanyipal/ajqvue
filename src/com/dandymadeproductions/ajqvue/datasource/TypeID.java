@@ -9,7 +9,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 1.2 07/10/2018
+// Version 1.3 08/03/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -34,6 +34,9 @@
 //         1.1 Updated Copyright.
 //         1.2 Added SQLite Data Type ID, SQLITE_NULL, to Bring Into
 //             Conformance With SQLite3 Data Types.
+//         1.3 Reordered Values for Data Type IDs for MSACCESS & MSSQL
+//             So That Virtual Types IDs for SQLite SQLITE_DATE,
+//             SQLITE_TIME, & SQLITE_TIMESTAMP Could be Added.
 //        
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -49,7 +52,7 @@ import java.util.Locale;
  * types that follows a prescribe naming scheme.
  * 
  * @author Dana M. Proctor
- * @version 1.2 07/10/2018
+ * @version 1.3 08/03/2018
  */
 
 public class TypeID
@@ -235,60 +238,64 @@ public class TypeID
    public static final int ORACLE_INTERVALDS = 51;
    
    // SQLite Data Type IDs
-   public static final int SQLITE_INTEGER = 52;
-   public static final int SQLITE_REAL = 54;
-   public static final int SQLITE_NUMERIC = 55;
-   public static final int SQLITE_TEXT = 56;
-   public static final int SQLITE_BLOB = 57;
-   public static final int SQLITE_NULL = 58;
-   public static final int SQLITE_NONE = 59;
+   public static final int SQLITE_INTEGER = 60;
+   public static final int SQLITE_REAL = 62;
+   public static final int SQLITE_NUMERIC = 64;
+   public static final int SQLITE_TEXT = 66;
+   public static final int SQLITE_BLOB = 68;
+   public static final int SQLITE_NULL = 70;
+   public static final int SQLITE_NONE = 72;
+   // Virtual
+   public static final int SQLITE_DATE = 74;
+   public static final int SQLITE_TIME = 76;
+   public static final int SQLITE_TIMESTAMP = 78;
    
    // MS Access Data Type IDs
-   public static final int MSACCESS_COUNTER = 60;
-   public static final int MSACCESS_BINARY = 62;
-   public static final int MSACCESS_LONGBINARY = 64;
-   public static final int MSACCESS_VARCHAR = 66;
-   public static final int MSACCESS_LONGCHAR = 68;
-   public static final int MSACCESS_BIT = 70;
-   public static final int MSACCESS_BYTE = 72;
-   public static final int MSACCESS_SMALLINT = 74;
-   public static final int MSACCESS_INTEGER = 76;
-   public static final int MSACCESS_REAL = 78;
-   public static final int MSACCESS_DOUBLE = 80;
-   public static final int MSACCESS_CURRENCY = 82;
-   public static final int MSACCESS_GUID = 84;
-   public static final int MSACCESS_DATETIME = 86;
+   public static final int MSACCESS_COUNTER = 80;
+   public static final int MSACCESS_BINARY = 82;
+   public static final int MSACCESS_LONGBINARY = 84;
+   public static final int MSACCESS_VARCHAR = 86;
+   public static final int MSACCESS_LONGCHAR = 88;
+   public static final int MSACCESS_BIT = 90;
+   public static final int MSACCESS_BYTE = 92;
+   public static final int MSACCESS_SMALLINT = 94;
+   public static final int MSACCESS_INTEGER = 96;
+   public static final int MSACCESS_REAL = 98;
+   public static final int MSACCESS_DOUBLE = 90;
+   public static final int MSACCESS_CURRENCY = 92;
+   public static final int MSACCESS_GUID = 94;
+   public static final int MSACCESS_DATETIME = 96;
    
    // MSSQL Data Type IDs
-   public static final int MSSQL_CHAR = 88;
-   public static final int MSSQL_NCHAR = 90;
-   public static final int MSSQL_VARCHAR = 92;
-   public static final int MSSQL_NVARCHAR = 94;
-   public static final int MSSQL_BINARY = 96;
-   public static final int MSSQL_VARBINARY = 98;
-   public static final int MSSQL_IMAGE = 100;
-   public static final int MSSQL_TEXT = 102;
-   public static final int MSSQL_NTEXT = 104;
-   public static final int MSSQL_UNIQUEIDENTIFIER = 106;
-   public static final int MSSQL_XML = 108;
-   public static final int MSSQL_BIT = 110;
-   public static final int MSSQL_TINYINT = 112;
-   public static final int MSSQL_SMALLINT = 114;
-   public static final int MSSQL_INT = 116;
-   public static final int MSSQL_BIGINT = 118;
-   public static final int MSSQL_FLOAT = 120;
-   public static final int MSSQL_REAL = 122;
-   public static final int MSSQL_DECIMAL = 124;
-   public static final int MSSQL_NUMERIC = 126;
-   public static final int MSSQL_MONEY = 128;
-   public static final int MSSQL_SMALLMONEY = 130;
-   public static final int MSSQL_DATE = 132;
-   public static final int MSSQL_TIME = 134;
-   public static final int MSSQL_DATETIME = 136;
-   public static final int MSSQL_SMALLDATETIME = 138;
-   public static final int MSSQL_DATETIME2 = 140;
-   public static final int MSSQL_DATETIMEOFFSET = 142;
-   public static final int MSSQL_TIMESTAMP = 144;    
+   public static final int MSSQL_CHAR = 100;
+   public static final int MSSQL_NCHAR = 102;
+   public static final int MSSQL_VARCHAR = 104;
+   public static final int MSSQL_NVARCHAR = 106;
+   public static final int MSSQL_BINARY = 108;
+   public static final int MSSQL_VARBINARY = 110;
+   public static final int MSSQL_IMAGE = 112;
+   public static final int MSSQL_TEXT = 114;
+   public static final int MSSQL_NTEXT = 116;
+   public static final int MSSQL_UNIQUEIDENTIFIER = 118;
+   public static final int MSSQL_XML = 120;
+   public static final int MSSQL_BIT = 122;
+   public static final int MSSQL_TINYINT = 124;
+   public static final int MSSQL_SMALLINT = 126;
+   public static final int MSSQL_INT = 128;
+   public static final int MSSQL_BIGINT = 130;
+   public static final int MSSQL_FLOAT = 132;
+   public static final int MSSQL_REAL = 134;
+   public static final int MSSQL_DECIMAL = 136;
+   public static final int MSSQL_NUMERIC = 138;
+   public static final int MSSQL_MONEY = 140;
+   public static final int MSSQL_SMALLMONEY = 142;
+   public static final int MSSQL_DATE = 144;
+   public static final int MSSQL_TIME = 146;
+   public static final int MSSQL_DATETIME = 148;
+   public static final int MSSQL_SMALLDATETIME = 150;
+   public static final int MSSQL_DATETIME2 = 152;
+   public static final int MSSQL_DATETIMEOFFSET = 154;
+   public static final int MSSQL_TIMESTAMP = 156;    
    
    //==============================================================
    // Class method to allow classes to try and obtain the field
