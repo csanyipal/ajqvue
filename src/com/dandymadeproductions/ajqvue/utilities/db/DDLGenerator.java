@@ -10,7 +10,7 @@
 //
 //=================================================================
 // Copyright (C) 2016-2018 Dana M. Proctor
-// Version 2.0 07/10/2018
+// Version 2.1 08/04/2018
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -58,6 +58,13 @@
 //         1.9 05/29/2018 Moved to utilities.db Package. Updated Import for Utils.
 //         2.0 07/10/2018 Method convertToSQLiteType() Added TIME to be Defined as SQLite
 //                        Numeric, Essentially None, Null.
+//         2.1 08/04/2018 Main getDDL() Method Added Direct Mapping for SQLite to SQLite.
+//                        Method convertToSQLiteType() TEXT Added XML & Text, Excluded
+//                        Character Bit Data. BLOB Added Binary, Raw, Image, & Bit Data.
+//                        INTEGER Insured Points are Not Picked Up. NUMERIC Excluded All,
+//                        But Numeric & Decimal. REAL Insured Oracle Binary Float & Double
+//                        Not Included. Aded Virtual Type DATE, YEAR, TIME, DATETIME,
+//                        & TIMESTAMP.
 //
 //-----------------------------------------------------------------
 //                 danap@dandymadeproductions.com
@@ -84,7 +91,7 @@ import com.dandymadeproductions.ajqvue.utilities.Utils;
  * a given database query to an alternate database table. 
  * 
  * @author Dana M. Proctor
- * @version 2.0 07/10/2018
+ * @version 2.1 08/04/2018
  */
 
 public class DDLGenerator
@@ -233,7 +240,9 @@ public class DDLGenerator
          columnClass = sqlQuery.getColumnClassHashMap().get(columnName);
          
          // Map directly from definition.
-         if (dataSinkType.equals(ConnectionManager.SQLITE) && useSQLiteCast)
+         if ((dataSinkType.equals(ConnectionManager.SQLITE) && useSQLiteCast)
+             || (dataSourceType.equals(ConnectionManager.SQLITE)
+                 && dataSinkType.equals(ConnectionManager.SQLITE)))
             columnType = sqlQuery.getColumnTypeNameHashMap().get(columnName);
          
          else if (dataSourceType.equals(ConnectionManager.SQLITE))
@@ -311,54 +320,73 @@ public class DDLGenerator
    // the defined SQLites types if possible.
    //
    // This is required because SQLite allows table definitions to
-   // be stored directly in essentially with field type of anything,
-   // "WhattZZa". It does not care because if the type does not fall
-   // into a SQL type or one of its own, it just becomes NONE.
+   // be stored directly with field types of anything, "WhattZZa".
+   // It does not care because if the type does not fall into a SQL
+   // type of one of its own, it just becomes BLOB, with affinity
+   // essentially defined with the first stored element. A set of
+   // rules is applied with affinity if possible.
    //
    // SQLite Documentation - 2.2 Affinity Name Examples.
    //==============================================================
    
    private String convertToSQLiteType(String columnType)
    {
-      if (columnType.indexOf("CHAR") != -1
-          || columnType.indexOf("CLOB") != -1)
+      if ((columnType.indexOf("CHAR") != -1 && columnType.indexOf("BIT DATA") == -1)
+          || columnType.indexOf("CLOB") != -1
+          || columnType.indexOf("TEXT") != -1
+          || columnType.indexOf("XML") != -1)
       {
          return "TEXT";
       }   
-      else if (columnType.indexOf("BYTEA") != -1)
+      else if (columnType.indexOf("BYTEA") != -1
+               || columnType.indexOf("BINARY") != -1
+               || columnType.indexOf("RAW") != -1
+               || columnType.indexOf("IMAGE") != -1
+               || columnType.indexOf("BIT DATA") != -1)
       {
          return "BLOB";
       }
+      // These are a real issue, because NUMERIC in SQLite's
+      // definition is ANY type to be determined based on
+      // affinity rules.
+      //
+      // NUMERIC DOES NOT NECESSARYLY MEAN A NUMBER!
       else if (columnType.indexOf("NUMERIC") != -1
-            || columnType.indexOf("DECIMAL") != -1
-            || columnType.indexOf("BOOLEAN") != -1
-            || columnType.indexOf("DATE") != -1
-            || columnType.indexOf("TIME") != -1
-            || columnType.indexOf("DATETIME") != -1
-            || columnType.indexOf("TIMESTAMP") != -1
-            || columnType.indexOf("YEAR") != -1)
+               || columnType.indexOf("DECIMAL") != -1)
       {
          return "NUMERIC";
       }
-      else if (columnType.indexOf("INT") != -1
-          || columnType.indexOf("TINYINT") != -1
-          || columnType.indexOf("SMALLINT") != -1
-          || columnType.indexOf("MEDIUMINT") != -1
-          || columnType.indexOf("BIGINT") != -1
-          || columnType.indexOf("INT2") != -1
-          || columnType.indexOf("INT4") != -1
-          || columnType.indexOf("INT8") != -1
-          || columnType.indexOf("SERIAL") != -1
-          )
+      
+      else if (columnType.indexOf("TINYINT") != -1
+               // INT2, INT4, & INT8
+               || (columnType.indexOf("INT") != -1 && columnType.indexOf("POINT") == -1)
+               || columnType.indexOf("SMALLINT") != -1
+               || columnType.indexOf("MEDIUMINT") != -1
+               || columnType.indexOf("BIGINT") != -1
+               || columnType.indexOf("SERIAL") != -1)
       {
          return "INTEGER";
       }
       else if (columnType.indexOf("REAL") != -1
-               || columnType.indexOf("DOUBLE") != -1
-               || columnType.indexOf("FLOAT") != -1)
+               || (columnType.indexOf("DOUBLE") != -1 && columnType.indexOf("BINARY") == -1)
+               || (columnType.indexOf("FLOAT") != -1 && columnType.indexOf("BINARY") == -1))
       {
          return "REAL";
-      }  
+      }
+      // Virtual Data Types for Conversion
+      // THESE ARE NOT DEFINED SQLite types.
+      // All Defined as NUMERIC by SQLite, but Numeric as
+      // defined by the project is an open ended type of
+      // (BLOB, TEXT, INTEGER, or REAL). 
+      
+      else if (columnType.equals("DATE") || columnType.equals("YEAR"))
+         return "DATE";
+      else if (columnType.equals("TIME"))
+         return "TIME";
+      else if (columnType.indexOf("DATETIME") != -1
+               || columnType.indexOf("TIMESTAMP") != -1)
+         return "TIMESTAMP";
+               
       else
          return columnType;
    }
