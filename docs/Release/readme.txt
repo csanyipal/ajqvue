@@ -1,6 +1,6 @@
-Ajqvue Version 1.15
+Ajqvue Version 2.0
 
-Copyright 2016-2017
+Copyright 2016-2018
 by Dana Proctor
 http://dandymadeproductions.com
 
@@ -67,18 +67,21 @@ Features:
 
 Requirements:
 
-    Microsoft® Windows 7, Vista ?, XP, 2000, 98, NT, ME, MAC?, Linux, & X-Window Environment.
+    Microsoft® Windows 7, Vista ?, XP, 2000, 98, NT, ME, MAC?, Linux, & X-Window
+    Environment.
     Java Runtime Environment, JRE 1.8 or Newer.
     Apache Derby 10.10.2.0 - 10.13.1.1.
-    H2 1.3.173 - 1.4.196.
-    HSQL 2.2.5 - 2.4.0. NOTE, 1.8.x No Longer Supported.
+    H2 1.3.173 - 1.4.197.
+    HSQL 2.2.5 - 2.4.1. NOTE, 1.8.x No Longer Supported.
     MSAccess MS Access 97 - 2003, ODBC-JDBC Bridge, Control Panel Data Sources.
     Microsoft SQL Server 8? - 11.00.2100, JDBC 4.0.
     MySQL 5.0.7 - 5.1.61, JDBC 5.0.7 - 5.1.42.
     MariaDB 5.5.32 - 10.0.26, JDBC 1.1.6 - 2.0.1.
     Oracle 10g - 11g JDBC 14.
-    PostgreSQL 8.2.5 - 8.4.4, 9.0.1 - 9.6.3, JDBC4 8.2-506 - 8.4-702, 9.3, 9.4, 42.1.4.
-    Xerial SQLite JDBC 3.6.20 - 3.19.3. Note, SQLite need not be installed on the system.
+    PostgreSQL 8.2.5 - 8.4.4, 9.0.1 - 9.6.3, 10.4, JDBC4 8.2-506 - 8.4-702, 9.3,
+    9.4, 42.1.0 - 42.2.4.
+    Xerial SQLite JDBC 3.6.20 - 3.23.1. Note, SQLite need not be installed on
+    the system.
 
 Installation Notes:
 
@@ -190,3 +193,5 @@ Version 1.0  Code Review and Cleanup. Libraries and TableFieldProfiler Plugin
         1.11 Minor Release to Mainly Highlight Updated QueryBuilder Plugin.
         1.15 Maintanence With Some Minor Fixes. Review/Testing Current Revisions
              of Supported Databases.
+        2.0	 Major Maintenance, Cleanup, and Consolidation of the Code Base
+             Driven a DB_To_FileMemoryDB Plugin and SQLite Affinity.
